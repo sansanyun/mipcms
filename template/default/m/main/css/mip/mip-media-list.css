@@ -1,0 +1,11 @@
+.news-list { list-style: none; padding: 10px; }
+.news-list:after { height: 0; visibility: hidden; clear: both; overflow: hidden; display: block; content: "clear"; }
+.news-list .news-list-img { float: left; width: 121px; height: 91px; position: relative; display: inline-block; overflow: hidden; box-sizing: border-box; }
+.news-list .news-list-img .img { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); transition: all 0.2s linear; }
+.news-list .news-list-content.hasImg { margin-left: 131px; }
+.news-list .news-list-content { height: 80px; position: relative; }
+.news-list .news-list-content .title { font-weight: 400; font-size: 18px; line-height: 25px; }
+.news-list .news-list-content p { position: absolute; bottom: 0px; left: 0; color: #888; margin-bottom: 0; }
+.news-list a { color: #333; overflow: hidden; text-overflow: ellipsis; -webkit-box-orient: vertical; display: -webkit-box; -webkit-line-clamp: 2; }
+
+/*# sourceMappingURL=mip-media-list.css.map */

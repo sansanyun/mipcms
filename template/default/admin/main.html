@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <!-- 引入样式 -->
+    <link rel="stylesheet" type="text/css" href="//at.alicdn.com/t/font_97y71aw2531h5mi.css"/>
+    <style type="text/css">
+    {include file="/assets/css/mipui/mip-app.css"}
+    {include file="/assets/css/mipui/bootstrap-layout.css"}
+    {include file="/assets/css/el/el.css"}
+    </style>
+    {block name="style"}
+    <style>
+    body {
+      padding: 0;
+      margin: 0;
+      font-size: 14px;
+    }
+    
+    .clearfix:before,
+    .clearfix:after,
+    .container-fluid:before,
+    .container-fluid:after,
+    .nav:before,
+    .nav:after {
+      display: table;
+      content: " "
+    }
+    
+    .clearfix:after,
+    .container-fluid:after,
+    .nav:after {
+      clear: both
+    }
+    
+    a {
+      color: #333;
+      text-decoration: none;
+      cursor: pointer
+    }
+    
+    a:hover {
+      color: #0AE;
+      text-decoration: none
+    }
+    
+    a:focus {
+      color: #0AE;
+      text-decoration: none
+    }
+    
+    a:active {
+      color: #0AE;
+      text-decoration: none
+    }
+    
+    a {
+      word-break: break-all;
+      word-wrap: break-word
+    }
+    
+    /*bootstrap*/ 
+    
+   /*btn*/
+    .btn {
+        display: inline-block;
+        padding: 6px 12px;
+        margin-bottom: 0;
+        font-size: 14px;
+        font-weight: normal;
+        line-height: 1.42857143;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        -ms-touch-action: manipulation;
+        touch-action: manipulation;
+        cursor: pointer;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        background-image: none;
+        border: 1px solid transparent;
+        border-radius: 4px
+    }
+    
+    .btn:focus,.btn:active:focus,.btn.active:focus,.btn.focus,.btn:active.focus,.btn.active.focus {
+        outline: thin dotted;
+        outline: 5px auto -webkit-focus-ring-color;
+        outline-offset: -2px
+    }
+    
+    .btn:hover,.btn:focus,.btn.focus {
+        color: #333;
+        text-decoration: none
+    }
+    
+    .btn:active,.btn.active {
+        background-image: none;
+        outline: 0;
+        -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+        box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125)
+    }
+    
+    .btn.disabled, .btn[disabled], fieldset[disabled] .btn {
+        pointer-events: none;
+        cursor: not-allowed;
+        filter: alpha(opacity=65);
+        -webkit-box-shadow: none;
+        box-shadow: none;
+        opacity: .65
+    }
+    
+    .btn-lg,.btn-group-lg>.btn {
+        padding: 10px 16px;
+        font-size: 18px;
+        line-height: 1.33;
+        border-radius: 6px
+    }
+    
+    .btn-sm,.btn-group-sm>.btn {
+        padding: 5px 10px;
+        font-size: 12px;
+        line-height: 1.5;
+        border-radius: 3px
+    }
+    
+    .btn-xs,.btn-group-xs>.btn {
+        padding: 1px 5px;
+        font-size: 12px;
+        line-height: 1.5;
+        border-radius: 3px
+    }
+    .btn-default {
+        color: #666;
+        background-color: #eef1f5;
+        border-color: #eef1f5
+    }
+    
+    .btn-default:focus,.btn-default.focus {
+        color: #666;
+        background-color: #ced7e2;
+        border-color: #9eafc6
+    }
+    
+    .btn-default:hover {
+        color: #666;
+        background-color: #ced7e2;
+        border-color: #c7d1de
+    }
+    
+    .btn-default:active,.btn-default.active,.open>.btn-default.dropdown-toggle {
+        color: #666;
+        background-color: #ced7e2;
+        border-color: #c7d1de
+    }
+    
+    .btn-default:active:hover,.btn-default:active:focus,.btn-default:active.focus,.btn-default.active:hover,.btn-default.active:focus,.btn-default.active.focus,.open>.btn-default.dropdown-toggle:hover,.open>.btn-default.dropdown-toggle:focus,.open>.btn-default.dropdown-toggle.focus {
+        color: #666;
+        background-color: #b7c4d5;
+        border-color: #9eafc6
+    }
+    
+    .btn-default:active,.btn-default.active,.open>.btn-default.dropdown-toggle {
+        background-image: none
+    }
+    
+    .btn-default.disabled:hover, .btn-default.disabled:focus, .btn-default.disabled.focus, .btn-default[disabled]:hover, .btn-default[disabled]:focus, .btn-default[disabled].focus, fieldset[disabled] .btn-default:hover, fieldset[disabled] .btn-default:focus, fieldset[disabled] .btn-default.focus {
+        background-color: #eef1f5;
+        border-color: #eef1f5
+    }
+    
+    .btn-default .badge {
+        color: #eef1f5;
+        background-color: #666
+    }
+    
+    .btn-primary {
+        color: #fff;
+        background-color: #0ae;
+        border-color: #0ae
+    }
+    
+    .btn-primary:focus,.btn-primary.focus {
+        color: #fff;
+        background-color: #0086bb;
+        border-color: #004f6f
+    }
+    
+    .btn-primary:hover {
+        color: #fff;
+        background-color: #0086bb;
+        border-color: #007eb1
+    }
+    
+    .btn-primary:active,.btn-primary.active,.open>.btn-primary.dropdown-toggle {
+        color: #fff;
+        background-color: #0086bb;
+        border-color: #007eb1
+    }
+    
+    .btn-primary:active:hover,.btn-primary:active:focus,.btn-primary:active.focus,.btn-primary.active:hover,.btn-primary.active:focus,.btn-primary.active.focus,.open>.btn-primary.dropdown-toggle:hover,.open>.btn-primary.dropdown-toggle:focus,.open>.btn-primary.dropdown-toggle.focus {
+        color: #fff;
+        background-color: #006c97;
+        border-color: #004f6f
+    }
+    
+    .btn-primary:active,.btn-primary.active,.open>.btn-primary.dropdown-toggle {
+        background-image: none
+    }
+    
+    .btn-primary.disabled:hover, .btn-primary.disabled:focus, .btn-primary.disabled.focus, .btn-primary[disabled]:hover, .btn-primary[disabled]:focus, .btn-primary[disabled].focus, fieldset[disabled] .btn-primary:hover, fieldset[disabled] .btn-primary:focus, fieldset[disabled] .btn-primary.focus {
+        background-color: #0ae;
+        border-color: #0ae
+    }
+    
+    .btn-primary .badge {
+        color: #0ae;
+        background-color: #fff
+    }
+    
+    .btn-success {
+        color: #fff;
+        background-color: #32c5d2;
+        border-color: #32c5d2
+    }
+    
+    .btn-success:focus,.btn-success.focus {
+        color: #fff;
+        background-color: #26a1ab;
+        border-color: #18666d
+    }
+    
+    .btn-success:hover {
+        color: #fff;
+        background-color: #26a1ab;
+        border-color: #2499a3
+    }
+    
+    .btn-success:active,.btn-success.active,.open>.btn-success.dropdown-toggle {
+        color: #fff;
+        background-color: #26a1ab;
+        border-color: #2499a3
+    }
+    
+    .btn-success:active:hover,.btn-success:active:focus,.btn-success:active.focus,.btn-success.active:hover,.btn-success.active:focus,.btn-success.active.focus,.open>.btn-success.dropdown-toggle:hover,.open>.btn-success.dropdown-toggle:focus,.open>.btn-success.dropdown-toggle.focus {
+        color: #fff;
+        background-color: #1f858e;
+        border-color: #18666d
+    }
+    
+    .btn-success:active,.btn-success.active,.open>.btn-success.dropdown-toggle {
+        background-image: none
+    }
+    
+    .btn-success.disabled:hover, .btn-success.disabled:focus, .btn-success.disabled.focus, .btn-success[disabled]:hover, .btn-success[disabled]:focus, .btn-success[disabled].focus, fieldset[disabled] .btn-success:hover, fieldset[disabled] .btn-success:focus, fieldset[disabled] .btn-success.focus {
+        background-color: #32c5d2;
+        border-color: #32c5d2
+    }
+    
+    .btn-success .badge {
+        color: #32c5d2;
+        background-color: #fff
+    }
+    
+    .btn-info {
+        color: #fff;
+        background-color: #21a9e1;
+        border-color: #1c99cd
+    }
+    
+    .btn-info:focus,.btn-info.focus {
+        color: #fff;
+        background-color: #1988b6;
+        border-color: #0d455d
+    }
+    
+    .btn-info:hover {
+        color: #fff;
+        background-color: #1988b6;
+        border-color: #147197
+    }
+    
+    .btn-info:active,.btn-info.active,.open>.btn-info.dropdown-toggle {
+        color: #fff;
+        background-color: #1988b6;
+        border-color: #147197
+    }
+    
+    .btn-info:active:hover,.btn-info:active:focus,.btn-info:active.focus,.btn-info.active:hover,.btn-info.active:focus,.btn-info.active.focus,.open>.btn-info.dropdown-toggle:hover,.open>.btn-info.dropdown-toggle:focus,.open>.btn-info.dropdown-toggle.focus {
+        color: #fff;
+        background-color: #147197;
+        border-color: #0d455d
+    }
+    
+    .btn-info:active,.btn-info.active,.open>.btn-info.dropdown-toggle {
+        background-image: none
+    }
+    
+    .btn-info.disabled:hover, .btn-info.disabled:focus, .btn-info.disabled.focus, .btn-info[disabled]:hover, .btn-info[disabled]:focus, .btn-info[disabled].focus, fieldset[disabled] .btn-info:hover, fieldset[disabled] .btn-info:focus, fieldset[disabled] .btn-info.focus {
+        background-color: #21a9e1;
+        border-color: #1c99cd
+    }
+    
+    .btn-info .badge {
+        color: #21a9e1;
+        background-color: #fff
+    }
+    
+    .btn-warning {
+        color: #fff;
+        background-color: #f3c200;
+        border-color: #daae00
+    }
+    
+    .btn-warning:focus,.btn-warning.focus {
+        color: #fff;
+        background-color: #c09900;
+        border-color: #5a4800
+    }
+    
+    .btn-warning:hover {
+        color: #fff;
+        background-color: #c09900;
+        border-color: #9c7d00
+    }
+    
+    .btn-warning:active,.btn-warning.active,.open>.btn-warning.dropdown-toggle {
+        color: #fff;
+        background-color: #c09900;
+        border-color: #9c7d00
+    }
+    
+    .btn-warning:active:hover,.btn-warning:active:focus,.btn-warning:active.focus,.btn-warning.active:hover,.btn-warning.active:focus,.btn-warning.active.focus,.open>.btn-warning.dropdown-toggle:hover,.open>.btn-warning.dropdown-toggle:focus,.open>.btn-warning.dropdown-toggle.focus {
+        color: #fff;
+        background-color: #9c7d00;
+        border-color: #5a4800
+    }
+    
+    .btn-warning:active,.btn-warning.active,.open>.btn-warning.dropdown-toggle {
+        background-image: none
+    }
+    
+    .btn-warning.disabled:hover, .btn-warning.disabled:focus, .btn-warning.disabled.focus, .btn-warning[disabled]:hover, .btn-warning[disabled]:focus, .btn-warning[disabled].focus, fieldset[disabled] .btn-warning:hover, fieldset[disabled] .btn-warning:focus, fieldset[disabled] .btn-warning.focus {
+        background-color: #f3c200;
+        border-color: #daae00
+    }
+    
+    .btn-warning .badge {
+        color: #f3c200;
+        background-color: #fff
+    }
+    
+    .btn-danger {
+        color: #fff;
+        background-color: #e7505a;
+        border-color: #e43a45
+    }
+    
+    .btn-danger:focus,.btn-danger.focus {
+        color: #fff;
+        background-color: #e12330;
+        border-color: #8b131b
+    }
+    
+    .btn-danger:hover {
+        color: #fff;
+        background-color: #e12330;
+        border-color: #c51b26
+    }
+    
+    .btn-danger:active,.btn-danger.active,.open>.btn-danger.dropdown-toggle {
+        color: #fff;
+        background-color: #e12330;
+        border-color: #c51b26
+    }
+    
+    .btn-danger:active:hover,.btn-danger:active:focus,.btn-danger:active.focus,.btn-danger.active:hover,.btn-danger.active:focus,.btn-danger.active.focus,.open>.btn-danger.dropdown-toggle:hover,.open>.btn-danger.dropdown-toggle:focus,.open>.btn-danger.dropdown-toggle.focus {
+        color: #fff;
+        background-color: #c51b26;
+        border-color: #8b131b
+    }
+    
+    .btn-danger:active,.btn-danger.active,.open>.btn-danger.dropdown-toggle {
+        background-image: none
+    }
+    
+    .btn-danger.disabled:hover, .btn-danger.disabled:focus, .btn-danger.disabled.focus, .btn-danger[disabled]:hover, .btn-danger[disabled]:focus, .btn-danger[disabled].focus, fieldset[disabled] .btn-danger:hover, fieldset[disabled] .btn-danger:focus, fieldset[disabled] .btn-danger.focus {
+        background-color: #e7505a;
+        border-color: #e43a45
+    }
+    /*mip admin*/    
+    .mip-admin {
+      background-color: #eef1f5;
+      position: relative
+    }
+    
+    .mip-admin .mip-header {
+      box-shadow: 0 1px 10px 0 rgba(50, 50, 50, 0.2);
+      background-color: rgba(255, 255, 255, 0.8);
+      height: 70px;
+      line-height: 70px;
+      position: fixed;
+      width: 100%;
+      z-index: 99
+    }
+    
+    .mip-admin .mip-header .mip-logo {
+      width: 200px;
+      font-size: 22px;
+      float: left;
+      height: 70px;
+      background-color: #1d9fdb;
+    }
+    
+    .mip-admin .mip-header .mip-logo-a {
+      padding-left: 15px;
+      padding-right: 15px;
+    }
+    
+    .mip-admin .mip-header .mip-logo a {
+      color: #fff
+    }
+    
+    .mip-admin .mip-header .mip-logo .sub-v {
+      font-size: 14px;
+      color: #FFF
+    }
+    
+    .mip-admin .mip-header .mip-switch {
+      padding-left: 15px;
+      padding-right: 15px;
+      float: left
+    }
+    
+    .mip-admin .mip-header .mip-user-info {
+      float: right;
+      padding-left: 15px;
+      padding-right: 30px
+    }
+    
+    .mip-admin .mip-menu {
+      width: 200px;
+      background-color: #26344b;
+      max-height: none !important;
+      position: fixed;
+      margin-right: -100%;
+      overflow: auto;
+      z-index: 2;
+      top: 70px;
+      bottom: 50px
+    }
+    
+    .mip-admin .mip-menu .ul {
+      padding-left: 0;
+      margin: 0;
+    }
+    
+    .mip-admin .mip-menu .ul .li {
+      border-top: 1px solid #2b3d55
+    }
+    
+    .mip-admin .mip-menu .ul .li.active a {
+      background: #1f2b3d
+    }
+    
+    .mip-admin .mip-menu .ul .li a {
+      color: #e4e9f2;
+      display: block;
+      margin: 0;
+      padding: 9px 15px;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 300;
+      background: 0 0
+    }
+    
+    .mip-admin .mip-menu .ul .li:hover {
+      background-color: #212d41
+    }
+    
+    .mip-admin .mip-menu .ul .li:hover a {
+      color: #fff
+    }
+    
+    .mip-admin .mip-main .mip-container {
+      position: fixed;
+      width: 100%;
+      float: left;
+      overflow: auto;
+      z-index: 1;
+      bottom: 50px;
+      top: 70px
+    }
+    
+    .mip-admin .mip-main .mip-container .mip-content {
+      padding-left: 200px;
+      padding-top: 15px
+    }
+    
+    .container-fluid {
+      padding-right: 15px;
+      padding-left: 15px;
+      margin-right: auto;
+      margin-left: auto;
+    }
+    
+    .mip-admin .mip-footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background-color: #26344b;
+      font-size: 12px;
+      height: 50px;
+      line-height: 50px;
+      z-index: 99
+    }
+    
+    .mip-admin .mip-footer p {
+      color: #fff;
+      margin: 0;
+      text-align: center
+    }
+    
+    .mip-box {
+      background-color: #fff;
+      margin-bottom: 15px;
+      border-radius: 3px;
+      border: 0;
+      -webkit-box-shadow: initial;
+      box-shadow: inherit
+    }
+    
+    .mip-box .mip-box-body {
+      padding: 15px 20px 15px 20px
+    }
+    
+    .mip-box-heading {
+      color: #333;
+      border-top-left-radius: 3px;
+      border-top-right-radius: 3px;
+      position: relative;
+      padding: 15px 0px;
+      margin-left: 20px;
+      margin-right: 20px;
+      border-bottom: 1px solid #EFEFEF
+    }
+    
+    .mip-box-body:before,
+    .mip-box-body:after {
+      display: table;
+      content: " "
+    }
+    
+    .mip-box-body:after {
+      clear: both
+    }
+    
+    .mip-box .mip-box-heading h3 {
+      margin: 0;
+      line-height: 16px;
+      font-size: 16px;
+      font-weight: 500;
+      color: #333
+    }
+    
+    .mip-box .mip-box-heading .right {
+      position: absolute;
+      right: 0;
+      top: 12px;
+      font-size: 13px;
+      padding: 1px 5px;
+      border: 1px solid transparent;
+      line-height: 1.5
+    }
+    
+    .mip-box .mip-box-heading .right:hover {
+      border-radius: 3px;
+      background-color: #eef1f5;
+      color: #333
+    }
+    
+    .el-table {
+      min-height: 450px;
+    }
+    
+    .el-table .cell,
+    .el-table th>div {
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+    .el-pagination{
+      margin-top: 15px;
+      float: right;
+    }
+    
+    
+    .no-data-block {
+          height: 300px;
+          padding-top: 80px;
+    }
+    .no-data-block .mip-shuaxin{
+        margin: 0 auto;
+        font-size: 40px;
+        position: relative;
+        color: #dbdbdb;
+    }
+    .no-data-block p{
+          margin-top: 15px;
+          color: #dbdbdb;
+    }
+    </style>
+    {/block}
+</head>
+<body class="mip-admin">
+<div id="app">
+  <header class="mip-header clearfix">
+     <div class="mip-logo">
+        <div class="mip-logo-a"><a href="">管理后台</a> <span class="sub-v">v1.0</span></div>
+      </div>
+        <div class="mip-switch">
+          <a href="/" class="btn btn-default btn-sm"> <span class="glyphicon glyphicon-th-large"></span> 切换到前台</a>
+          <a href="/admin/setting" class="btn btn-default btn-sm" style="margin-left: 10px;"> <span class="glyphicon glyphicon-cog"></span> 网站设置</a>
+        </div>
+      <div class="mip-user-info">
+          <ul class="nav navbar-nav navbar-right">
+          </ul>
+      </div>
+  </header>
+  <main class="mip-main clearfix">
+    <aside class="mip-menu hidden-xs">
+      <ul class="ul">
+        <li class="li {if condition='$act=="index"'}active{/if}"><a href="/admin">控制台</a></li>
+        <li class="li {if condition='$act=="article"'}active{/if}"><a href="/admin/article">文章管理</a></li>
+        <li class="li {if condition='$act=="user"'}active{/if}"><a href="/admin/user">用户管理</a></li>
+        <li class="li {if condition='$act=="spider"'}active{/if}"><a href="/admin/spider">搜索引擎</a></li>
+        <li class="li {if condition='$act=="role"'}active{/if}"><a href="/admin/role">权限管理</a></li>
+      </ul>
+    </aside>
+    <section class="mip-container">
+      <section class="mip-content clearfix">
+        <div class="container-fluid">
+        {block name="main"}
+        {/block}
+        </div>      
+      </section>
+    </section>
+  </main>
+  <footer class="mip-footer">
+    <p>MIPCMS内容管理系统管理后台 ©2017-2099 http://www.MIPCMS.com</p>
+  </footer>
+  {block name="dialog"}{/block}
+</div>
+</body>
+{block name="javascript"}
+<script src="/assets/js/vue.min.js"></script>
+<script src="/assets/js/axios.min.js"></script>
+<script src="/assets/js/element.js"></script>
+<script src="/assets/js/md5.js"></script>
+<script src="/assets/js/utils.js"></script>
+{/block}
+</html>

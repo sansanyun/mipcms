@@ -1,0 +1,76 @@
+.mip-header-default {
+  background-color: #303641;
+  overflow: hidden;
+}
+
+.mip-header-default .logo {
+  padding-top: 10px;
+  float: left;
+  margin-right: 15px
+}
+
+.mip-header-default .logo .logo-link {
+  width: 41px;
+  height: 41px;
+  display: block;
+  position: relative
+}
+
+.mip-nav li {
+  float: left
+}
+
+.mip-nav li.active,
+.mip-nav li.active:hover {
+  background-color: #e4e4e4
+}
+
+.mip-nav li:hover {
+  background-color: #f4f5f9
+}
+
+.mip-nav li a {
+  display: block;
+  padding: 10px 15px
+}
+
+.mip-menu {
+  background-color: #303641;
+  line-height: 0
+}
+
+.mip-menu:after,
+.mip-menu:before {
+  content: " ";
+  display: table
+}
+
+.mip-menu>li {
+  float: left;
+  display: block;
+  position: relative
+}
+
+.mip-menu>li>a {    
+  margin-left: 2px;
+  margin-right: 2px;
+  display: block;
+  padding: 30px 15px;
+  position: relative;
+  -webkit-transition: ease-in color .15s;
+  transition: ease-in color .15s;
+  color: #ECEFF1
+}
+
+.mip-menu>li>a:hover {
+  color: #fff;
+  background-color: #2b313b
+}
+.mip-menu>li.active {
+  color: #fff;
+  background-color: #2b313b
+}
+.mip-menu>li.active>a:hover {
+  color: #fff;
+  background-color: #2b313b
+}

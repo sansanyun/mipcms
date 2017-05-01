@@ -1,0 +1,11 @@
+.mip-answer .answer-list { padding-top: 10px; padding-bottom: 10px; border-bottom: 1px solid #F2F5F8; overflow: visible; position: relative; }
+.mip-answer .answer-list .answer-user { float: left; padding-right: 10px; display: table-cell; vertical-align: top; }
+.mip-answer .answer-list .answer-user .avatar { width: 45px; height: 45px; display: block; position: relative; }
+.mip-answer .answer-list .answer-user img { width: 32px; border-radius: 50px; }
+.mip-answer .answer-list .answer-content { width: 900px; padding-bottom: 10px; display: table-cell; vertical-align: top; zoom: 1; }
+.mip-answer .answer-list .answer-content .answer-info { margin-bottom: 5px; font-size: 12px; color: #999; }
+.mip-answer .answer-list .answer-content .answer-info a { color: #999; }
+.mip-answer .answer-list .answer-content .answer-info a:hover { color: #00aaee; }
+.mip-answer .answer-list .sub-list { margin-left: 40px; border-top: 1px solid #F2F5F8 !important; border-bottom: 0 !important; }
+
+/*# sourceMappingURL=mip-answer-001.css.map */

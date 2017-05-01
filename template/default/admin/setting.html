@@ -1,0 +1,176 @@
+{extend name="admin/main"/}
+
+{block name="style"}
+{__block__}
+<style>
+   
+</style>
+{/block}
+{block name="main"}
+<div class="row">
+    <div class="col-md-6">
+        
+        <section class="mip-box mip-default">
+          <div class="mip-box-heading">
+            <h3>网站设置</h3>
+          </div>
+          <div class="mip-box-body">
+                <el-form label-width="80px">
+                    <el-form-item label="网站域名">
+                            <el-input v-model="setting.domain" placeholder="例:www.baidu.com"></el-input>
+                    </el-form-item>
+                    <el-form-item label="MIP域名">
+                        <el-tooltip class="item" effect="dark" content="请输入百度MIP站点绑定的域名，请勿输入带http://、https://以及末尾勿带/" placement="top">
+                            <el-input v-model="setting.mipDomain" placeholder="例:mip.baidu.com"></el-input>
+                        </el-tooltip>
+                    </el-form-item>
+                  <el-form-item label="网站名称">
+                    <el-input v-model="setting.siteName"></el-input>
+                  </el-form-item>
+                  
+                  <el-form-item label="关键词">
+                    <el-input type="textarea" v-model="setting.keywords"></el-input>
+                  </el-form-item>
+                  
+                  <el-form-item label="网站描述">
+                    <el-input type="textarea" v-model="setting.description"></el-input>
+                  </el-form-item>
+                  
+                  <el-form-item label="上传目录">
+                    <el-input v-model="setting.uploadPath"></el-input>
+                  </el-form-item>
+                  
+                  <el-form-item label="引用路径">
+                    <el-input v-model="setting.uploadUrl"></el-input>
+                  </el-form-item>
+                  
+                  <el-form-item label="统计代码">
+                    <el-input type="textarea" v-model="setting.statistical"></el-input>
+                  </el-form-item>
+                  
+                  <el-form-item label="备案号">
+                    <el-input v-model="setting.icp"></el-input>
+                  </el-form-item>
+                    
+                </el-form>
+          </div>
+        </section>
+            </div>
+            <div class="col-md-6">
+                <section class="mip-box mip-default">
+                  <div class="mip-box-heading">
+                    <h3>系统配置</h3>
+                  </div>
+                  <div class="mip-box-body">
+                       <el-form label-width="80px">
+                            <el-form-item label="站点状态">
+                                <el-switch on-text="开启" off-text="关闭" v-model="setting.systemStatus"></el-switch>
+                            </el-form-item>
+                            <el-form-item label="登录功能">
+                                <el-switch on-text="开启" off-text="关闭" v-model="setting.loginStatus"></el-switch>
+                            </el-form-item>
+                            <el-form-item label="注册功能">
+                                <el-switch on-text="开启" off-text="关闭" v-model="setting.registerStatus"></el-switch>
+                            </el-form-item>
+                              <el-form-item label="系统类型">
+                                <el-radio-group v-model="setting.systemType">
+                                  <el-radio label="Blog"></el-radio>
+                                  <el-radio label="CMS"></el-radio>
+                                </el-radio-group>
+                              </el-form-item>
+                              
+                            <el-form-item label="文章名称">
+                                <el-input v-model="setting.articleModelName"></el-input>
+                            </el-form-item>
+                            <el-form-item label="文章别名">
+                                <el-input v-model="setting.articleModelUrl"></el-input>
+                            </el-form-item>
+                            <el-form-item label="uuid模式">
+                                <el-switch on-text="开启" off-text="关闭" v-model="setting.idStatus"></el-switch>
+                            </el-form-item>
+                               <el-form-item label="模板切换">
+                                <el-select v-model="setting.template" placeholder="请选择模板主题">
+                                  <el-option label="default" value="default"></el-option>
+                                </el-select>
+                              </el-form-item>
+                        </el-form>
+                  </div>
+                </section>
+            </div>
+            <div class="col-md-12 text-center m-b">
+                    <el-button type="primary" @click="onSubmitSetting">立即保存</el-button>
+            </div>
+        </div>
+
+  
+{/block}
+{block name="javascript"}
+{__block__}
+<script>
+    new Vue({
+        el: '#app',
+        data:{
+            setting: '',
+        },
+        mounted: function() {
+            this.getSettingData();
+            _this = this;
+        },
+        methods:{
+            onSubmitSetting: function() {
+                this.$mip.ajax('/api/Setting/settingEdit', {
+                    setting: JSON.stringify(this.setting),
+                }).then(function (res) {
+                    if (res.code == 1) {
+                        Vue.prototype.$message({
+                            type: 'success',
+                            message: res.msg
+                        });
+                        _this.getSettingData();
+                    } else {
+                        Vue.prototype.$message({
+                            type: 'error',
+                            message: res.msg
+                        });
+                    }
+                }); 
+            },
+            getSettingData: function() {
+                this.$mip.ajax('/api/Setting/settingSelect', {
+                }).then(function (res) {
+                    if (res.code == 1) {
+                        var temp = res.data;
+                        if (temp.systemStatus) {
+                            temp.systemStatus = true;
+                        } else {
+                            temp.systemStatus = false;
+                        }
+                        if (temp.loginStatus) {
+                            temp.loginStatus = true;
+                        } else {
+                            temp.loginStatus = false;
+                        }
+                        if (temp.registerStatus) {
+                            temp.registerStatus = true;
+                        } else {
+                            temp.registerStatus = false;
+                        }
+                        if (temp.idStatus) {
+                            temp.idStatus = true;
+                        } else {
+                            temp.idStatus = false;
+                        }
+                        _this.setting = temp;
+                    } else {
+                        Vue.prototype.$message({
+                            type: 'error',
+                            message: res.msg
+                        });
+                    }
+                }); 
+            },
+        },
+
+    })
+</script>
+{/block}

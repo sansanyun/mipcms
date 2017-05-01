@@ -1,0 +1,23 @@
+.mip-box { background-color: #fff; margin-bottom: 15px; border-radius: 3px; border: 0; -webkit-box-shadow: initial; box-shadow: inherit; }
+.mip-box .mip-box-body { padding: 15px 20px 15px 20px; }
+.mip-box .mip-box-heading { color: #333; border-top-left-radius: 3px; border-top-right-radius: 3px; position: relative; padding: 15px 0px; margin-left: 20px; margin-right: 20px; border-bottom: 1px solid #EFEFEF; }
+.mip-box .mip-box-heading h3 { margin: 0; line-height: 16px; font-size: 16px; font-weight: 500; color: #333; }
+.mip-box .mip-box-heading h3.active a { color: #00aaee; }
+.mip-box .mip-box-heading.taps { overflow: hidden; }
+.mip-box .mip-box-heading.taps h3 { float: left; }
+.mip-box .mip-box-heading.taps ul { float: left; margin-top: -3px; list-style: none; padding-left: 0; }
+.mip-box .mip-box-heading.taps ul li { float: left; }
+.mip-box .mip-box-heading.taps ul li a { font-size: 16px; }
+.mip-box .mip-box-heading.taps ul li:before { font-size: 16px; color: #DDDDDD; content: "|"; padding-left: 10px; padding-right: 10px; }
+.mip-box .mip-box-heading.taps ul li.active { color: #00AAEE; }
+.mip-box .mip-box-heading.taps ul li.active a { color: #00AAEE; }
+.mip-box .mip-box-heading .right { position: absolute; right: 0; top: 12px; font-size: 13px; padding: 1px 5px; border: 1px solid transparent; line-height: 1.5; }
+.mip-box .mip-box-footer { padding: 10px 15px; background-color: #f6f8f8; border-top: 1px solid #efefef; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px; }
+
+.mip-box-body:before, .mip-box-body:after { display: table; content: " "; }
+
+.mip-box-body:after { clear: both; }
+
+.mip-box .mip-box-heading .right:hover { border-radius: 3px; background-color: #eef1f5; color: #333; }
+
+/*# sourceMappingURL=mip-box.css.map */

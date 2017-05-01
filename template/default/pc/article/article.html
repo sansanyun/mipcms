@@ -1,0 +1,124 @@
+{extend name="pc/main/main"/}
+
+{block name="style"}{__block__}
+{include file="/assets/css/mipui/bootstrap-pagination.css"}
+{/block}
+
+{block name="title"}{if condition='$categoryUrlName'}{if condition="$ctr=='Article'"}{if condition='!$categoryInfo'}{$articleModelName}_{else/}{$categoryInfo->name}_{/if}{/if}{__block__}{/if}{/block}
+{block name='keywords'}{if condition='$categoryUrlName'}{if condition='$categoryInfo'}{if condition='$categoryInfo->keywords'}{else/}{$categoryInfo->name}{/if}{else /}{$articleModelName}{/if}{else /}{$mipInfo['keywords']}{/if}{/block}
+{block name='description'}{if condition='$categoryUrlName'}{if condition='$categoryInfo'}{if condition='$categoryInfo->description'}{$categoryInfo->description}{else/}{$categoryInfo->name}{/if}{else/}{$articleModelName}{/if}{else/}{$mipInfo['description']}{/if}{/block}
+
+{block name="main"}
+{if condition='$categoryUrlName'}
+ <div class="container m-b">
+    <ul class="breadcrumb">
+        <li><a href="{$domain}" title="{$mipInfo['siteName']}">{$mipInfo['siteName']}</a></li>
+        <li><a href="{$domain}/{$articleModelUrl}/{$categoryUrlName}/" title="{$categoryInfo->name}">{$categoryInfo->name}</a></li>
+    </ul>
+</div>
+ {/if}
+<div class="container">
+    <div class="row">
+        <section class="col-lg-8">
+            <div class="mip-box">
+                <div class="mip-box-heading taps">
+                    {if condition='$mipInfo["systemType"] == "SNS"'}
+                    <h3 class='title {if condition="!$categoryUrlName"}active{/if}'><a href="{$domain}/{$articleModelUrl}/" title="全部{$articleModelName}">全部</a></h3>
+                    {if condition='$articleCategoryList'}
+                    <ul>
+                        {foreach name='$articleCategoryList' id='v'}
+                        <li class='{if condition="$categoryUrlName==$v['url_name']"}active{/if}'>
+                            <a href="{$domain}/{$articleModelUrl}/{$v['url_name']}/" title="{$v['name']}">{$v['name']}</a>
+                        </li>
+                        {/foreach}
+                    </ul>
+                    {/if}
+                    {else/}
+                    <h3>{if condition='$categoryInfo'}{$categoryInfo->name}{else /}全部{/if}</h3>
+                    {/if}
+                   
+                </div>
+                <div class="mip-box-body">
+                    <ul class="mip-article-list-001 list-unstyled">
+                        {foreach name='$list' id='v'}
+                        <li class="list">
+                            {if condition="$v['firstImg']"}
+                            <div class="list-img hidden-xs">
+                                <a class="list-img-a" title="{$v.title}" href="{$domain}/{$articleModelUrl}/{$v.id}.html">
+                                    
+                                    {if condition='$userId'}
+                                        <mip-img layout="fill" alt="{$v.title}" src="{$v.firstImg}" class="mip-element mip-layout-fill mip-layout-size-defined mip-img-loaded">
+                                             <img class="mip-fill-content mip-replaced-content" src="{$v.firstImg}" alt="{$v.title}">
+                                         </mip-img>
+                                    {else/}
+                                        <mip-img
+                                            layout="fill"
+                                            alt="{$v.title}"
+                                            src="{$v.firstImg}">
+                                    </mip-img>
+                                    {/if}
+                                </a>
+                            </div>
+                            {/if}
+                            <div class="list-content {if condition='!$v["firstImg"]'}block{/if}">
+                                <h4 class="title">
+                                    <a href="{$domain}/{$articleModelUrl}/{$v.id}.html" title="{$v.title}">{$v.title}</a>
+                                </h4>
+                                <div class="description hidden-xs">
+                                    {:mb_substr(preg_replace('# #', '',$v['content']),0,88,'utf-8')}
+                                </div>
+                                <ul class="info clearfix list-unstyled">
+                                    <li>发布：<span>{$v['users']['username']}</span></li>
+                                    <li>时间：<time>{$v['publish_time']|date='Y-m-d',###}</time></li>
+                                    <li>浏览：<span class="views">{$v['views']}</span></li>
+                                </ul>
+                            </div>
+                        </li>
+                        {/foreach}
+                    </ul>
+                    {$pagination}
+                </div>
+            </div>
+        </section>
+        <aside class="col-lg-4">
+            {if condition="$hot_list_by_cid"}
+            <div class="mip-box">
+                <div class="mip-box-heading">
+                    <h3 class="title">热门{$articleModelName}</h3>
+                </div>
+                <div class="mip-box-body">
+                    <ul class="list-unstyled">
+                        {foreach  name='$hot_list_by_cid' id="v"}
+                        <li class="li-box-list">
+                            <a href="{$domain}/{$articleModelUrl}/{$v.id}.html" title="{$v.title}">{$v.title}</a>
+                            <p>浏览 : <span>{$v.views}</span>  时间 : <span>{$v['publish_time']|date='Y-m-d',###}</span> </p>
+                        </li>
+                        {/foreach}
+                    </ul>
+                </div>
+            </div>
+            {/if}
+            {if condition="$recommendListByCid"}
+            <div class="mip-box">
+                <div class="mip-box-heading"><h3 class="title">推荐{$articleModelName}</h3></div>
+                <div class="mip-box-body">
+                    <ul class="list-unstyled">
+                        {foreach  name='$recommendListByCid' id="v"}
+                        <li class="li-box-list">
+                            <a href="{$domain}/{$articleModelUrl}/{$v.id}.html" title="{$v.title}">{$v.title}</a>
+                            <p>浏览 <span>{$v.views}</span>  时间 : <span>{$v['publish_time']|date='Y-m-d',###}</span>  </p>
+                        </li>
+                        {/foreach}
+                    </ul>
+                </div>
+            </div>
+            {/if}
+
+        </aside>
+    </div>
+</div>
+
+{/block}
+
+{block name="script"}{__block__}
+{/block}

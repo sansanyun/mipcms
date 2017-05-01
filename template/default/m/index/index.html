@@ -1,0 +1,93 @@
+{extend name="m/main/main"/}
+
+{block name="title"}{__block__}{/block}
+ 
+{block name="style"}{__block__}
+
+    {include file="/m/main/css/mip/mip-media-list.css"}
+    {include file="/assets/css/mipui/bootstrap-pagination.css"}
+            .mui-bar .mui-segmented-control {
+                top:4px;
+            }
+            ul{
+                list-style:none;
+            }
+          .page-control {
+                overflow: hidden;
+                text-align: center;
+          }
+          .pagination {
+            float: initial;
+          }
+          .mip-vd-tabs-nav {
+              background-color:#f5f5f5;
+          }
+    
+{/block}
+
+{block name="main"}
+ 
+<div class="mip-container">
+    {if condition="$recommendList"}
+    <mip-carousel
+    autoplay
+    defer="4000"  
+    layout="responsive" 
+    width="600" 
+    height="400"
+    indicator
+    buttonController
+    >
+     {foreach name='$recommendList' id='v'}
+    <a target="_blank" href="{$domain}/{$articleModelUrl}/{$v.id}.html">
+        <mip-img 
+            src="{$v.firstImg}" layout="responsive" 
+        width="600" 
+        height="400">
+        </mip-img>
+        <div class="mip-carousle-subtitle">{$v.title}</div>
+    </a>
+ 
+    {/foreach}
+</mip-carousel>
+{/if}
+<mip-vd-tabs allow-scroll>
+    <section>
+    {foreach  name='$categoryList' id="val"}<li>{$val['name']}</li>{/foreach}
+    </section>
+     {volist  name='$categoryList' id="val"}
+    <div>
+        <ul class="mui-table-view">
+            {foreach name='$val["articles"]' id='v'}
+                <li class="news-list xbx"> 
+                    {if condition="$v['firstImg']"}
+                    <div class="news-list-img">
+                        <mip-img
+                            layout="full"
+                            class="img"
+                            alt="{$v.title}"
+                            src="{$v.firstImg}">
+                        </mip-img>
+                    </div>
+                {/if}
+                    <div class="news-list-content  {if condition='$v["firstImg"]'}hasImg{/if}">
+                        <h4 class="title"><mip-link target="_blank" href="{$domain}/{$articleModelUrl}/{$v.id}.html" title="{$v.title}">{$v.title}</mip-link></h4>
+                        <p>{$v['users']['username']} {$v['publish_time']|date='Y-m-d',###} {$v['views']}
+                        </p>
+                    </div>
+                </li>
+            {/foreach}
+        </ul>
+        <div class="p-xs text-center">
+            <mip-link target="_blank" class="mui-btn mui-btn-primary" href="{$domain}/{$articleModelUrl}/{$val['url_name']}/">查看更多</mip-link>
+        </div>
+    </div>
+    {/volist}
+</mip-vd-tabs>
+ 
+</div>
+ 
+{/block}
+{block name="script"}{__block__}
+<script src="https://mipcache.bdstatic.com/static/v1/mip-vd-tabs/mip-vd-tabs.js" type="text/javascript" charset="utf-8"></script>
+{/block}

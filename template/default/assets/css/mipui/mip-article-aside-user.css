@@ -1,0 +1,20 @@
+.user-box .user-box-main { padding: 20px 20px 10px 20px; text-align: center; }
+.user-box .user-box-main .user-avata { width: 100px; height: 100px; position: relative; margin: 0 auto; }
+.user-box .user-box-main .user-avata img { width: 100px; border-radius: 100px; }
+.user-box .user-box-main h3 { font-size: 18px; }
+.user-box .user-box-main p { font-size: 12px; }
+.user-box .user-box-info { border-top: 1px solid #EFEFEF; padding-left: 20px; padding-right: 20px; padding-bottom: 15px; padding-top: 15px; }
+.user-box .user-box-info .text { text-align: center; font-size: 12px; }
+.user-box .user-box-info .text h5 { margin: 0; margin-bottom: 5px; color: #00AAEE; font-size: 18px; }
+.user-box .user-box-list { padding-bottom: 20px; }
+.user-box .user-box-list .ul { margin-bottom: 0; padding-left: 0; list-style: none; }
+.user-box .user-box-list .ul > li, .user-box .user-box-list .ul > li > a { display: block; position: relative; }
+.user-box .user-box-list .ul > li > a { padding: 10px 15px; }
+.user-box .user-box-list ul li { border-bottom: 1px solid #f0f4f7; }
+.user-box .user-box-list ul li.active a { color: #5b9bd1; background-color: #f6f9fb; border-left: 2px solid #5b9bd1; margin-left: -2px; }
+.user-box .user-box-list ul li a { color: #93a3b5; font-size: 16px; font-weight: 400; }
+.user-box .user-box-list ul li a:hover { background-color: #fafcfd; color: #5b9bd1; }
+.user-box .user-box-list ul li a i { margin-right: 8px; font-size: 16px; }
+.user-box .user-box-list ul li:last-child { border-bottom: none; }
+
+/*# sourceMappingURL=mip-article-aside-user.css.map */
