@@ -87,10 +87,10 @@ class Role extends AuthBase
             if (!$name) {
               return jsonError('请输入节点路径');
             }
-            if (empty(intval($pid))) {
+            if (intval($pid)) {
               return jsonError('缺少pid参数');
             }
-            if (empty($id)) {
+            if (intval($id)) {
               return jsonError('缺少id参数');
             }
             
