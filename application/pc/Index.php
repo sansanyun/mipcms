@@ -74,7 +74,7 @@ class Index extends Mip
                 $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
         }
         $this->assign('list',$list);
-        return $this->fetch($this->mipInfo['template'].'/'.'pc/Index/sitemap'); 
+        return $this->fetch($this->mipInfo['template'].'/'.'pc/index/sitemap'); 
         //???
 //       $sitemap = '<?xml version="1.0" encoding="UTF-8"><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
 //          foreach($list as $k=>$v){
