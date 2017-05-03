@@ -82,6 +82,7 @@
     }
     
     .mip-top-right .caption {
+        width:100%;
         padding: 5px 10px 5px 10px;
     }
     .mip-top-right a{
@@ -91,7 +92,7 @@
 {/block}
 
 {block name="main"}
-{if condition="$recommendList"}
+{if condition="$recommendList && count($recommendList) > 3"}
 <div class="container m-b">
     <div class="row">
         <div class="col-lg-8">
@@ -198,7 +199,7 @@
             {if condition="$rand_list"}
             <div class="mip-box">
                 <div class="mip-box-heading">
-                    <h3 class="title">热门{$articleModelName}</h3>
+                    <h3 class="title">随机{$articleModelName}</h3>
                 </div>
                 <div class="mip-box-body">
                     <ul class="list-unstyled">
