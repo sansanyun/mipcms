@@ -449,8 +449,8 @@ INSERT INTO `mip_settings` (`id`, `key`, `val`) VALUES
 (23, 'indexTitle', ''),
 (24, 'baiduSpider', '1'),
 (25, 'baiduMip', '1'),
-(25, 'localCurrentVersionNum', '101'),
-(25, 'localCurrentVersion', 'v1.0.1');
+(26, 'localCurrentVersionNum', '101'),
+(27, 'localCurrentVersion', 'v1.0.1');
 
 -- --------------------------------------------------------
 
