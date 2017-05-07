@@ -67,6 +67,7 @@ class Mip extends Controller
                 }
             }
         }
+        $this->isMobile = Request::instance()->isMobile();
 //      Session::set('isMobile',false);
         $this->mipInit();
         $this->categoryInit();

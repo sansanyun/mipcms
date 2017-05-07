@@ -136,24 +136,55 @@ class Article extends Mip {
                 @preg_match('/alt=".+?"/',$val,$tempAlt);
                 @$alt = explode('=',$tempAlt[0]);
                 @$alt = explode('"',$alt[1]);
-                if (@$width[1] && $width[1] < 728) {
-                    $width = 'width="'.$width[1].'"';
-                    $layout = 'layout="fixed"';
+                if ($this->isMobile) {
+                    if (@$width[1]) {
+                        $tempRes = $width[1]/$height[1];
+                        $width = 'width="290"';
+                        $layout = 'layout="fixed"';
+                    } else {
+                        $width = '';
+                        $layout = 'layout="container"';
+                    }
+                    if (@$height[1]) {
+                        $tempHeightRes = 290/$tempRes;
+                        $height = 'height="'.$tempHeightRes.'"';
+                    } else {
+                        $height = '';
+                    }
                 } else {
-                    $width = '';
-                    $layout = 'layout="container"';
+                    if (@$width[1]) {
+                        $oldWidth = $width[1];
+                        $tempRes = $width[1]/$height[1];
+                        if ($width[1] < 728) {
+                            $width = 'width="'.$width[1].'"';
+                        } else {
+                             $width = 'width="728"';
+                        }
+                        $layout = 'layout="fixed"';
+                    } else {
+                        $width = '450';
+                        $layout = 'layout="fixed"';
+                    }
+                    
+                    if (@$height[1]) {
+                        if ($oldWidth < 728) {
+                            $height = 'height="'.$height[1].'"';
+                        } else {
+                            $tempHeightRes = 728/$tempRes;
+                            $height = 'height="'.$tempHeightRes.'"';
+                        }
+                    } else {
+                        $height = 150;
+                    }
                 }
-                if (@$height[1]) {
-                    $height = 'height="'.$height[1].'"';
-                } else {
-                    $height = '';
-                }
+                
                 if (@preg_match($patern,$imagesArray[1][$key])) {
                     $src = $imagesArray[1][$key];
                 } else {
                     $src = $this->domain.$imagesArray[1][$key];
                 }
-                $tempImg = '<mip-img '.$layout.' alt="'.$alt[1].'" '.$width.' '.$height.' src="'.$src.'"></mip-img>';
+                 
+                $tempImg = '<mip-img '.$layout.' alt="'.$alt[1].'" '.$width.' '.$height.'  src="'.$src.'" ></mip-img>';
                 $itemInfo['content'] =  str_replace($val,$tempImg,$itemInfo['content']);
             }
             $itemInfo['content'] =  preg_replace("/style=.+?['|\"]/i",'', $itemInfo['content']);
