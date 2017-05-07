@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
     <meta name="description" content="{block name="description"}{$mipInfo['description']}{/block}">
     <meta name="keywords" content="{block name="keywords"}{$mipInfo['keywords']}{/block}">
-    <title>{block name="title"}{/block}{$mipInfo['siteName']}</title>
+    <title>{block name="title"}{/block}{$mipInfo['siteName']}{if condition="$ctr=='Index'"}{$mipInfo['indexTitle']}{/if}</title>
     <link rel="shortcut icon" href="{$domain}/favicon.ico" type="image/x-icon" />
     {if condition="$ctr != 'Account' &&  !$userId"}
         <link rel="stylesheet" type="text/css" href="https://mipcache.bdstatic.com/static/v1/mip.css">
@@ -182,7 +182,11 @@
             {/foreach}
         </ul>
     </div>
-        <p class="text-center">Copyright &copy;<?php echo date('Y'); ?> <a href="{$domain}" title="{$mipInfo['siteName']}">{$mipInfo['siteName']}</a> {if condition='$mipInfo["icp"]'} <a href="http://www.miibeian.gov.cn/"> {$mipInfo['icp']}</a>{/if} <a href="{$domain}/sitemap.xml"> sitemap</a> Powered By <a href="http://www.mipcms.com" title="MIPCMS内容管理系统" target="_blank">MIPCMS v1.0.0</a>{$mipInfo['statistical']} </p>
+        <p class="text-center">Copyright &copy;<?php echo date('Y'); ?> 
+            <a href="{$domain}" title="{$mipInfo['siteName']}">{$mipInfo['siteName']}</a> {if condition='$mipInfo["icp"]'} 
+            <a href="http://www.miibeian.gov.cn/"> {$mipInfo['icp']}</a>{/if} <a href="{$domain}/sitemap.xml"> sitemap</a> Powered By 
+            <a href="http://www.mipcms.com" title="MIPCMS内容管理系统" target="_blank">MIPCMS {$mipInfo['localCurrentVersion']} </a>{$mipInfo['statistical']} 
+        </p>
     </div>
 </footer>
 {block name="script"}

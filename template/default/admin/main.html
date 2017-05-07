@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <!-- 引入样式 -->
-    <link rel="stylesheet" type="text/css" href="//at.alicdn.com/t/font_97y71aw2531h5mi.css"/>
+    <title>{block name="title"}{/block}{$mipInfo['siteName']}管理后台</title>
+    <link rel="stylesheet" type="text/css" href="//at.alicdn.com/t/font_cit5aonlrfpyzaor.css"/>
     <style type="text/css">
     {include file="/assets/css/mipui/mip-app.css"}
     {include file="/assets/css/mipui/bootstrap-layout.css"}
@@ -461,13 +462,15 @@
     }
     
     .mip-admin .mip-menu .ul .li.active a {
-      background: #1f2b3d
+      background: #1f2b3d;
+      height: 37px;
     }
     
     .mip-admin .mip-menu .ul .li a {
       color: #e4e9f2;
       display: block;
       margin: 0;
+      height: 37px;
       padding: 9px 15px;
       text-decoration: none;
       font-size: 13px;
@@ -609,6 +612,89 @@
           margin-top: 15px;
           color: #dbdbdb;
     }
+    
+    .mip-menu ul{
+        list-style: none;
+    }
+    .list-link {   
+        overflow: hidden;
+        clear: both;
+        content: ' ';
+    }
+    .mip-kongzhitai,.mip-article,.mip-wangzhanyonghuqun,.mip-zhizhu,.mip-quanxianguanli {
+        font-size: 19px;
+        display: block;
+        float: left;
+        margin-top: -1px;
+    }
+    .mip-article {
+        font-size: 17px;
+        margin-left: 1px;
+    }
+    .mip-wangzhanyonghuqun {
+        margin-top: -1px;
+        font-size: 17px;
+    }
+    .mip-zhizhu {
+        font-size: 21px;
+        margin-left: -1px;
+    }
+    .span-kongzhitai {
+        padding-left: 7px;
+        margin-top: 3px;
+        display: block;
+        float: left;
+    }
+    .span-article {
+        padding-left: 8px;
+        display: block;
+        margin-top: 1px;
+        float: left;
+    }
+    .span-users {
+        padding-left: 7px;
+        margin-top: 1px;
+        display: block;
+        float: left;
+    }
+    .span-zhizhu {
+        padding-left: 6px;
+        display: block;
+        margin-top: 2px;
+        float: left;
+    }
+    .span-quanxianguanli {
+        padding-left: 7px;
+        margin-top: 2px;
+        display: block;
+        float: left;
+    }
+    .mip-pczhan {
+        font-size: 12px;
+    }
+    .mip-wangzhanshezhi {
+        font-size: 12px;
+    }
+    
+    .mip-main .menu-footer {
+        position: absolute;
+        bottom: 0;
+        left: 10px;
+    }
+    .mip-main .menu-footer a {
+        padding: 5px 6px;
+        border: 1px solid #e4e9f2;
+        color: #e4e9f2;
+        border-radius: 4px;
+        text-align: center;
+    }
+    .mip-main .menu-footer a:hover {
+        border: 1px solid #00AAEE;
+        color: #00AAEE;
+    }
+    .mip-footer a{
+        color: #FFFFFF;
+    }
     </style>
     {/block}
 </head>
@@ -616,11 +702,11 @@
 <div id="app">
   <header class="mip-header clearfix">
      <div class="mip-logo">
-        <div class="mip-logo-a"><a href="">管理后台</a> <span class="sub-v">v1.0</span></div>
+        <div class="mip-logo-a"><a href="">系统管理后台</a> <span class="sub-v"></span></div>
       </div>
         <div class="mip-switch">
-          <a href="/" class="btn btn-default btn-sm"> <span class="glyphicon glyphicon-th-large"></span> 切换到前台</a>
-          <a href="/admin/setting" class="btn btn-default btn-sm" style="margin-left: 10px;"> <span class="glyphicon glyphicon-cog"></span> 网站设置</a>
+          <a href="/" class="btn btn-default btn-sm"> <span class="mip-iconfont mip-pczhan"></span> 切换到前台</a>
+          <!--<a href="/admin/setting" class="btn btn-default btn-sm" style="margin-left: 10px;"> <span class="mip-iconfont mip-wangzhanshezhi"></span> 网站设置</a>-->
         </div>
       <div class="mip-user-info">
           <ul class="nav navbar-nav navbar-right">
@@ -630,12 +716,22 @@
   <main class="mip-main clearfix">
     <aside class="mip-menu hidden-xs">
       <ul class="ul">
-        <li class="li {if condition='$act=="index"'}active{/if}"><a href="/admin">控制台</a></li>
-        <li class="li {if condition='$act=="article"'}active{/if}"><a href="/admin/article">文章管理</a></li>
-        <li class="li {if condition='$act=="user"'}active{/if}"><a href="/admin/user">用户管理</a></li>
-        <li class="li {if condition='$act=="spider"'}active{/if}"><a href="/admin/spider">搜索引擎</a></li>
-        <li class="li {if condition='$act=="role"'}active{/if}"><a href="/admin/role">权限管理</a></li>
+        <li class="li {if condition='$act=="index"'}active{/if}"><a href="/admin" class="list-link"> <i class="mip-iconfont mip-kongzhitai"></i> <span class="span-kongzhitai">控制台</span></a></li>
+        <li class="li {if condition='$act=="article"'}active{/if}"><a href="/admin/article" class="list-link"> <i class="mip-iconfont mip-article"></i> <span class="span-article">{$articleModelName}管理</span></a></li>
+        <li class="li {if condition='$act=="user"'}active{/if}"><a href="/admin/user" class="list-link"> <i class="mip-iconfont mip-wangzhanyonghuqun"></i> <span class="span-users">{$userModelName}管理</span></a></li>
+        <li class="li {if condition='$act=="spider"'}active{/if}"><a href="/admin/spider" class="list-link"> <i class="mip-iconfont mip-zhizhu"></i> <span class="span-zhizhu">搜索引擎</span></a></li>
+        <li class="li {if condition='$act=="role"'}active{/if}"><a href="/admin/role" class="list-link"> <i class="mip-iconfont mip-quanxianguanli"></i> <span class="span-quanxianguanli">权限管理</span></a></li>
       </ul>
+      <div class="menu-footer">
+        
+        <el-tooltip class="item" effect="dark" content="网站系统设置" placement="top">
+            <a href="/admin/setting" class="pull-left m-l-sm"><span class="mip-iconfont mip-xitongshezhi"></span></a>
+        </el-tooltip>
+        <el-tooltip class="item" effect="dark" content="系统升级" placement="top">
+      <a href="/admin/update" class="pull-left m-l-sm"><span class="mip-iconfont mip-shengji"></span></a>
+        </el-tooltip>
+        
+      </div>
     </aside>
     <section class="mip-container">
       <section class="mip-content clearfix">
@@ -647,7 +743,9 @@
     </section>
   </main>
   <footer class="mip-footer">
-    <p>MIPCMS内容管理系统管理后台 ©2017-2099 http://www.MIPCMS.com</p>
+    <p>
+        <span> <a href="http://www.mipcms.com" title="MIPCMS内容管理系统">MIPCMS内容管理系统</a> 管理后台 ©2017-2099</span>
+    </p>
   </footer>
   {block name="dialog"}{/block}
 </div>

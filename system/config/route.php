@@ -17,8 +17,23 @@ if (!is_file(CONF_PATH . 'db' . DS .'install.lock')) {
         }
         $mipInfo[$v['key']] = $v['val'];
     }
+
+    Route::rule('/m',function(){
+        $settings = db('Settings')->select();
+        foreach ($settings as $k => $v){
+            if (is_serialized($v['val'])){
+                $v['val'] =@unserialize($v['val']);
+            }
+            $mipInfo[$v['key']] = $v['val'];
+        }
+        if ($mipInfo['mipDomain']) {
+            header('Location: ' . 'http://'.$mipInfo['mipDomain']);
+            exit();
+        }
+    });
     if ($mipInfo['mipDomain']) {
         Route::domain($mipInfo['mipDomain'], function(){
+            
             $settings = db('Settings')->select();
             foreach ($settings as $k => $v){
                 if (is_serialized($v['val'])){
@@ -27,6 +42,19 @@ if (!is_file(CONF_PATH . 'db' . DS .'install.lock')) {
                 $mipInfo[$v['key']] = $v['val'];
             }
             Route::rule('/','m/Index/index');
+            Route::rule('/m',function(){
+                $settings = db('Settings')->select();
+                foreach ($settings as $k => $v){
+                    if (is_serialized($v['val'])){
+                        $v['val'] =@unserialize($v['val']);
+                    }
+                    $mipInfo[$v['key']] = $v['val'];
+                }
+                if ($mipInfo['mipDomain']) {
+                    header('Location: ' . 'http://'.$mipInfo['mipDomain']);
+                    exit();
+                }
+            });
             Route::rule('/login','m/Account/login');
             Route::rule('/register','m/Account/register');
             if ($mipInfo['systemType'] == 'Blog' || $mipInfo['systemType'] == 'CMS' || $mipInfo['systemType'] == 'SNS') {
@@ -40,12 +68,7 @@ if (!is_file(CONF_PATH . 'db' . DS .'install.lock')) {
             }
         },['ext'=>'html'],['id'=>'\d+','name'=>'\w+']);
     }
-    if ($mipInfo['systemType'] == 'Blog') {
-        Route::rule('/','pc/Article/index');
-    }
-    if ($mipInfo['systemType'] == 'CMS') {
-        Route::rule('/','pc/Index/index');
-    }
+    Route::rule('/','pc/Index/index');
     Route::rule('login','pc/Account/login');
     Route::rule('register','pc/Account/register');
     if ($mipInfo['systemType'] == 'Blog' || $mipInfo['systemType'] == 'CMS' || $mipInfo['systemType'] == 'SNS') {
@@ -82,6 +105,7 @@ Route::rule('admin/setting','admin/Index/setting');
 Route::rule('admin/role','admin/Index/role');
 Route::rule('admin/role_authorization','admin/Index/role_authorization');
 Route::rule('admin/spider','admin/Index/spider');
+Route::rule('admin/update','admin/Index/update');
 $tpl_path = config('template')['view_path'];
 foreach (fetch_file_lists($tpl_path) as $key => $file){
     if(strstr($file,'route.php')){

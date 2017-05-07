@@ -8,7 +8,7 @@
     <meta name="description" content="{block name="description"}{$mipInfo['description']}{/block}">
     <meta name="keywords" content="{block name="keywords"}{$mipInfo['keywords']}{/block}">
     <link rel="shortcut icon" href="{$domain}/favicon.ico" type="image/x-icon" />
-    <title>{block name="title"}{/block}{$mipInfo['siteName']}</title>
+    <title>{block name="title"}{/block}{$mipInfo['siteName']}{if condition="$ctr=='Index'"}{$mipInfo['indexTitle']}{/if}</title>
     {if condition="$ctr != 'Account' &&  !$userId"}
         <link rel="stylesheet" type="text/css" href="https://mipcache.bdstatic.com/static/v1/mip.css">
     {/if}

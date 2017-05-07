@@ -43,4 +43,8 @@ class Index extends AdminBase
     public function spider() {
         return $this->mipView('admin/spider');
     }
+    
+    public function update() {
+        return $this->mipView('admin/update');
+    }
 }

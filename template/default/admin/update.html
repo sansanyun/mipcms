@@ -1,0 +1,146 @@
+{extend name="admin/main"/}
+
+{block name="title"}系统升级 - {__block__}{/block}
+
+{block name="style"}
+{__block__}
+<style>
+   
+</style>
+{/block}
+{block name="main"}
+<div class="row">
+    <div class="col-md-6">
+        
+        <section class="mip-box mip-default">
+            <div class="mip-box-heading">
+                <h3>系统升级</h3>
+            </div>
+            <div class="mip-box-body">
+                <el-form label-width="100px">
+                    <el-form-item label="当前版本">
+                        <el-input v-model="localCurrentVersion" :disabled="true"></el-input>
+                    </el-form-item>
+                    <el-form-item label="最新版本">
+                        <el-input v-model="onlineCurrentVersion" :disabled="true"></el-input>
+                    </el-form-item>
+                    
+                    <el-form-item label="版本列表">
+                        <el-select v-model="value" placeholder="请选择">
+                            <el-option
+                              v-for="item in versionList"
+                              :label="item.versionName"
+                              :value="item.versionId"
+                              :disabled="item.disabled">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                 
+                </el-form>
+                 
+                <div class="text-center">
+                    <el-button type="primary" @click='startUpgrade(value)'>开始升级</el-button>
+                </div>
+          </div>
+        </section>
+        </div>
+              
+        </div>
+
+            
+{/block}
+{block name="javascript"}
+{__block__}
+<script src="http://www.mipcms.com/assets/update/current.js" type="text/javascript" charset="utf-8"></script>
+<script src="http://www.mipcms.com/assets/update/versionList.js" type="text/javascript" charset="utf-8"></script>
+
+<script type="text/javascript">
+	Vue.prototype.$onlineCurrentVersionNum = currtentVersion;
+    Vue.prototype.$versionList = versionList;
+</script>
+<script>
+    new Vue({
+        el: '#app',
+        data:{
+            localCurrentVersionNum: '{$mipInfo["localCurrentVersionNum"] | @}',
+            localCurrentVersion: '{$mipInfo["localCurrentVersion"] | @}',
+            onlineCurrentVersionNum: 100,
+            onlineCurrentVersion: 'v1.0.0',
+            versionList: [],
+            value:'',
+        },
+        mounted: function() {
+            this.contrast();
+            _this = this;
+        },
+        methods:{
+            contrast: function() {
+                if (!this.localCurrentVersionNum) {
+                    this.localCurrentVersionNum = 100;
+                    this.localCurrentVersion = 'v1.0.0';
+                }
+                this.onlineCurrentVersionNum = this.$onlineCurrentVersionNum;
+                var versionList = Vue.prototype.$versionList;
+                for (var i = 0; i < versionList.length; i++) {
+                    if (versionList[i].versionId <= this.localCurrentVersionNum) {
+                        versionList[i].disabled = true;
+                    } else {
+                        if (versionList[i].versionId > this.onlineCurrentVersionNum) {
+                                versionList[i].disabled = true;
+                        }
+                    }
+                }
+                this.versionList = versionList;
+                if (parseInt(this.localCurrentVersionNum) == parseInt(this.onlineCurrentVersionNum)) {
+                    Vue.prototype.$message({
+                        message:'当前版本已经是最新版本了'
+                    });
+                }
+                if (parseInt(this.localCurrentVersionNum) < parseInt(this.onlineCurrentVersionNum)) {
+                    Vue.prototype.$message({
+                        message: '有新版本，请去官网升级',
+                        type: 'warning'
+                    });
+                }
+                this.onlineCurrentVersion = 'v'+(this.onlineCurrentVersionNum + "").split('').join('.');
+                
+            },
+            
+            startUpgrade: function(value) {
+                if (parseInt(this.localCurrentVersionNum) == parseInt(this.onlineCurrentVersionNum)) {
+                    Vue.prototype.$message({
+                        message:'当前版本已经是最新版本了'
+                    });
+                    return false;
+                }
+                if (!this.value) {
+                    _this.$message({
+                        type: 'error',
+                        message: '请选择你要升级的版本'
+                    });
+                    return false;
+                }
+                this.$mip.ajax('/api/Update/update',{
+                    versionMum:this.value,
+                }).then(function (res) {
+                    if(res.code == 1) {
+                        _this.$message({
+                            type: 'success',
+                            message: res.msg
+                        });
+                        location.href = location.href;
+                    } else {
+                      _this.$message({
+                        type: 'error',
+                        message: res.msg
+                      });
+                      return false;
+                    } 
+                });
+            },
+            
+        },
+
+    })
+</script>
+{/block}

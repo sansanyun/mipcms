@@ -1,5 +1,7 @@
 {extend name="admin/main"/}
 
+{block name="title"}{$userModelName}管理 - {__block__}{/block}
+
 {block name="style"}
 {__block__}
 <style>
@@ -21,7 +23,7 @@
 <section class="mip-box mip-default">
   <section class="mip-box-body">
     <el-tabs type="card" v-model="tabsValue" @tab-remove="removeTab">
-      <el-tab-pane label="用户管理" name="list">
+      <el-tab-pane label="全部{$userModelName}" name="list">
         <template>
           <el-row :gutter="24" style="margin-bottom: 15px;">
             <el-col :span="6">
@@ -35,7 +37,7 @@
             </el-col>
             <el-col :span="18">
               <el-button-group style="float: right;">
-                <el-button type="primary" @click="addItem" icon="plus">新建用户</el-button>
+                <el-button type="primary" @click="addItem" icon="plus">新建{$userModelName}</el-button>
                 <el-button type="primary" @click="delItems" icon="delete" :disabled="isDelDisabled">批量删除</el-button>
               </el-button-group>
             </el-col>
@@ -133,36 +135,59 @@
             </el-pagination>
           </template>
       </el-tab-pane>
-      <el-tab-pane label="新建用户" v-if="isShowTab"  name="newAdd" closable>
+    <el-tab-pane label="新建{$userModelName}" v-if="isShowTab"  name="newAdd" closable>
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-          <el-form-item label="用户名" prop="username">
-            <el-input v-model="ruleForm.username"></el-input>
-          </el-form-item>
-          <el-form-item label="密码">
-            <el-input type="password" v-model="ruleForm.password"></el-input>
-          </el-form-item>
-          <el-form-item label="性别">
-            <el-radio-group v-model="ruleForm.sex">
-              <el-radio label="1">男</el-radio>
-              <el-radio label="2">女</el-radio>
+            <el-form-item label="用户名" prop="username">
+                <el-input v-model="ruleForm.username"></el-input>
+            </el-form-item>
+            <el-popover
+              ref="password"
+              placement="top-start"
+              width="600"
+              trigger="hover"
+              content='编辑状态下，不填写，表示不修改此用户密码。新建时，必须输入密码'>
+            </el-popover>
+            <div class="el-form-item" prop='password'>
+               <label for="name" class="el-form-item__label" style="width: 100px;"> <span class="mip-iconfont mip-wenhao" v-popover:password></span> 密码</label>
+                <div class="el-form-item__content" style="margin-left: 100px;">
+                    <div class="el-input">
+                        <el-input type="password" v-model="ruleForm.password"></el-input>
+                    </div>
+                </div>
+            </div>
+            
+            
+            <el-form-item label="性别">
+                <el-radio-group v-model="ruleForm.sex">
+                <el-radio label="1">男</el-radio>
+                <el-radio label="2">女</el-radio>
             </el-radio-group>
-          </el-form-item>
-          <el-form-item label="邮箱" prop="email">
-            <el-input v-model="ruleForm.email"></el-input>
-          </el-form-item>
-          <el-form-item label="手机" prop="mobile">
-            <el-input v-model="ruleForm.mobile"></el-input>
-          </el-form-item>
-          <el-form-item label="QQ" prop="qq">
-            <el-input v-model="ruleForm.qq"></el-input>
-          </el-form-item>
-          <el-form-item label="签名" prop="signature">
-            <el-input type="textarea" v-model="ruleForm.signature"></el-input>
-          </el-form-item>
+            </el-form-item>
+            <el-form-item label="分组">
+                <el-select v-model="ruleForm.group_id" :disabled='currentSisabled' placeholder="请选择">
+                    <el-option
+                        v-for="item in ruleForm.groupList"
+                        :label="item.label"
+                        :value="item.value">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="邮箱" prop="email">
+                <el-input v-model="ruleForm.email"></el-input>
+            </el-form-item>
+            <el-form-item label="手机" prop="mobile">
+                <el-input v-model="ruleForm.mobile"></el-input>
+            </el-form-item>
+            <el-form-item label="QQ" prop="qq">
+                <el-input v-model="ruleForm.qq"></el-input>
+            </el-form-item>
+            <el-form-item label="签名" prop="signature">
+                <el-input type="textarea" v-model="ruleForm.signature"></el-input>
+            </el-form-item>
           
-          <el-form-item>
-            <el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
-          </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
+            </el-form-item>
         </el-form>
       </el-tab-pane>
     </el-tabs>

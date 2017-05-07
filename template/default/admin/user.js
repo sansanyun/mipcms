@@ -10,6 +10,7 @@ new Vue({
             loading: false,
             currentPage: 1,
             currentStatus: 'publish',
+            currentSisabled: false,
             limit:10,
             total:this.total,
             ruleForm: {
@@ -17,6 +18,8 @@ new Vue({
                 password: '',
                 rpassword: '',
                 sex: '0',
+                groupList: [],
+                group_id: '',
                 email: '',
                 mobile: '',
                 qq: '',
@@ -30,15 +33,16 @@ new Vue({
                 ],
                 password: [
                     { required: true, message: '请输入密码', trigger: 'blur' },
-                  { min: 6, max: 25, message: '长度在 6 到25 个字符', trigger: 'blur' }
+                  { min: 5, max: 25, message: '长度在 5 到25 个字符', trigger: 'blur' }
                 ],
                 rpassword: [
-                  { min: 6, max: 25, message: '长度在 6 到25 个字符', trigger: 'blur' }
+                  { min: 5, max: 25, message: '长度在 5 到25 个字符', trigger: 'blur' }
                 ],
             }
         },
         mounted: function() {
             this.getPageList();
+            this.getGroupList();
             _this = this;
         },
         methods:{
@@ -62,17 +66,18 @@ new Vue({
                 });
             },
             addItem:function() {
+                this.currentStatus = 'publish';
+                this.currentSisabled = true;
                 this.tabsValue = "newAdd";
-                this.ruleForm = {
-                    'uid': '',
-                    'username': '',
-                    'password':'',
-                    'sex': '1',
-                    'email': '',
-                    'mobile': '',
-                    'qq': '',
-                    signature: '',
-                };
+                this.ruleForm.uid = '';
+                this.ruleForm.group_id = 2;
+                this.ruleForm.username = '';
+                this.ruleForm.password = '';
+                this.ruleForm.sex = '1';
+                this.ruleForm.email = '';
+                this.ruleForm.mobile = '';
+                this.ruleForm.qq = '';
+                this.ruleForm.signature = '';
                 this.isShowTab = true;
             },
             
@@ -113,16 +118,16 @@ new Vue({
                 this.tabsValue = "newAdd";
                 this.isShowTab = true;
                 this.currentStatus = 'edit';
-                this.ruleForm = {
-                    'uid': row.uid,
-                    'username': row.username,
-                    'password':'',
-                    'sex': row.sex + "",
-                    'email': row.email,
-                    'mobile': row.mobile,
-                    'qq': row.qq,
-                    'signature': row.signature,
-                }
+                this.currentSisabled = false;
+                this.ruleForm.group_id = row.group_id;
+                this.ruleForm.uid = row.uid;
+                this.ruleForm.username = row.username;
+                this.ruleForm.password = '';
+                this.ruleForm.sex = row.sex + "";
+                this.ruleForm.email = row.email;
+                this.ruleForm.mobile = row.mobile;
+                this.ruleForm.qq = row.qq;
+                this.ruleForm.signature = row.signature;
             },
             handleDelete:function(index, row) {
                 this.$confirm('此操作将永久删除该内容, 是否继续?', '提示', {
@@ -170,19 +175,41 @@ new Vue({
                     _this.loading = false;
                 });
             },
+            getGroupList:function() {
+                this.loading = true;
+                this.$mip.ajax('/api/User_group/userGroupSelect',{
+                }).then(function (res) {
+                    if (res.code == 1) {
+                        var groupList = res.data;
+                        for (var i = 0; i < groupList.length; i++) {
+                        	groupList[i].value = groupList[i].group_id;
+                            groupList[i].label = groupList[i].name;
+                        }
+                        _this.ruleForm.groupList = groupList;
+                        console.log(_this.ruleForm);
+                    } else {
+                        Vue.prototype.$message({
+                            type: 'error',
+                            message: res.msg
+                        });
+                    }
+                    _this.loading = false;
+                });
+            },
             submitForm(formName) {
                 if (this.currentStatus == 'edit') {
                     _this = this;
                     this.$mip.ajax('/api/user/userEdit',{
-                          uid:this.ruleForm.uid,
-                          username:this.ruleForm.username,
-                          password:this.ruleForm.password ? md5(this.ruleForm.password) : '',
-                          sex:parseInt(this.ruleForm.sex),
-                          email:this.ruleForm.email,
-                          mobile:this.ruleForm.mobile,
-                          qq:this.ruleForm.qq,
-                          signature:this.ruleForm.signature,
-                          status:0,
+                        uid:this.ruleForm.uid,
+                        username:this.ruleForm.username,
+                        password:this.ruleForm.password ? md5(this.ruleForm.password) : '',
+                        sex:parseInt(this.ruleForm.sex),
+                        group_id: parseInt(this.ruleForm.group_id),
+                        email:this.ruleForm.email,
+                        mobile:this.ruleForm.mobile,
+                        qq:this.ruleForm.qq,
+                        signature:this.ruleForm.signature,
+                        status:0,
                     }).then(function (res) {
                         if (res.code == 1) {
                             _this.tabsValue = 'list';
@@ -200,16 +227,24 @@ new Vue({
                 } else {
                     this.$refs[formName].validate((valid) => {
                         if (valid) {
+                            if (!this.ruleForm.password) {
+                                Vue.prototype.$message({
+                                    type: 'warning',
+                                    message: '请输入密码'
+                                });
+                                return false;
+                            }
                             _this = this;
                             this.$mip.ajax('/api/user/userCreate',{
-                                  terminal:'pc',
-                                  username:this.ruleForm.username,
-                                  password:md5(this.ruleForm.password),
-                                  sex: parseInt(this.ruleForm.sex),
-                                  email:this.ruleForm.email,
-                                  mobile:this.ruleForm.mobile,
-                                  qq:this.ruleForm.qq,
-                                  signature:this.ruleForm.signature,
+                                terminal:'pc',
+                                username:this.ruleForm.username,
+                                password:md5(this.ruleForm.password),
+                                sex: parseInt(this.ruleForm.sex),
+                                group_id: parseInt(this.ruleForm.group_id),
+                                email:this.ruleForm.email,
+                                mobile:this.ruleForm.mobile,
+                                qq:this.ruleForm.qq,
+                                signature:this.ruleForm.signature,
                             }).then(function (res) {
                                 if (res.code == 1) {
                                     _this.tabsValue = 'list';

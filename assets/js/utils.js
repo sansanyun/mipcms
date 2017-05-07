@@ -132,7 +132,9 @@ var mip = {
                         return false;
                     }
                     if (res.data.code == 1005) {
-                        location.href="/login.html";
+                        axios.post('/api/User/loginOut','').then(function (res) {
+                            location.href = "/login.html";
+                        });
                     }
                     if (res.data.code != 200 && res.data.code != 1 &&  res.data.code != -1 ) {
                         Vue.prototype.$message({
@@ -143,6 +145,20 @@ var mip = {
                         resolve(res.data);
                     }
                 } else {
+                    if (res.status == 500) {
+                        Vue.prototype.$message({
+                            type: 'error',
+                            message: '错误500,如果是mysql5.7 请修改数据库模式'
+                        });
+                        return false;
+                    }
+                    if (res.status == 404) {
+                        Vue.prototype.$message({
+                            type: 'error',
+                            message: '错误404,您很有可能伪静态没有配置好'
+                        });
+                        return false;
+                    }
                     Vue.prototype.$message({
                         type: 'error',
                         message: '系统错误'

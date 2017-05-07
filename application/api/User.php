@@ -29,7 +29,7 @@ class User extends AuthBase
             $captcha = input('post.captcha');
             $rules = [
                 'terminal'  => 'require',
-                'username'  => 'require|max:33',
+                'username'  => 'require|max:25',
                 'password'  => 'require|max:33',
                 'email' => 'email',
                 'mobile' => 'mobile',
@@ -151,7 +151,7 @@ class User extends AuthBase
             if ($userInfo) {
                 if (!$this->mipInfo['loginStatus']) {
                     if ($userInfo['group_id'] != 1) {
-                        return jsonError('该功能已被管理员关闭');
+                        return jsonError('本站已关闭登录');
                     }
                 }
                 if($userInfo['status']==1){
@@ -265,7 +265,9 @@ class User extends AuthBase
 			$signature = input('post.signature');
 			$nickname = input('post.nickname');
 			$status = input('post.status');
+            $group_id = input('post.group_id');
 			$data = '';
+
 			if(!empty($qq)){
 				$data['qq'] = $qq;
 			}
@@ -286,7 +288,11 @@ class User extends AuthBase
 			}
             if(!empty($nickname)){
                 $data['nickname'] = $nickname;
+            }            
+            if (!$group_id) {
+                return jsonError('请为该用户分配用户组');
             }
+            $data['group_id'] = $group_id;
 			$rules = [
                 'email' => 'email',
                 'mobile' => 'mobile',
@@ -302,9 +308,12 @@ class User extends AuthBase
 			if(!$uid){
 				return jsonError('请输入用户ID');
 			}
-			if(!$userInfo=Users::getByUid($uid)){
+			if(!$userInfo = Users::getByUid($uid)){
 				return jsonError('用户不存在');
 			}
+            if ($userInfo['group_id'] == 1) {
+                return jsonError('超级管理员组禁止变更');
+            }
 			if(!empty($password)){
 				$data['password'] = create_md5($password,$userInfo['salt']);
 			}

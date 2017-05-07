@@ -9,9 +9,6 @@ class Account extends Mip {
         return $this->mipView('pc/account/index');
     }
     public function login() {
-        if (!$this->mipInfo['loginStatus']) {
-            $this->error('本站已登录注册功能');
-        }
         if ($this->userId) {
             $this->redirect('/');
         }

@@ -72,13 +72,6 @@ class Mip extends Controller
         $this->categoryInit();
         $this->friendLink(); 
         $this->spider(); 
-//      if (!$this->passStatus) {
-//          if ($this->request->method() == 'POST') {
-//              return jsonError('无权限操作');
-//          } else {
-//              exception("无权限操作");
-//          }
-//      }
     }
     //用户信息初始化
     public function mipInit(){
@@ -145,7 +138,10 @@ class Mip extends Controller
         $this->articleModelUrl = $this->mipInfo['articleModelUrl'];
         $this->assign('askModelName',$this->mipInfo['askModelName']);
         $this->assign('askModelUrl',$this->mipInfo['askModelUrl']);
-        $this->askModelUrl = 'ask';
+        $this->askModelUrl = $this->mipInfo['askModelUrl'];
+        $this->assign('userModelName',$this->mipInfo['userModelName']);
+        $this->assign('userModelUrl',$this->mipInfo['userModelUrl']);
+        $this->userModelUrl = $this->mipInfo['userModelUrl'];
         $categoryUrlName = null;
         $itemCategoryList = null;
         $articleCategoryList = null;
@@ -195,28 +191,39 @@ class Mip extends Controller
             $this->assign('askCategoryList',$askCategoryList); 
         }
         
-        
         $this->assign('categoryUrlName',$categoryUrlName);
         
     }
     public function spider() {
         $userAgent = Request::instance()->header()['user-agent'];
-        if (strpos($userAgent,"Baiduspider")) {
-            if (strpos($userAgent,"Mobile")) {
-                if (strpos($userAgent,"render")) {
-                    db('spiders')->insert(array('uuid' => uuid(),'add_time' => time(),'type' => 'mobileRender','pageUrl' => $this->siteUrl));
+        if ($this->mipInfo['baiduSpider']) {
+            if (strpos($userAgent,"Baiduspider")) {
+                if (strpos($userAgent,"Mobile")) {
+                    if (strpos($userAgent,"render")) {
+                        db('spiders')->insert(array('uuid' => uuid(),'add_time' => time(),'type' => 'mobileRender','pageUrl' => $this->siteUrl, 'ua' => $userAgent, 'vendor' => 'baidu'));
+                    } else {
+                        db('spiders')->insert(array('uuid' => uuid(),'add_time' => time(),'type' => 'mobile','pageUrl' => $this->siteUrl, 'ua' => $userAgent, 'vendor' => 'baidu'));
+                    }
                 } else {
-                    db('spiders')->insert(array('uuid' => uuid(),'add_time' => time(),'type' => 'mobile','pageUrl' => $this->siteUrl));
-                }
-            } else {
-                if (strpos($userAgent,"render")) {
-                    db('spiders')->insert(array('uuid' => uuid(),'add_time' => time(),'type' => 'pcRender','pageUrl' => $this->siteUrl));
-                } else {
-                    db('spiders')->insert(array('uuid' => uuid(),'add_time' => time(),'type' => 'pc','pageUrl' => $this->siteUrl));
+                    if (strpos($userAgent,"render")) {
+                        db('spiders')->insert(array('uuid' => uuid(),'add_time' => time(),'type' => 'pcRender','pageUrl' => $this->siteUrl, 'ua' => $userAgent, 'vendor' => 'baidu'));
+                    } else {
+                        db('spiders')->insert(array('uuid' => uuid(),'add_time' => time(),'type' => 'pc','pageUrl' => $this->siteUrl, 'ua' => $userAgent, 'vendor' => 'baidu'));
+                    }
                 }
             }
         }
-        
+        if ($this->mipInfo['baiduMip']) {
+            if (strpos($userAgent,"baidumip")) {
+                db('spiders')->insert(array('uuid' => uuid(),'add_time' => time(),'type' => 'baidumip','pageUrl' => $this->siteUrl, 'ua' => $userAgent, 'vendor' => 'baidu'));
+            }
+            if (strpos($userAgent,"baidumib")) {
+                db('spiders')->insert(array('uuid' => uuid(),'add_time' => time(),'type' => 'baidumib','pageUrl' => $this->siteUrl, 'ua' => $userAgent, 'vendor' => 'baidu'));
+            }
+            if (strpos($userAgent,"mip")) {
+                db('spiders')->insert(array('uuid' => uuid(),'add_time' => time(),'type' => 'mip','pageUrl' => $this->siteUrl, 'ua' => $userAgent, 'vendor' => 'baidu'));
+            }
+        }
     }
     public function friendLink() {
         $friendLink = db('friendlink')->order('id desc')->select();
@@ -226,8 +233,11 @@ class Mip extends Controller
     //模板渲染处理
     public function mipView($parent){
         $tplName = $this->mipInfo['template'];
-//           return $this->fetch($tplName.'/'.$parent); //前端代码不压缩
-     return compress_html($this->fetch($tplName.'/'.$parent));//前端代码压缩
+        if ($this->mipInfo['codeCompression']) {
+            return compress_html($this->fetch($tplName.'/'.$parent));
+        } else {
+            return $this->fetch($tplName.'/'.$parent);
+        }
     }
 
 

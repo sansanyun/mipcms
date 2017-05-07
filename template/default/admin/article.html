@@ -1,5 +1,7 @@
 {extend name="admin/main"/}
 
+{block name="title"}{$articleModelName}管理 - {__block__}{/block}
+
 {block name="style"}
 {__block__}
 <style>
@@ -30,7 +32,7 @@
 <section class="mip-box mip-default" style="display: none;" :style="showAction">
     <section class="mip-box-body">
         <el-tabs type="card" v-model="tabsValue" @tab-remove="removeTab">
-            <el-tab-pane label="文章管理" name="list">
+            <el-tab-pane label="全部{$articleModelName}" name="list">
                 <template>
                     <el-row :gutter="24" style="margin-bottom: 15px;">
                         <el-col :span="6">
@@ -43,7 +45,7 @@
                         </el-col>
                         <el-col :span="18">
                             <el-button-group style="float: right;">
-                              <el-button type="primary" @click="itemAddTap" icon="plus">发布文章</el-button>
+                              <el-button type="primary" @click="itemAddTap" icon="plus">发布{$articleModelName}</el-button>
                               <el-button type="primary" @click="itemsDel" icon="delete" :disabled="isDelDisabled">批量删除</el-button>
                             </el-button-group>
                         </el-col>
@@ -159,7 +161,7 @@
                 </template>
             </el-tab-pane>
             
-            <el-tab-pane label="发布文章" v-if="isShowTab"  name="newAdd" closable>
+            <el-tab-pane label="发布{$articleModelName}" v-if="isShowTab"  name="newAdd" closable>
                 <el-form ref="publish" :model="publish" label-width="80px">
                     <el-row>
                         <el-col :span="12">
@@ -183,7 +185,7 @@
                                     filterable
                                     style="width: 355px;"
                                     allow-create
-                                    placeholder="请选择文章标签">
+                                    placeholder="请选择标签,支持直接输入">
                                     <el-option
                                       v-for="item in publish.tagsList"
                                       :label="item.name"

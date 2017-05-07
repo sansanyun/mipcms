@@ -441,7 +441,16 @@ INSERT INTO `mip_settings` (`id`, `key`, `val`) VALUES
 (15, 'loginStatus', '1'),
 (16, 'registerStatus', '1'),
 (17, 'articleModelUrl', 'article'),
-(18, 'askModelName', '问答');
+(18, 'askModelName', '问答'),
+(19, 'askModelUrl', 'ask'),
+(20, 'userModelName', '用户'),
+(21, 'userModelUrl', 'user'),
+(22, 'codeCompression', '1'),
+(23, 'indexTitle', ''),
+(24, 'baiduSpider', '1'),
+(25, 'baiduMip', '1'),
+(25, 'localCurrentVersionNum', '101'),
+(25, 'localCurrentVersion', 'v1.0.1');
 
 -- --------------------------------------------------------
 

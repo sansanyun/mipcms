@@ -103,7 +103,7 @@ class Article extends Mip {
         );
         $pagination = new Pagination($pagination_array);
         $this->assign('pagination',  $pagination->create_links());
-        
+         
         return $this->mipView('pc/article/article');
     }
 

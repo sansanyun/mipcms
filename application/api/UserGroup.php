@@ -59,7 +59,7 @@ class UserGroup extends AuthBase
     public function userGroupSelect(Request $request){
 		if (Request::instance()->isPost()) {
 		    
-			return jsonSuccess(UsersGroup::all());
+			return jsonSuccess('',UsersGroup::all());
 			
 		}
     }

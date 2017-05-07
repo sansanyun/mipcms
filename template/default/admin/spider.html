@@ -1,5 +1,7 @@
 {extend name="admin/main"/}
 
+{block name="title"}搜索引擎 - {__block__}{/block}
+
 {block name="style"}
 {__block__}
 <style>
@@ -41,7 +43,7 @@
         <div class="row">
         <section class="col-lg-12">
            <div class="mip-box">
-            <div class="mip-box-heading"><h3 class="left">蜘蛛抓取分析（百度）</h3> <a href="" class="right">更多</a></div>
+            <div class="mip-box-heading"><h3 class="left">蜘蛛抓取分析（百度）</h3></div>
                 <div class="mip-box-body">
                      <div id="main" v-loading="loading" style="height:400px;"></div>
                     <template>
