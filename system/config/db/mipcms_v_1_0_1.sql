@@ -435,7 +435,7 @@ INSERT INTO `mip_settings` (`id`, `key`, `val`) VALUES
 (9, 'icp', ''),
 (10, 'systemStatus', '1'),
 (11, 'systemType', 'Blog'),
-(12, 'idStatus', '1'),
+(12, 'idStatus', ''),
 (13, 'mipDomain', ''),
 (14, 'articleModelName', '文章'),
 (15, 'loginStatus', '1'),
