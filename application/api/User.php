@@ -311,7 +311,7 @@ class User extends AuthBase
 			if(!$userInfo = Users::getByUid($uid)){
 				return jsonError('用户不存在');
 			}
-            if ($userInfo['group_id'] == 1) {
+            if ($userInfo['group_id'] == 1 && $group_id != 1) {
                 return jsonError('超级管理员组禁止变更');
             }
 			if(!empty($password)){

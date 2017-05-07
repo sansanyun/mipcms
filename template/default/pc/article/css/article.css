@@ -11,7 +11,7 @@
 .article-detail .space { padding: 15px 20px; }
 
 .article-detail .article-detail-content { word-break: break-all; word-wrap: break-word; font-size: 16px; line-height: 1.8; }
-.article-detail .article-detail-content ul { padding-left: 20px; }
+.article-detail .article-detail-content ul, .article-detail .article-detail-content ol { padding-left: 20px; }
 
 .article-detail .article-detail-content img { max-height: 100%; max-width: 100%; width: auto; }
 
