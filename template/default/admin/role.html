@@ -400,7 +400,7 @@
                     terminal: 'pc',
                 }).then(function (res) {
                    if (res.code == 1) {
-                        _this.groupList = res.msg;
+                        _this.groupList = res.data;
                     } else {
                         _this.$message({
                             type: 'error',
