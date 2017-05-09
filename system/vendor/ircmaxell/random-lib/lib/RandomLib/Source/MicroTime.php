@@ -76,7 +76,7 @@ final class MicroTime extends \RandomLib\AbstractSource
         if (function_exists('hphp_get_thread_id')) {
             $state .= hphp_get_thread_id();
         }
-        $state      .= getmypid() . memory_get_usage();
+        $state      .= rand(1,9) . memory_get_usage();
         $state      .= serialize($_ENV);
         $state      .= serialize($_SERVER);
         $state      .= count(debug_backtrace(false));
