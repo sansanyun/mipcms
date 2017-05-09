@@ -37,7 +37,7 @@
                             {if condition='$tags'}
                             <ul class="tags hidden-xs pull-right">
                                 {foreach name='$tags' id='v'}
-                                <li><a title="{$v['tags']['name']}">{$v['tags']['name']}</a></li>
+                                <li><span title="{$v['tags']['name']}">{$v['tags']['name']}</span></li>
                                 {/foreach}
                             </ul>
                             {/if}
