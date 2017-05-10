@@ -91,21 +91,23 @@ class Mip extends Controller
             }
             $this->isLogin = true;
             
-//          $roleAccessList = db('RolesAccess')->where('group_id',$this->groupId)->select(); 
-//          if ($roleAccessList) {
-//              foreach ($roleAccessList as $k => $v) {
-//                  $modeIds[$k] = $v['node_id'];
-//                  $rolesAccessPids[$k] = $v['pid'];
-//              }
-//              $rolesNodeList = db('RolesNode')->select();
-//              foreach ($rolesNodeList as $k => $v) {
-//                 $this->assign('is'.ucfirst($v['name']),'');
-//              }
-//              $roleList = db('RolesNode')->where(['id' => ['in', $modeIds]])->whereOr(['id' => ['in', $rolesAccessPids]])->select();
-//              foreach ($roleList as $k => $v) {
-//                 $this->assign('is'.ucfirst($v['name']),$v['name']);
-//              }
-//          }
+            $roleAccessList = db('RolesAccess')->where('group_id',$this->groupId)->select(); 
+            if ($roleAccessList) {
+                foreach ($roleAccessList as $k => $v) {
+                    $modeIds[$k] = $v['node_id'];
+                    $rolesAccessPids[$k] = $v['pid'];
+                }
+                $rolesNodeList = db('RolesNode')->select();
+                foreach ($rolesNodeList as $k => $v) {
+                   $role[$v['name']] = '';
+                }
+                $roleList = db('RolesNode')->where(['id' => ['in', $modeIds]])->whereOr(['id' => ['in', $rolesAccessPids]])->select();
+                foreach ($roleList as $k => $v) {
+                   $role[$v['name']] = $v['name'];
+                }
+                $this->role = $role;
+                $this->assign('role',$this->role);
+            }
             
             if ($this->userInfo['status'] == 1) {
                 Session::delete('userInfo');
@@ -196,7 +198,7 @@ class Mip extends Controller
         
     }
     public function spider() {
-        $userAgent = Request::instance()->header()['user-agent'];
+        $userAgent = @Request::instance()->header()['user-agent'];
         if ($this->mipInfo['baiduSpider']) {
             if (strpos($userAgent,"Baiduspider")) {
                 if (strpos($userAgent,"Mobile")) {

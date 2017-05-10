@@ -146,7 +146,7 @@
                           <img :src="avatarImg" class="avatar-img"/>{$userInfo['username']}<i class="el-icon-caret-bottom el-icon--right"></i>
                       </span>
                       <el-dropdown-menu slot="dropdown" class="members-dropdown">
-                        {if condition='$userInfo["group_id"] == 1'}
+                        {if condition='$role["admin"]'}
                         <el-dropdown-item><a href="{$domain}/admin/">系统管理</a></el-dropdown-item>
                         {/if}
                         <el-dropdown-item><a @click="loginOut">安全退出</a></el-dropdown-item>

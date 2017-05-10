@@ -18,7 +18,7 @@
             </div>
             <div class="mip-box-body">
                 <el-form label-width="100px">
-                    <el-form-item label="网站域名">
+                    <el-form-item label="PC域名">
                         <el-input v-model="setting.domain" placeholder="例:www.baidu.com"></el-input>
                     </el-form-item>
                     <el-popover
@@ -26,10 +26,10 @@
                       placement="top-start"
                       width="500"
                       trigger="hover"
-                      content="请输入百度MIP站点绑定的域名，请勿输入带http://、https://以及末尾勿带/,不输入则不开启MIP移动站">
+                      content="请输入M站点(手机站)绑定的域名，请勿输入带http://、https://以及末尾勿带/,不输入则表示不启用M站">
                     </el-popover>
                    <div class="el-form-item">
-                       <label for="name" class="el-form-item__label" style="width: 100px;"> <span class="mip-iconfont mip-wenhao" v-popover:mipdomain></span> MIP域名</label>
+                       <label for="name" class="el-form-item__label" style="width: 100px;"> <span class="mip-iconfont mip-wenhao" v-popover:mipdomain></span> M域名</label>
                         <div class="el-form-item__content" style="margin-left: 100px;">
                             <div class="el-input">
                                 <el-input v-model="setting.mipDomain" placeholder="例:mip.baidu.com"></el-input>
@@ -191,12 +191,14 @@
         },
         methods:{
             onSubmitSetting: function() {
-                if (this.setting.domain == this.setting.mipDomain) {
-                    Vue.prototype.$message({
-                        type: 'warning',
-                        message: '主域名和mip站域名不能一样'
-                    });
-                    return false;
+                if (this.setting.domain) {
+                    if (this.setting.domain == this.setting.mipDomain) {
+                        Vue.prototype.$message({
+                            type: 'warning',
+                            message: '主域名和M站域名不能一样'
+                        });
+                        return false;
+                    }
                 }
                 this.$mip.ajax('/api/Setting/settingEdit', {
                     setting: JSON.stringify(this.setting),

@@ -87,7 +87,7 @@ new Vue({
                     uids.push(this.multipleSelection[i].uid);
                 }
                 uids = uids.join(',');
-                this.$mip.ajax('/api/user/delUsers',{
+                this.$mip.ajax('/api/user/usersDel',{
                     uids:uids,
                 }).then(function (res) {
                     if(res.status==200){

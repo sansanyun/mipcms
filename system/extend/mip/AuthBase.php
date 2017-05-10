@@ -61,8 +61,6 @@ class AuthBase extends Mip
             $this->accessTokenId = $header['uid'];
             $this->accessToken = $header['access-token'];
             $this->passStatus = false;
-            $this->passStatusModule = false;
-            $this->passStatusController = false;
             $roleAccessList = db('RolesAccess')->where('group_id',$accessTokenInfo['client']['client_group_id'])->select(); 
             if ($roleAccessList) {
                 foreach ($roleAccessList as $k => $v) {
@@ -70,34 +68,11 @@ class AuthBase extends Mip
                     $rolesAccessPids[$k] = $v['pid'];
                 }
                 $roleList = db('RolesNode')->where(['id' => ['in', $modeIds]])->whereOr(['id' => ['in', $rolesAccessPids]])->select();
-                $roleList = list_to_tree($roleList);
                 foreach ($roleList as $key => $val) {
-                    if ($val['pid'] == 0 && strtoupper($val['name']) == strtoupper($this->request->module())) {
-                        $this->passStatusModule = true;
-                        if (isset($val['_child'])) {
-                            foreach ($val['_child'] as $controller) {
-                                if (strtoupper($controller['name']) == strtoupper($this->request->controller())) {
-                                    $this->passStatusController = true;
-                                    if (isset($controller['_child'])) {
-                                         foreach ($controller['_child'] as $action) {
-                                            if (strtoupper($action['name']) == strtoupper($this->request->action())) {
-                                                $this->passStatus = true;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        } 
+                    if (strtoupper($val['name']) == strtoupper($this->request->action())) {
+                        $this->passStatus = true;
                     }
                 }
-            }
-            if (!$this->passStatusModule) {
-                header('Content-Type:application/json; charset=utf-8');
-                exit(json_encode(['code'=>1008, 'msg'=>'无权限操作']));
-            }
-            if (!$this->passStatusController) {
-                header('Content-Type:application/json; charset=utf-8');
-                exit(json_encode(['code'=>1007, 'msg'=>'无权限操作']));
             }
             if (!$this->passStatus) {
                 header('Content-Type:application/json; charset=utf-8');
@@ -125,7 +100,7 @@ class AuthBase extends Mip
         if (!$clientInfo) {
             return false;
         }
-        $access_token = $this->getAccessTokenAndClient($uid,$terminal);
+        $access_token = $this->getAccessTokenAndClient($uid, $terminal, $clientInfo['client_group_id']);
         $access_token = (!$access_token) ? self::setAccessToken($clientInfo,$terminal) : $access_token;
         return array([
             'access-token' => $access_token,
@@ -163,7 +138,8 @@ class AuthBase extends Mip
         $info = Cache::get($keys);
         if ($info == false || $info['expires_time'] < time()) return false;
         $client_id = $info['client']['client_id'];
-        if ($this->getAccessTokenAndClient($client_id,$terminal) != $accessToken) return false;
+        $group_id = $info['client']['client_group_id'];
+        if ($this->getAccessTokenAndClient($client_id,$terminal,$group_id) != $accessToken) return false;
         return $info;
     }
 
@@ -177,11 +153,11 @@ class AuthBase extends Mip
     
     protected static function saveAccessToken($accessToken, $accessTokenInfo,$terminal) {
         Cache::set(self::$accessTokenPrefix . $terminal . $accessToken, $accessTokenInfo, self::$expires);
-        Cache::set(self::$accessTokenAndClientPrefix . $terminal .  $accessTokenInfo['client']['client_id'], $accessToken, self::$expires);
+        Cache::set(self::$accessTokenAndClientPrefix . $terminal .  $accessTokenInfo['client']['client_id'] . $accessTokenInfo['client']['client_group_id'], $accessToken, self::$expires);
     }
 
-    protected function getAccessTokenAndClient($client_id,$terminal) {
-        return Cache::get(self::$accessTokenAndClientPrefix . $terminal . $client_id);
+    protected function getAccessTokenAndClient($client_id,$terminal,$group_id) {
+        return Cache::get(self::$accessTokenAndClientPrefix . $terminal . $client_id . $group_id);
     }
 
 }

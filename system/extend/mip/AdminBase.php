@@ -9,7 +9,7 @@ class AdminBase extends Mip {
     public function _initialize() {
         parent::_initialize();
         if(!$this->user_info){
-            $this->error('尚未登录','/login.html',404);
+            $this->error('尚未登录','/login.html',301);
         }
         $this->passStatus = false;
         $roleAccessList = db('RolesAccess')->where('group_id',$this->user_info['group_id'])->select();     
@@ -21,24 +21,12 @@ class AdminBase extends Mip {
             $roleList = list_to_tree($roleList);
             foreach ($roleList as $key => $val) {
                 if ($val['pid'] == 0 && strtoupper($val['name']) == strtoupper($this->request->module())) {
-//                  if (isset($val['_child'])) {
-//                      foreach ($val['_child'] as $controller) {
-//                          if (strtoupper($controller['name']) == strtoupper($this->request->controller())) {
-//                              if (isset($controller['_child'])) {
-//                                   foreach ($controller['_child'] as $action) {
-//                                      if (strtoupper($action['name']) == strtoupper($this->request->action())) {
-                                            $this->passStatus = true;
-//                                      }
-//                                  }
-//                              }
-//                          }
-//                      }
-//                  } 
+                    $this->passStatus = true;
                 }
             }
         }
         if (!$this->passStatus) {
-            $this->error('无权限操作','/',404);
+            $this->error('无权限操作','/',301);
         }
     }
 }

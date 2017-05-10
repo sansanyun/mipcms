@@ -186,11 +186,14 @@ class User extends AuthBase
     public function userDel(Request $request){
 		if (Request::instance()->isPost()) {
 			$uid = input('post.uid');
-			if(!$uid){
+			if (!$uid) {
 				return jsonError('请输入用户ID');
 			}
-			if(!Users::getByUid($uid)){
+			if (!$uidInfo = Users::getByUid($uid)) {
 				return jsonError('用户不存在');
+			}
+			if ($uidInfo['uid'] == 1) {
+                return jsonError('禁止删除超级管理员');
 			}
 		    if($uid = Users::where('uid',$uid)->delete()){
 		   		return jsonSuccess('删除成功',$uid);
