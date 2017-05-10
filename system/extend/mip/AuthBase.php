@@ -53,7 +53,7 @@ class AuthBase extends Mip
                 header('Content-Type:application/json; charset=utf-8');
                 exit(json_encode(['code'=>1002, 'msg'=>'缺少请求参数']));
             }
-            $accessTokenInfo = $this->auth($header['access-token'],$this->terminal);
+            $accessTokenInfo = $this->auth($header['access-token'], $this->terminal, $header['uid']);
             if (!$accessTokenInfo) {
                 header('Content-Type:application/json; charset=utf-8');
                 exit(json_encode(['code'=>1005, 'msg'=>'身份失效']));
@@ -81,11 +81,12 @@ class AuthBase extends Mip
         }
     }
     
-    public function auth($accessToken,$terminal) {
+    public function auth($accessToken,$terminal,$uid) {
         if (empty($accessToken) || strlen($accessToken) < 32 || $accessToken == false) {
             return false;
         }
-        $accessTokenInfo = $this->getAccessTokenInfo($accessToken,$terminal);
+        $userInfo = db('Users')->where('uid',$uid)->find();
+        $accessTokenInfo = $this->getAccessTokenInfo($accessToken,$terminal,$userInfo['group_id']);
         if (!$accessTokenInfo) {
             return false;
         }
@@ -132,13 +133,12 @@ class AuthBase extends Mip
         return $accessToken;
     }
 
-    protected function getAccessTokenInfo($accessToken,$terminal)
+    protected function getAccessTokenInfo($accessToken,$terminal,$group_id)
     {
-        $keys = self::$accessTokenPrefix . $this->terminal . $accessToken;
+        $keys = self::$accessTokenPrefix . $this->terminal . $accessToken . $group_id;
         $info = Cache::get($keys);
         if ($info == false || $info['expires_time'] < time()) return false;
         $client_id = $info['client']['client_id'];
-        $group_id = $info['client']['client_group_id'];
         if ($this->getAccessTokenAndClient($client_id,$terminal,$group_id) != $accessToken) return false;
         return $info;
     }
@@ -152,7 +152,7 @@ class AuthBase extends Mip
     }
     
     protected static function saveAccessToken($accessToken, $accessTokenInfo,$terminal) {
-        Cache::set(self::$accessTokenPrefix . $terminal . $accessToken, $accessTokenInfo, self::$expires);
+        Cache::set(self::$accessTokenPrefix . $terminal . $accessToken . $accessTokenInfo['client']['client_group_id'], $accessTokenInfo, self::$expires);
         Cache::set(self::$accessTokenAndClientPrefix . $terminal .  $accessTokenInfo['client']['client_id'] . $accessTokenInfo['client']['client_group_id'], $accessToken, self::$expires);
     }
 
