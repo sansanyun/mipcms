@@ -50,39 +50,23 @@
                             </el-button-group>
                         </el-col>
                     </el-row>
-                    <el-table
-                        v-loading="loading"
-                        :data="articleList"
-                        style="width: 100%"
-                        @selection-change="handleListSelectionChange">
-                        <el-table-column type="selection">
+                    <el-table v-loading="loading" :data="articleList" @selection-change="handleListSelectionChange" style="width: 100%">
+                        <el-table-column type="selection"></el-table-column>
+                        <el-table-column label="ID" prop="id" width="80" show-overflow-tooltip></el-table-column>
+                        <el-table-column label="标题" show-overflow-tooltip width="300" inline-template>
+                            <template><a :href="'{$domain}/{$articleModelUrl}/'+row.id+'.html'" target="_blank">{{row.title}}</a></template>
                         </el-table-column>
-                        <el-table-column
-                            label="文章ID"
-                            prop="id">
-                        </el-table-column>
-                        <el-table-column
-                            label="发布者"
-                            inline-template>
-                            <template>{{row.users.username}}</template>
-                        </el-table-column>
-                        <el-table-column
-                            label="标题"
-                            prop="title">
-                        </el-table-column>
-                        <el-table-column
-                            label="创建时间"
-                            inline-template>
-                            <template>{{row.create_time | time}}</template>
-                        </el-table-column>
-                        <el-table-column
-                            label="发布时间"
-                            inline-template>
+                        <el-table-column label="发布时间" inline-template>
                             <template>{{row.publish_time | time}}</template>
                         </el-table-column>
-                        <el-table-column
-                            label="浏览"
-                            prop="views">
+                        <el-table-column label="浏览" prop="" width="80" inline-template>
+                            <template>{{row.views}}</template>
+                        </el-table-column>
+                        <el-table-column label="回复" prop="" width="80" inline-template>
+                            <template>{{row.comments}}</template>
+                        </el-table-column>
+                         <el-table-column label="发布者" inline-template>
+                            <template>{{row.users.username}}</template>
                         </el-table-column>
                         <el-table-column
                             label="操作">

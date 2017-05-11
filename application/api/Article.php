@@ -144,6 +144,7 @@ class Article extends AuthBase
 		    foreach ($articleList as $key => $val) {
 		        $val['content'] = htmlspecialchars_decode($val['content']);
                 $articleList[$key]->users;
+                $val['id'] = $this->mipInfo['idStatus'] ? $val['uuid'] : $val['id'];
 		    }
 		    return jsonSuccess('',['articleList' => $articleList,'total' => Articles::count(),'page' => $page]); 
         }
