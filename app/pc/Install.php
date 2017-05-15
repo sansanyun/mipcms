@@ -124,7 +124,7 @@ class Install extends Controller
                     return jsonError('install.lock文件写入失败，请检查system/config/install 文件夹是否可写入');
                 }
                 if(is_array($dbconfig)){
-                    $conf = file_get_contents(ROOT_PATH.'package'.DS.'temp.php');
+                    $conf = file_get_contents(ROOT_PATH.'package'.DS.'database.php');
                     foreach ($dbconfig as $key => $value) {
                         $conf = str_replace("#{$key}#", $value, $conf);
                     }
