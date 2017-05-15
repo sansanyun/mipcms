@@ -1,96 +1,5 @@
 {extend name="pc/main/main"/}
 
-{block name="title"}{__block__}{/block}
-
-{block name="link"}{__block__}
-{/block}
-{block name="style"}{__block__}
- .container .row .col-lg-8 .row .col-lg-6:nth-of-type(even) {
-    padding-left: 7px;
- }
- .container .row .col-lg-8 .row .col-lg-6:nth-of-type(odd) {
-    padding-right: 7px;
- }
-  
- .mip-top-img {
-        position: relative;
-        display: inline-block;
-        overflow: hidden;
-        box-sizing: border-box;
-    }
-    .mip-top-img .img{
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%,-50%);
-        transition: all 0.2s linear;
-    }
-    .image-link-left {
-        width: 768px;
-        height: 306px;
-    }
-    .image-link-right-top {
-        width: 300px;
-        height: 180px;
-    }
-    .image-link-right-bottom {
-        width: 140px;
-        height: 107px;
-    }
-    .mip-top-img .left-img {
-        width: 768px;
-    }
-    .mip-top-img .right-img-top {
-        width: 300px;
-    }
-    .mip-top-img .right-img-bottom {
-        width: 140px;
-    }
-    .mip-top-img .left-img:hover {
-        width: 778px;
-    }
-    .mip-top-img .right-img-top:hover {
-        width: 310px;
-    }
-    .mip-top-img .right-img-bottom:hover {
-        width: 150px;
-    }
-    .mip-top-block {
-        position: relative;
-    }
-    .caption {
-        background: -webkit-linear-gradient(top,  rgba(25,35,45,0) 0%,rgba(0,0,0,0.8) 100%);
-        background: linear-gradient(to bottom,  rgba(25,35,45,0) 0%,rgba(0,0,0,0.8) 100%);
-        text-shadow: 0px 1px 1px #000;
-        padding: 14px 20px 17px 20px;
-        position: absolute;
-        bottom: 0;
-        box-sizing: border-box;
-        -moz-box-sizing: border-box;
-        -webkit-box-sizing: border-box;
-    }
-    .caption .time {
-        color: #d3dbdf;
-        display: block;
-        text-transform: uppercase;
-        font-size: 11px;
-    }
-    .caption a{
-        color: #fff;
-        font-size: 18px;
-        line-height: 2;
-    }
-    
-    .mip-top-right .caption {
-        width:100%;
-        padding: 5px 10px 5px 10px;
-    }
-    .mip-top-right a{
-        font-size: 13px;
-        line-height: 20px;        
-    }
-{/block}
-
 {block name="main"}
 {if condition="$recommendList && count($recommendList) > 3"}
 <div class="container m-b">
@@ -98,12 +7,7 @@
         <div class="col-lg-8">
             <div class="relative">
                 <a href="{$domain}/{$articleModelUrl}/{$recommendList[0]['id']}.html" title="{$recommendList[0]['title']}" class="mip-top-img image-link-left">
-                    <mip-img
-                            layout="full"
-                            class="img left-img"
-                            alt="{$recommendList[0]['title']}"
-                            src="{$recommendList[0]['firstImg']}">
-                    </mip-img>
+                    <img src="{$recommendList[0]['firstImg']}" alt="{$recommendList[0]['title']}" class="img left-img" />
                 </a>
                 <div class="caption w-100">
                     <time class="time" datetime="{$recommendList[0]['publish_time'] | date='Y-m-d',###}">{$recommendList[0]['publish_time'] | date='Y-m-d',###}</time>
@@ -114,12 +18,7 @@
         <div class="col-lg-4">
             <div class="mip-top-block mip-top-right m-b">
                 <a href="{$domain}/{$articleModelUrl}/{$recommendList[1]['id']}.html" title="{$recommendList[1]['title']}" class="mip-top-img image-link-right-top">
-                    <mip-img
-                        layout="full"
-                        class="img right-img-top"
-                        alt="{$recommendList[1]['title']}"
-                        src="{$recommendList[1]['firstImg']}">
-                    </mip-img>
+                    <img class="img right-img-top" alt="{$recommendList[1]['title']}" src="{$recommendList[1]['firstImg']}" />
                 </a>
                 <div class="caption">
                     <a href="{$domain}/{$articleModelUrl}/{$recommendList[1]['id']}.html" title="{$recommendList[1]['title']}">{$recommendList[1]['title']}</a>
@@ -127,12 +26,7 @@
             </div>
             <div class="mip-top-block mip-top-right pull-left">
                 <a href="{$domain}/{$articleModelUrl}/{$recommendList[2]['id']}.html" title="{$recommendList[2]['title']}" class="mip-top-img image-link-right-bottom">
-                    <mip-img
-                        layout="full"
-                        class="img right-img-bottom"
-                        alt="{$recommendList[2]['title']}"
-                        src="{$recommendList[2]['firstImg']}">
-                    </mip-img>
+                    <img class="img right-img-bottom" alt="{$recommendList[2]['title']}" src="{$recommendList[2]['firstImg']}" />
                 </a>
                 <div class="caption">
                     <a href="{$domain}/{$articleModelUrl}/{$recommendList[2]['id']}.html" title="{$recommendList[2]['title']}">{$recommendList[2]['title']}</a>
@@ -140,12 +34,7 @@
             </div>
             <div class="mip-top-block mip-top-right pull-left m-l-md">
                 <a href="{$domain}/{$articleModelUrl}/{$recommendList[3]['id']}.html" title="{$recommendList[3]['title']}" class="mip-top-img image-link-right-bottom">
-                    <mip-img
-                        layout="full"
-                        class="img right-img-bottom"
-                        alt="{$recommendList[3]['title']}"
-                        src="{$recommendList[3]['firstImg']}">
-                    </mip-img>
+                    <img class="img right-img-bottom" alt="{$recommendList[3]['title']}" src="{$recommendList[3]['firstImg']}" />
                 </a>
                 <div class="caption">
                    <a href="{$domain}/{$articleModelUrl}/{$recommendList[3]['id']}.html" title="{$recommendList[3]['title']}">{$recommendList[3]['title']}</a>

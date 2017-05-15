@@ -9,17 +9,10 @@
     <meta name="keywords" content="{block name="keywords"}{$mipInfo['keywords']}{/block}">
     <link rel="shortcut icon" href="{$domain}/favicon.ico" type="image/x-icon" />
     <title>{block name="title"}{/block}{$mipInfo['siteName']}{if condition="$ctr=='Index'"}{$mipInfo['indexTitle']}{/if}</title>
-    {if condition="$ctr != 'Account' &&  !$userId"}
-        <link rel="stylesheet" type="text/css" href="https://mipcache.bdstatic.com/static/v1/mip.css">
-    {/if}
+    <link rel="stylesheet" type="text/css" href="https://mipcache.bdstatic.com/static/v1/mip.css">
     <style mip-custom>
-    {if condition="$ctr=='Account' || $userId"}
-        {include file="/assets/css/mipui/mip.css"}
-        {include file="/assets/css/el/el.css"}
-        {include file="/assets/css/el/el-mipcms.css"}
-    {/if}
     
-    {include file="/assets/css/mipui/reset.css"}
+    {include file="/m/main/css/mip/reset.css"}
     * {
         -webkit-box-sizing: border-box;
         box-sizing: border-box;
@@ -66,8 +59,7 @@
         background-color: #fff;   
     }
    
-    {include file="/assets/css/mipui/mip-app.css"}
-    
+    {include file="/m/main/css/mip/mip-app.css"}
     {include file="/m/main/css/mui/mui-layout.css"}
     {include file="/m/main/css/mui/mui-bar.css"}
     {include file="/m/main/css/mui/mui-btn.css"}

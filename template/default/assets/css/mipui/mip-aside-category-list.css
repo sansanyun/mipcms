@@ -1,6 +1,0 @@
-.category-lists .category-list { float: left; width: 49%; line-height: 35px; background: #efefef; margin-bottom: 5px; margin-right: 1%; text-align: center; }
-.category-lists .category-list:hover, .category-lists .category-list.active { background-color: #00AAEE; color: #FFFFFF; }
-.category-lists .category-list:hover a, .category-lists .category-list.active a { color: #FFFFFF; }
-.category-lists .category-list a { padding: 5px 10px; color: #999999; }
-
-/*# sourceMappingURL=mip-aside-category-list.css.map */

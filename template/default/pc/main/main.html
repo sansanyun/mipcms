@@ -1,25 +1,19 @@
 <!DOCTYPE html>
-<html mip>
+<html>
 <head>
     <meta charset="utf-8">
-   <meta name="applicable-device"content="pc">
+    <meta name="applicable-device"content="pc">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
     <meta name="description" content="{block name="description"}{$mipInfo['description']}{/block}">
     <meta name="keywords" content="{block name="keywords"}{$mipInfo['keywords']}{/block}">
     <title>{block name="title"}{/block}{$mipInfo['siteName']}{if condition="$ctr=='Index'"}{$mipInfo['indexTitle']}{/if}</title>
     <link rel="shortcut icon" href="{$domain}/favicon.ico" type="image/x-icon" />
-    {if condition="$ctr != 'Account' &&  !$userId"}
-        <link rel="stylesheet" type="text/css" href="https://mipcache.bdstatic.com/static/v1/mip.css">
     
-    {/if}
-    <style mip-custom>
-    {if condition="$ctr=='Account' || $userId"}
-        {include file="/assets/css/mipui/mip.css"}
-        {include file="/assets/css/el/el.css"}
-        {include file="/assets/css/el/el-mipcms.css"}
-    {/if}
-    {include file="/assets/css/mipui/reset.css"}
+    <link rel="stylesheet" type="text/css" href="/assets/css/mipui/mipcms.css"/>
+    
+    <style>
+ 
       body {
         background-color: #ECF0F1;
         color: #333;
@@ -59,40 +53,7 @@
         }
       }
       a:hover{color: #00AAEE;}
-      mip-link {
-          display: inline-block!important;
-          cursor: pointer;
-      }
-      mip-link:hover{
-          color: #00AAEE;
-      }
       
-    {include file="/assets/css/mipui/bootstrap-layout.css"}
-    {include file="/assets/css/mipui/mip-app.css"}
-    {include file="/assets/css/mipui/mip-herader.css"}
-    {include file="/assets/css/mipui/mip-btn.css"}
-    {include file="/assets/css/mipui/mip-box.css"}
-    {include file="/assets/css/mipui/mip-article-list-001.css"}
-    {include file="/assets/css/mipui/bootstrap-breadcrumb.css"}
-    .mip-footer{margin-bottom: 20px;}
-    .mip-footer p{margin:0}
-    .friend-link {
-        text-align: center;
-        margin-bottom: 15px;
-        text-align: center;
-    }
-    .friend-link ul {
-        overflow: hidden;
-        list-style: none;
-        padding: 0;
-        display: inline-block;
-    }
-    .friend-link li {
-        float: left;
-        margin: 0 5px;
-    }
-    .friend-link a{
-    }
     {block name="style"}{/block}
     </style>
     <link rel="canonical" href="{$siteUrl}">
@@ -104,23 +65,8 @@
             <div class="col-lg-8">
                 <div class="logo">
                     <a class="logo-link" href="{$domain}">
-                        {if condition="$userId"}
-                         <mip-img layout="fill" alt="{$mipInfo['siteName']}" src="{$domain}/assets/images/logo.png" class="mip-element mip-layout-fill mip-layout-size-defined mip-img-loaded">
-                             <img class="mip-fill-content mip-replaced-content" src="{$domain}/assets/images/logo.png" alt="{$mipInfo['siteName']}">
-                         </mip-img>
-                        {else/}
-                        
-                        {if condition='$ctr=="Account"'}
-                            <img class="mip-fill-content mip-replaced-content" src="{$domain}/assets/images/logo.png" alt="{$mipInfo['siteName']}">
-                        {else/}
-                        <mip-img
-                            layout="fill"
-                            alt="{$mipInfo['siteName']}"
-                            src="{$domain}/assets/images/logo.png">
-                        </mip-img>
-                        {/if}
-                        {/if}
-                        </a>
+                        <img class="mip-fill-content mip-replaced-content" src="{$domain}/assets/images/logo.png" alt="{$mipInfo['siteName']}">
+                    </a>
                 </div>
                 <ul class="mip-menu">
                     <li class='{if condition="$ctr=='index'"}active{/if}'>
@@ -190,18 +136,8 @@
     </div>
 </footer>
 {block name="script"}
-{if condition="$userId || $ctr == 'Account' "}
-<script src="/assets/js/vue.min.js"></script>
-<script src="/assets/js/axios.min.js"></script>
-<script src="/assets/js/element.js"></script>
-<script src="/assets/js/md5.js"></script>
-<script src="/assets/js/utils.js"></script>
-<script src="/assets/js/mipcms.js"></script>
-{else /}
-<script src="https://mipcache.bdstatic.com/static/v1/mip.js"></script>
-<script src="https://mipcache.bdstatic.com/static/v1/mip-link/mip-link.js"></script>
-<script src="https://mipcache.bdstatic.com/static/v1/mip-stats-baidu/mip-stats-baidu.js"></script>
-{/if}
+ 
+<script src="/assets/min/?f=/assets/js/vue.min.js,/assets/js/axios.min.js,/assets/js/element.js,/assets/js/md5.js,/assets/js/utils.js,/assets/js/mipcms.js"></script>
 {/block}
 </body>
 </html>

@@ -2,12 +2,6 @@
 
 {block name="style"}
 {__block__}
-
-{include file="pc/article/css/article.css"}
-{include file="/assets/css/mipui/mip-article-comments-001.css"}
-{include file="/assets/css/mipui/mip-article-aside-user.css"}
-{include file="/assets/css/mipui/mip-aside-category-list.css"}
-
 {/block}
 
 {block name="title"}{$itemInfo['title']}_{__block__}{/block}
@@ -74,11 +68,7 @@
                                 {foreach $comments as $K=> $v }
                                 <li class="comment">
                                     <div class="comment-img">
-                                        <mip-img
-                                                layout="fill"
-                                                alt="用户名"
-                                                src="{$domain}/assets/images/avatar.jpg">
-                                        </mip-img>
+                                        <img alt="用户名" src="{$domain}/assets/images/avatar.jpg"/>
                                     </div>
                                     <div class="comment-body">
                                         <div class="comment-info">
@@ -102,7 +92,7 @@
                             {/if}
                         </div>
                         <div class="mip-box-footer text-center">
-                            <p class="m-b-none">您尚未登录，暂无法评论！请先 <mip-link href="{$domain}/login.html">登录</mip-link>/<mip-link href="{$domain}/register.html">注册</mip-link></p>
+                            <p class="m-b-none">您尚未登录，暂无法评论！请先 <a href="{$domain}/login.html">登录</a>/<a href="{$domain}/register.html">注册</a></p>
                         </div>
                     {else /}
                         <!--登录后区域-->
@@ -183,17 +173,7 @@
                             <li class="col-md-3">
                                 <a href="{$domain}/{$articleModelUrl}/{$v['id']}.html" title="{$v.title}" class="article-love-img">
                                     {if condition="$v['firstImg']"}
-                                        {if condition="$userId"}
-                                         <mip-img layout="fill" alt="{$v['title']}" src="{$v['firstImg']}" class="mip-element mip-layout-fill mip-layout-size-defined mip-img-loaded">
-                                             <img class="mip-fill-content mip-replaced-content" src="{$v['firstImg']}" alt="{$v['title']}">
-                                         </mip-img>
-                                        {else/}
-                                         <mip-img
-                                            layout="fill"
-                                            alt="{$v['title']}"
-                                            src="{$v['firstImg']}">
-                                        </mip-img>
-                                        {/if}
+                                         <img alt="{$v['title']}" src="{$v['firstImg']}" />
                                     {else/}
                                     <span>暂无图片</span>
                                     {/if}
@@ -211,17 +191,7 @@
               <section class="mip-box user-box">
                 <div class="user-box-main">
                     <div class="user-avata">
-                        {if condition='$userId'}
-                            <mip-img layout="fill" alt="{$itemInfo['users']['username']}" src="{$domain}/assets/images/avatar.jpg" class="mip-element mip-layout-fill mip-layout-size-defined mip-img-loaded">
-                                 <img class="mip-fill-content mip-replaced-content" src="{$domain}/assets/images/avatar.jpg" alt="{$itemInfo['users']['username']}">
-                             </mip-img>
-                        {else/}
-                            <mip-img
-                                    layout="fill"
-                                    alt="{$itemInfo['users']['username']}"
-                                    src="{$domain}/assets/images/avatar.jpg">
-                            </mip-img>
-                        {/if}
+                         <img alt="{$itemInfo['users']['username']}" src="{$domain}/assets/images/avatar.jpg"/>
                     </div>
                     <h3>{$itemInfo['users']['username']}</h3>
                     <p>{$itemInfo['users']['email']}</p>

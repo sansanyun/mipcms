@@ -464,7 +464,7 @@ class App
             // 加载模块配置
 
             //自定义转移common目录
-            $config_path = CONF_PATH. $module;
+            $config_path = ALL_PATH. $module;
             $config = Config::load(CONF_PATH . $module . 'config' . CONF_EXT);
             // 读取数据库配置文件
             $filename = CONF_PATH . $module . 'database' . CONF_EXT;
@@ -535,9 +535,9 @@ class App
             } else {
                 $files = $config['route_config_file'];
                 foreach ($files as $file) {
-                    if (is_file(CONF_PATH . $file . CONF_EXT)) {
+                    if (is_file(ALL_PATH . $file . CONF_EXT)) {
                         // 导入路由配置
-                        $rules = include CONF_PATH . $file . CONF_EXT;
+                        $rules = include ALL_PATH . $file . CONF_EXT;
                         if (is_array($rules)) {
                             Route::import($rules);
                         }

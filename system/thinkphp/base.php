@@ -21,13 +21,14 @@ define('TRAIT_PATH', LIB_PATH . 'traits' . DS);
 defined('APP_PATH') or define('APP_PATH', dirname($_SERVER['SCRIPT_FILENAME']) . DS);
 defined('ROOT_PATH') or define('ROOT_PATH', dirname(realpath(APP_PATH)) . DS);
 defined('SYSTEM_PATH') or define('SYSTEM_PATH', dirname(THINK_PATH) . DS);
-defined('EXTEND_PATH') or define('EXTEND_PATH', SYSTEM_PATH . 'extend' . DS);
+defined('EXTEND_PATH') or define('EXTEND_PATH', ROOT_PATH . 'all' . DS);
 defined('VENDOR_PATH') or define('VENDOR_PATH', SYSTEM_PATH . 'vendor' . DS);
 defined('RUNTIME_PATH') or define('RUNTIME_PATH', ROOT_PATH . 'cache' . DS);
 defined('LOG_PATH') or define('LOG_PATH', RUNTIME_PATH . 'log' . DS);
 defined('CACHE_PATH') or define('CACHE_PATH', RUNTIME_PATH . 'cache' . DS);
 defined('TEMP_PATH') or define('TEMP_PATH', RUNTIME_PATH . 'temp' . DS);
 defined('CONF_PATH') or define('CONF_PATH', SYSTEM_PATH . 'config' . DS); // 配置文件目录
+defined('ALL_PATH') or define('ALL_PATH', ROOT_PATH . 'all' . DS); // 全局文件目录
 defined('CONF_EXT') or define('CONF_EXT', EXT); // 配置文件后缀
 defined('ENV_PREFIX') or define('ENV_PREFIX', 'PHP_'); // 环境变量的配置前缀
 

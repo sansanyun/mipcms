@@ -1,7 +1,6 @@
 {extend name="pc/main/main"/}
 
 {block name="style"}{__block__}
-{include file="/assets/css/mipui/bootstrap-pagination.css"}
 {/block}
 
 {block name="title"}{if condition='$categoryUrlName'}{if condition="$ctr=='Article'"}{if condition='!$categoryInfo'}{$articleModelName}_{else/}{$categoryInfo->name}_{/if}{/if}{__block__}{/if}{/block}
@@ -45,18 +44,7 @@
                             {if condition="$v['firstImg']"}
                             <div class="list-img hidden-xs">
                                 <a class="list-img-a" title="{$v.title}" href="{$domain}/{$articleModelUrl}/{$v.id}.html">
-                                    
-                                    {if condition='$userId'}
-                                        <mip-img layout="fill" alt="{$v.title}" src="{$v.firstImg}" class="mip-element mip-layout-fill mip-layout-size-defined mip-img-loaded">
-                                             <img class="mip-fill-content mip-replaced-content" src="{$v.firstImg}" alt="{$v.title}">
-                                         </mip-img>
-                                    {else/}
-                                        <mip-img
-                                            layout="fill"
-                                            alt="{$v.title}"
-                                            src="{$v.firstImg}">
-                                    </mip-img>
-                                    {/if}
+                                    <img alt="{$v.title}" src="{$v.firstImg}" />
                                 </a>
                             </div>
                             {/if}

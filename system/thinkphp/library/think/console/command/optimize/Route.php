@@ -35,8 +35,8 @@ class Route extends Command
     {
         $files = \think\Config::get('route_config_file');
         foreach ($files as $file) {
-            if (is_file(CONF_PATH . $file . CONF_EXT)) {
-                $config = include CONF_PATH . $file . CONF_EXT;
+            if (is_file(ALL_PATH . $file . CONF_EXT)) {
+                $config = include ALL_PATH . $file . CONF_EXT;
                 if (is_array($config)) {
                     \think\Route::import($config);
                 }

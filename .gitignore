@@ -1,6 +1,6 @@
 /cache/*
 /uploads/*
-/system/config/db/install.lock
+/system/config/install/install.lock
 /system/config/database.php
 .idea
 .project

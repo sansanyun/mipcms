@@ -12,17 +12,22 @@
         .news-list-img {
             float: left;
             width: 121px;
-            height: 91px;
+            height: 75px;
             position: relative;
             display: inline-block;
             overflow: hidden;
             box-sizing: border-box;
-            .img {
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%,-50%);
-                transition: all 0.2s linear;
+            .mip-layout-container{
+               position: initial;
+                img {
+                    min-width: auto;
+                    max-width: inherit;
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;    
+                    transform: translate(-50%,-50%);
+                    transition: all 0.2s linear;
+                 }
             }
         }
         .news-list-content.hasImg{
