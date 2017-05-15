@@ -1,7 +1,7 @@
 cache/*
 !cache/
 uploads/*
-!uploads/*
+!uploads/
 system/config/install/install.lock
 !system/config/install/*
 system/config/database.php
