@@ -24,7 +24,7 @@ class Article extends AuthBase
 	      	$content = Htmlp::htmlp(input('post.content'));
             $cid = input('post.cid');
             $tags = input('post.tags');
-            $publish_time = input('post.publish_time');
+            $publish_time = input('post.publish_time') ? input('post.publish_time') : time();;
             $itemType = 'article';
             $is_recommend = input('post.is_recommend');
             if (!$is_recommend) {
@@ -337,7 +337,7 @@ class Article extends AuthBase
 			 $orderBy = 'id';
 			}
 			if (!$order) {
-				$order = 'desc';
+				$order = 'asc';
 			}
 		    $articlesCommentsList = ArticlesComments::where('item_id',$itemId)->limit($limit)->page($page)->order($orderBy, $order)->select();
 		    

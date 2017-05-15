@@ -42,7 +42,7 @@
                         <el-table-column type="selection" width="30"></el-table-column>
                         <el-table-column label="ID" prop="id" width="70" show-overflow-tooltip></el-table-column>
                         <el-table-column label="分类" show-overflow-tooltip width="90" inline-template>
-                            <template>{{row.articlesCategory.name}}</template>
+                            <template>{{row.articlesCategory ? row.articlesCategory.name : '-'}}</template>
                         </el-table-column>
                         <el-table-column label="标题" show-overflow-tooltip inline-template>
                             <template><a :href="'{$domain}/{$articleModelUrl}/'+row.id+'.html'" target="_blank">{{row.title}}</a></template>
