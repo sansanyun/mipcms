@@ -1,7 +1,3 @@
-/cache
-/uploads
-system/config/install/
-system/config/database.php
 .idea
 .project
 .DS_Store
