@@ -1,5 +1,6 @@
-system/config/install/install.lock
-!system/config/install/*
+/cache
+/uploads
+system/config/install/
 system/config/database.php
 .idea
 .project
