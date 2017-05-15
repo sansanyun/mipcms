@@ -1,7 +1,7 @@
-/cache/*
-/uploads/*
-/system/config/install/install.lock
-/system/config/database.php
+cache/
+uploads/
+system/config/install/install.lock
+system/config/database.php
 .idea
 .project
 .DS_Store
