@@ -1,0 +1,105 @@
+{extend name="m/main/main"/}
+
+{block name="title"}{$itemInfo['title']}_{__block__}{/block}
+{block name='keywords'}{if condition='$tags'}{foreach name='$tags' key='k' id='v'}{if condition='$k!=0'},{/if}{$v['tags']['name']}{/foreach}{/if}{/block}
+{block name='description'}{:mb_substr($itemInfo['message_description'],0,88,'utf-8')}{/block}
+
+{block name="style"}{__block__}
+    {include file="/m/main/css/mip/mip-media-list.css"}
+        .article-main {
+            background-color:#fff;
+            word-break: break-all;
+            word-wrap: break-word;
+            line-height: 1.8;
+        }
+        h1 {
+            margin:0;
+            padding: 15px;
+            font-size:22px;
+            line-height:30px;
+            font-weight: 500;
+        }
+        .info {
+            color:#999;
+            margin:0;
+            padding-left: 15px;
+            
+        }
+        .content {
+            padding: 15px;
+        }
+        .content ol,.content ul {
+            padding-left:15px;
+        }
+        .content img{
+            width:auto;
+            max-width: 100%;
+        }
+        .item-up-down-page {
+            padding:10px;
+            background-color:#fff;
+            margin-top:15px;
+        }
+        .item-up-down-page p{
+          color:#999;
+          font-size:14px;
+          margin:5px 0;
+        }
+        .item-up-down-page a{
+            line-height:30px;
+            color:#333;
+        }
+{/block}
+{block name="main"}
+<div class="mip-container">
+    <article class="article-main">
+        <h1 class="text-left">{$itemInfo['title']}</h1>
+        <p class="info">日期：{$itemInfo['publish_time']|date='Y-m-d',###}</p>
+        <div class="content">  
+            
+            {$itemInfo['content']}
+        </div>
+    </article>
+    
+    
+    {if condition="$item_up_page || $item_down_page"}
+      <div class="mip-box-footer item-up-down-page ">
+          <ul class="clearfix list-unstyled">
+              {if condition="$item_up_page"}<li class="item-up-page"><p>上一篇</p><mip-link href="{$domain}/{$articleModelUrl}/{$item_up_page[0]['id']}.html" title="{$item_up_page[0]['title']}">{$item_up_page[0]['title']} </mip-link> </li>{/if}
+              {if condition="$item_down_page"}<li class="item-down-page"> <p>下一篇</p> <mip-link href="{$domain}/{$articleModelUrl}/{$item_down_page[0]['id']}.html" title="{$item_down_page[0]['title']}">{$item_down_page[0]['title']}</mip-link></li>{/if}
+          </ul>
+      </div>
+      {/if}
+    
+    
+    <h4 class="mip-title">推荐{$articleModelName}</h4>
+ 
+    <ul class="mui-table-view">
+     {foreach name='$rand_list' id='v'}
+            <li class="news-list xbx"> 
+                {if condition="$v['firstImg']"}
+                <div class="news-list-img">
+                    <mip-link href="{$domain}/{$articleModelUrl}/{$v.id}.html" title="{$v.title}">
+                        <mip-img
+                            layout="full"
+                            class="img"
+                            alt="{$v.title}"
+                            src="{$v.firstImg}">
+                        </mip-img>
+                    </mip-link>
+                </div>
+            {/if}
+                <div class="news-list-content  {if condition='$v["firstImg"]'}hasImg{/if}">
+                    <h4 class="title"><mip-link href="{$domain}/{$articleModelUrl}/{$v.id}.html" title="{$v.title}">{$v.title}</mip-link></h4>
+                    <p>{$v['users']['username']} {$v['publish_time']|date='Y-m-d',###} {$v['views']}
+                    </p>
+                </div>
+            </li>
+        {/foreach}
+            </ul>
+
+</div>
+ 
+{/block}
+{block name="script"}{__block__}
+{/block}

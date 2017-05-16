@@ -1,0 +1,178 @@
+{extend name="pc/view/admin@main"/}
+{block name="title"}控制台 - {__block__}{/block}
+
+{block name="style"}
+{__block__}
+<style>
+.user-statistical .mip-box-body {
+    padding-top: 0;
+    padding-bottom: 0
+}
+
+.user-statistical .mip-iconfont {
+    font-size: 35px;
+    position: absolute;
+    right: 0;
+    bottom: 0px;
+    color: #0AE;
+    opacity: 0.2;
+}
+
+.user-statistical h3 {
+    margin-top: 10px;
+    color: #0AE;
+    margin-bottom: 10px;
+}
+
+.user-statistical h3 .unit {
+    display: none;
+    color: #999;
+    font-size: 12px;
+}
+
+.user-statistical p {
+    color: #bababa;
+    font-size: 14px;
+}
+
+</style>
+{/block}
+{block name="main"}
+
+        <div class="row user-statistical">
+            <section class="col-md-3">
+              <div class="mip-box">
+                <div class="mip-box-body">
+                  <div class="relative">
+                    <i class="mip-iconfont mip-tianjiayonghu"></i>
+                    <h3>{$todayUserCount} <span class="unit">人</span></h3>
+                    <p>今日新增</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section class="col-md-3">
+              <div class="mip-box">
+                <div class="mip-box-body">
+                  <div class="relative">
+                    <i class="mip-iconfont mip-yonghu"></i>
+                    <h3>{$yesterdayUserCount}  <span class="unit">人</span></h3>
+                    <p>昨日注册</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section class="col-md-3">
+              <div class="mip-box">
+                <div class="mip-box-body">
+                  <div class="relative">
+                    <i class="mip-iconfont mip-zaixianyonghu"></i>
+                    <h3>- <span class="unit">人</span></h3>
+                    <p>在线人数</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section class="col-md-3">
+              <div class="mip-box">
+                <div class="mip-box-body">
+                  <div class="relative">
+                    <i class="mip-iconfont mip-duoyonghu"></i>
+                    <h3>{$allUserCount}  <span class="unit">人</span></h3>
+                    <p>用户总数</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+            
+            
+        <div class="row">
+        <section class="col-lg-12">
+           <div class="mip-box">
+            <div class="mip-box-heading"><h3 class="left">最新注册</h3> <a href="/admin/user" class="right">更多</a></div>
+                <div class="mip-box-body">
+                    <template>
+                        <el-table
+                            :data="usersList"
+                            style="width: 100%">
+                        <el-table-column
+                            label="用户ID"
+                            prop="uid">
+                        </el-table-column>
+                        <el-table-column
+                            label="用户名"
+                            prop="username">
+                        </el-table-column>
+                        <el-table-column
+                            inline-template
+                            label="性别">
+                            <template>{{row.sex == 1 ? '男' : '女'}}</template>
+                        </el-table-column>
+                        <el-table-column
+                            label="邮箱"
+                            inline-template
+                            prop="email">
+                            <template>{{row.email || '-' }}</template>
+                        </el-table-column>
+                        <el-table-column
+                            inline-template
+                            label="手机">
+                            <template>{{row.mobile || '-' }}</template>
+                        </el-table-column>
+                        <el-table-column
+                            inline-template
+                            label="Q Q">
+                            <template>{{row.qq || '-' }}</template>
+                        </el-table-column>
+                        <el-table-column
+                            label="最后登录"
+                            inline-template
+                            >
+                            <template>{{row.last_login_time | formatTime}}</template>
+                        </el-table-column>
+                        </el-table>
+                    </template>
+
+                </div>
+            </div>
+        </section>
+      </div>
+  
+{/block}
+{block name="javascript"}
+{__block__}
+<script>
+    new Vue({
+        el: '#app',
+        data:{
+            usersList: [],
+        },
+        mounted: function() {
+            this.getPageList();
+            _this = this;
+        },
+        methods:{
+            getPageList:function() {
+                this.loading = true;
+                this.$mip.ajax('/api/user/usersSelect',{
+                    page:this.currentPage,
+                    status:'all',
+                    limit:this.limit,
+                }).then(function (res) {
+                    if (res.code == 1) {
+                        _this.usersList = res.data.usersList;
+                        _this.total = res.data.total;
+                    } else {
+                        Vue.prototype.$message({
+                            type: 'error',
+                            message: res.msg
+                        });
+                    }
+                    _this.loading = false;
+                });
+            },
+        },
+    })
+</script>
+{/block}

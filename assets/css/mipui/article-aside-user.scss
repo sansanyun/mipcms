@@ -1,0 +1,81 @@
+.user-box{
+    .user-box-main{
+      padding: 20px 20px 10px 20px;
+      text-align: center;
+      .user-avata{
+          width: 100px;
+          height: 100px;
+          position: relative;
+          margin: 0 auto;
+        img{
+          width: 100px;
+          border-radius: 100px;
+        }
+      }
+      h3{
+        font-size: 18px;
+      }
+      p{
+        font-size: 12px;
+      }
+    }
+    .user-box-info{
+      border-top: 1px solid #EFEFEF;
+      padding-left: 20px;
+      padding-right: 20px;
+      padding-bottom: 15px;
+      padding-top: 15px;
+      .text{
+        text-align: center;
+        font-size: 12px;
+        h5{
+          margin: 0;
+          margin-bottom: 5px;
+          color: #00AAEE;
+          font-size: 18px;
+        }
+      }
+    }
+    .user-box-list{
+      padding-bottom: 20px;
+      .ul {
+        margin-bottom: 0;
+        padding-left: 0;
+        list-style: none;
+      }
+      .ul>li, .ul>li>a {
+        display: block;
+        position: relative;
+      }
+      .ul>li>a {
+        padding: 10px 15px;
+      }
+      ul li {
+        border-bottom: 1px solid #f0f4f7;
+        &.active a {
+          color: #5b9bd1;
+          background-color: #f6f9fb;
+          border-left: 2px solid #5b9bd1;
+          margin-left: -2px; 
+        }
+        a {
+          color: #93a3b5;
+          font-size: 16px;
+          font-weight: 400;
+          &:hover {
+          background-color: #fafcfd;
+          color: #5b9bd1;
+          }
+            i{
+            margin-right: 8px;
+            font-size: 16px;
+          }
+        }
+
+          &:last-child {
+          border-bottom: none;
+        }
+      }
+    }
+    
+  }

@@ -1,0 +1,254 @@
+{extend name="pc/main/main"/}
+
+{block name="style"}
+{__block__}
+{/block}
+
+{block name="title"}{$itemInfo['title']}_{__block__}{/block}
+{block name='keywords'}{if condition='$tags'}{foreach name='$tags' key='k' id='v'}{if condition='$k!=0'},{/if}{$v['tags']['name']}{/foreach}{/if}{/block}
+{block name='description'}{:mb_substr($itemInfo['message_description'],0,88,'utf-8')}{/block}
+
+{block name="main"}
+    <div class="container m-b">
+        <ul class="breadcrumb">
+          <li><a href="{$domain}" title="{$mipInfo['siteName']}">{$mipInfo['siteName']}</a></li>
+            {if condition="$itemInfo->categoryInfo"}
+            <li><a href="{$domain}/{$articleModelUrl}/{$itemInfo->categoryInfo->url_name}/" title="{$itemInfo->categoryInfo->name}">{$itemInfo->categoryInfo->name}</a></li>
+            {/if}
+          <li class="active" title="{$itemInfo['title']}">{$itemInfo['title']}</li>
+        </ul>
+    </div>
+    <div class="container">
+        <div class="row">
+            <section class="col-lg-8">
+                <article class="mip-box article-detail">
+                    <header class="detail-heading">
+                        <h1 class="detail-title">{$itemInfo['title']}</h1>
+                        <div class="info clearfix">
+                            <ul>
+                                <li><i class="time"></i><time>{$itemInfo['publish_time']|date='Y-m-d',###}</time></li>
+                            </ul>
+                            {if condition='$tags'}
+                            <ul class="tags hidden-xs pull-right">
+                                {foreach name='$tags' id='v'}
+                                <li><span title="{$v['tags']['name']}">{$v['tags']['name']}</span></li>
+                                {/foreach}
+                            </ul>
+                            {/if}
+                        </div>
+                    </header>
+                    <div class="mip-box-body space">
+                        <div class="article-detail-content">
+                            {$itemInfo['content']}
+                        </div>
+                    </div>
+                     {if condition="$item_up_page || $item_down_page"}
+                      <div class="mip-box-footer item-up-down-page ">
+                          <ul class="clearfix list-unstyled">
+                              {if condition="$item_up_page"}<li class="item-up-page"><p>上一篇</p><a href="{$domain}/{$articleModelUrl}/{$item_up_page[0]['id']}.html" title="{$item_up_page[0]['title']}">{$item_up_page[0]['title']} </a> </li>{/if}
+                              {if condition="$item_down_page"}<li class="item-down-page"> <p>下一篇</p> <a href="{$domain}/{$articleModelUrl}/{$item_down_page[0]['id']}.html" title="{$item_down_page[0]['title']}">{$item_down_page[0]['title']}</a></li>{/if}
+                          </ul>
+                      </div>
+                      {/if}
+                </article>
+                <section class="mip-box">
+                    <div class="mip-box-heading">
+                        <h3>评论 
+                            {if condition='!$userId'}
+                            <span class="badge">{$itemInfo['comments']}</span>
+                            {else /}
+                            <span class="badge" v-html="total"></span>
+                            {/if}
+                        </h3>
+                    </div>
+                    {if condition='!$userId'}
+                        <div class="mip-box-body mip-article-comments">
+                            {if condition="$comments"}
+                            <ul class="comments">
+                                {foreach $comments as $K=> $v }
+                                <li class="comment">
+                                    <div class="comment-img">
+                                        <img alt="用户名" src="{$domain}/assets/images/avatar.jpg"/>
+                                    </div>
+                                    <div class="comment-body">
+                                        <div class="comment-info">
+                                            <span class="comment-author">{$v['users']['username']}</span>
+                                            <span class="comment-date">{$v['create_time'] | formatTime}</span>
+                                        </div>
+                                        <div class="comment-text">{$v['content']} </div>
+                                        <div class="comment-details">
+                                            <span class="comment-status comment-status-pending"></span>
+                                        </div>
+                                    </div>
+                                </li>
+                                {/foreach}
+                            </ul>
+                            {else /}
+                            <ul class="comments list-unstyled">
+                                <li class="comment comment-none">
+                                    <div class="text-center">额~,木有评论！</div>
+                                </li>
+                            </ul>
+                            {/if}
+                        </div>
+                        <div class="mip-box-footer text-center">
+                            <p class="m-b-none">您尚未登录，暂无法评论！请先 <a href="{$domain}/login.html">登录</a>/<a href="{$domain}/register.html">注册</a></p>
+                        </div>
+                    {else /}
+                        <!--登录后区域-->
+                        <div class="mip-box-body mip-article-comments">
+                            <ul class="comments">
+                                <li class="comment" v-for="item in commentsList">
+                                    <div class="comment-img">
+                                        <img src="{$domain}/assets/images/avatar.jpg">
+                                    </div>
+                                    <div class="comment-body">
+                                        <div class="comment-info">
+                                            <span class="comment-author" v-text='item.users.username'></span>
+                                            <span class="comment-date"><template>{{item.create_time | formatTime}}</template></span>
+                                        </div>
+                                        <div class="comment-text" v-html='item.content'></div>
+                                        <div class="comment-details">
+                                            <span class="comment-status comment-status-pending"></span>
+                                            <ul class="comment-actions">
+                                                <li v-if='item.commentsEditRole'>
+                                                   <el-button type="primary" size="mini" @click='commentEditDialog(item)'>编辑</el-button>
+                                                </li>
+                                                <li v-if='item.commentsDelRole'>
+                                                   <el-button type="primary" size="mini" @click='commentDel(item)'>删除</el-button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                            <el-dialog title="编辑回复" size="tiny" v-model="dialogComment">
+                                <el-form>
+                                    <el-form-item>
+                                        <el-input type="textarea" rows="3" placeholder="在此处写评论" v-model="commentEditData"></el-input>
+                                    </el-form-item>
+                                    <el-form-item class="pull-right">
+                                        <el-button type="primary" @click="commentEdit">立即保存</el-button>
+                                    </el-form-item>
+                                </el-form>
+                            </el-dialog>
+                            <ul class="comments list-unstyled" v-if="commentsList.length == 0">
+                                <li class="comment comment-none">
+                                    <div class="text-center">额~,木有评论！</div>
+                                </li>
+                            </ul>
+                            <div class="comments-pagination pull-right m-t m-b">
+                                <el-pagination
+                                    small
+                                    :current-page="currentPage"
+                                    :page-size="limit"
+                                    layout="prev, pager, next"
+                                    @current-change="commentsCurrentChange"
+                                    :total="total">
+                                </el-pagination>
+                            </div>
+                        </div>
+                        <section class="mip-article-comments-form">
+                            <el-form label-width="70px" class="demo-ruleForm">
+                                <label for="articleComments" class="el-form-item__label">
+                                    <img src="/assets/images/avatar.jpg" class="avatar-img" />    
+                                </label>
+                                <el-form-item>
+                                    <el-input type="textarea" name="articleComments" rows="3" placeholder="在此处写评论" v-model="articleComments"></el-input>
+                                </el-form-item>
+                                <el-form-item>
+                                    <el-button type="primary" class="pull-right" @click="commentsAdd">立即评论</el-button>
+                                </el-form-item>
+                            </el-form>
+                        </section>
+                    {/if}
+                    <!--编辑器 end-->
+                </section>
+              {if condition="$rand_list"}
+                <section class="mip-box article-love">
+                    <div class="mip-box-heading"><h3>猜你喜欢</h3></div>
+                    <div class="mip-box-body ">
+                        <ul class="row list-unstyled">
+                            {foreach  name='$rand_list' id="v"}
+                            <li class="col-md-3">
+                                <a href="{$domain}/{$articleModelUrl}/{$v['id']}.html" title="{$v.title}" class="article-love-img">
+                                    {if condition="$v['firstImg']"}
+                                         <img alt="{$v['title']}" src="{$v['firstImg']}" />
+                                    {else/}
+                                    <span>暂无图片</span>
+                                    {/if}
+                                </a>
+                                <div class="li-box-list"><a href="{$domain}/{$articleModelUrl}/{$v.id}.html" title="{$v.title}">{$v.title}</a></div>
+                            </li>
+                            {/foreach}
+                        </ul>
+                    </div>
+                </section>
+                {/if}
+              
+            </section>
+            <aside class="col-lg-4">
+              <section class="mip-box user-box">
+                <div class="user-box-main">
+                    <div class="user-avata">
+                         <img alt="{$itemInfo['users']['username']}" src="{$domain}/assets/images/avatar.jpg"/>
+                    </div>
+                    <h3>{$itemInfo['users']['username']}</h3>
+                    <p>{$itemInfo['users']['email']}</p>
+                </div>
+                <div class="user-box-info">
+                    <div class="row">
+                        <div class="col-md-4 col-sm-4 col-xs-6 text">
+                            <h5>{$itemInfo['users']['article_num']}</h5>发布数
+                        </div>
+                        <div class="col-md-4 col-sm-4 col-xs-6 text">
+                            <h5>{$itemInfo['users']['article_comments_num']}</h5>回复数
+                        </div>
+                        <div class="col-md-4 col-sm-4 col-xs-6 text">
+                            <h5>{$itemInfo['users']['article_views_num']}</h5>阅读量
+                        </div>
+                    </div>
+                </div>
+            </section>
+              <section class="mip-box">
+                    <div class="mip-box-heading"><h3>TA还发布了</h3></div>
+                    <div class="mip-box-body ">
+                        <ul class="list-unstyled">
+                            {foreach  name='$news_list_by_uid' id="v"}
+                            <li class="li-box-list">
+                                <a href="{$domain}/{$articleModelUrl}/{$v.id}.html" title="{$v.title}">{$v.title}</a>
+                                <p>浏览 <span>{$v.views}</span>  时间 : <span>{$v['publish_time']|date='Y-m-d',###}</span></p>
+                            </li>
+                            {/foreach}
+                        </ul>
+                    </div>
+                </section>
+
+                {if condition="$categoryList"}
+                <section class="mip-box category-lists">
+                    <div class="mip-box-heading"><h3>分类目录</h3></div>
+                    <div class="mip-box-body">
+                        <ul class="list-unstyled">
+                            {foreach  name='$categoryList' id="v"}
+                            <li class="category-list {if condition="$itemInfo['categoryInfo']['name']==$v['name']"}active{/if}"><a href="{$domain}/{$articleModelUrl}/{$v['url_name']}/" title="{$v['name']}">{$v['name']}</a></li>
+                            {/foreach}
+                        </ul>
+                    </div>
+                </section>
+                {/if}
+            </aside>
+
+
+        </div>
+    </div>
+ 
+{/block}
+
+{block name="script"}
+{__block__}
+{if condition='$userId'}
+<script>
+    {include file="pc/article/js/article.js"}
+</script>
+{/if}
+{/block}

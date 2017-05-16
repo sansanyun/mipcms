@@ -1,0 +1,27 @@
+
+.mui-toast-container {
+    line-height: 17px;
+    position: fixed;
+    z-index: 9999;
+    bottom: 50px;
+    left: 50%;
+    -webkit-transition: opacity .3s;
+    transition: opacity .3s;
+    -webkit-transform: translate(-50%, 0);
+    transform: translate(-50%, 0);
+    opacity: 0
+}
+
+.mui-toast-container.mui-active {
+    opacity: .9
+}
+
+.mui-toast-message {
+    font-size: 14px;
+    padding: 10px 25px;
+    text-align: center;
+    color: #fff;
+    border-radius: 6px;
+    background-color: #323232
+}
+
