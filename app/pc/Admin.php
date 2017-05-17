@@ -40,4 +40,8 @@ class Admin extends AdminBase
     public function update() {
         return $this->fetch('pc@admin/update');
     }
+    
+    public function friendlink() {
+        return $this->fetch('pc@admin/friendlink');
+    }
 }

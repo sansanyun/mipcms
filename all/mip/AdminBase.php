@@ -25,6 +25,9 @@ class AdminBase extends Mip {
                 }
             }
         }
+        if ($this->user_info['group_id'] == 1) {
+            $this->passStatus = true;
+        }
         if (!$this->passStatus) {
             $this->error('无权限操作','/',301);
         }

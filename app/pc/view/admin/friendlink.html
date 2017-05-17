@@ -1,0 +1,143 @@
+{extend name="pc/view/admin@main"/}
+
+{block name="title"}友情链接 - {__block__}{/block}
+
+{block name="style"}
+{__block__}
+<style>
+   
+</style>
+{/block}
+{block name="main"}
+<div class="row">
+    <div class="col-md-6">
+        <section class="mip-box mip-default">
+            <div class="mip-box-heading">
+                <h3 class="left">友情链接</h3> <a class="right" @click='dialogLinkAdd'>+添加</a>
+            </div>
+            <div class="mip-box-body">
+                <div class="el-collapse">
+                    <span>{{itemList}}</span>
+                    <draggable :list="itemList">
+                        <div class="el-collapse-item" v-for='(item,index) in itemList'>
+                            <div class="el-collapse-item__header">{{item.name}} {{item.url}}</div>
+                        </div>  
+                    </draggable>
+                    
+                </div>
+          </div>
+        </section>
+    </div>
+    
+    <div class="col-md-6">
+        <section class="mip-box mip-default">
+            <div class="mip-box-heading">
+                <h3></h3>
+            </div>
+            <div class="mip-box-body">
+                
+            </div>
+        </section>
+    </div>
+</div>
+{/block}
+{block name="dialog"}
+<el-dialog :title="dialogLinkTitle" v-model="dialogLink" size="tiny">
+  <el-form :model="linkInfo" :rules="linkInfoRules" ref="linkInfo" label-width="90px">
+    <el-form-item label="名称" prop="name">
+      <el-input v-model="linkInfo.name" placeholder="例:MIPCMS"></el-input>
+    </el-form-item>
+    <el-form-item label="网址" prop="url">
+      <el-input v-model="linkInfo.url" placeholder="例:http://www.mipcms.com"></el-input>
+    </el-form-item>
+    <el-form-item label="描述">
+      <el-input v-model="linkInfo.description" placeholder="例:MIPCMS内容管理系统"></el-input>
+    </el-form-item>
+  </el-form>
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="dialogLink = false">取 消</el-button>
+    <el-button type="primary" @click="linkAdd('linkInfo')">确 定</el-button>
+  </div>
+</el-dialog>
+{/block}
+{block name="javascript"}
+{__block__}
+<script src="https://cdn.jsdelivr.net/sortable/1.4.2/Sortable.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="https://cdn.rawgit.com/David-Desmaisons/Vue.Draggable/master/dist/vuedraggable.min.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data:{
+            
+            itemList: [],
+            linkInfo:{
+                name: '',
+                url: '',
+                type: 'all',
+                description: '',
+            },
+            dialogLinkTitle: '添加友情链接',
+            dialogLink: false,
+            linkInfoRules: {
+                name: [
+                    { required: true, message: '请输入名称', trigger: 'blur' }
+                ],
+                url: [
+                    { required: true, message: '请输入网址', trigger: 'blur' }
+                ],
+            },
+        },
+        mounted: function() {
+            _this = this;
+            this.getItemList();
+        },
+        methods:{
+           dialogLinkAdd: function() {
+                this.dialogLinkTitle = '添加友情链接';
+                this.dialogLink = true;
+                this.linkInfo.name = '';
+                this.linkInfo.url = '';
+                this.linkInfo.description = '';
+                this.linkInfo.type = 'all';
+           },
+           linkAdd: function(val) {
+               this.$refs[val].validate((valid) => {
+                    if (valid) {
+                        this.$mip.ajax('/api/Link/friendlinkAdd',{
+                            name: this.linkInfo.name,
+                            url: this.linkInfo.url,
+                            description: this.linkInfo.description,
+                            type: this.linkInfo.type,
+                        }).then(function (res) {
+                            if (res.code == 1) {
+                                _this.itemList = res.data.friendlinkList;
+                                _this.getItemList();
+                                _this.dialogLink = false;
+                            } else {
+                                Vue.prototype.$message({
+                                    type: 'error',
+                                    message: res.msg
+                                });
+                            }
+                        });
+                    }
+                });
+           },
+           getItemList: function() {
+                this.$mip.ajax('/api/Link/friendlinkSelect',{
+                }).then(function (res) {
+                    if (res.code == 1) {
+                        _this.itemList = res.data.friendlinkList;
+                    } else {
+                        Vue.prototype.$message({
+                            type: 'error',
+                            message: res.msg
+                        });
+                    }
+                });
+           },
+        },
+
+    })
+</script>
+{/block}
