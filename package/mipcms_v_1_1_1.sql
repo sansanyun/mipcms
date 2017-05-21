@@ -204,7 +204,7 @@ CREATE TABLE IF NOT EXISTS `mip_friendlink` (
   `url` varchar(255) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
   `logo` varchar(255) DEFAULT NULL,
-  `sort` int(5) DEFAULT '0',
+  `sort` int(5) DEFAULT '999',
   `type` varchar(100) DEFAULT 'all',
   `add_time` int(11) unsigned zerofill NOT NULL,
   `status` int(1) DEFAULT '0',
@@ -310,7 +310,10 @@ INSERT INTO `mip_roles_access` (`group_id`, `node_id`, `level`, `pid`) VALUES
 (2, 26, 3, 21),
 (1, 53, 2, 2),
 (1, 54, 3, 53),
-(1, 55, 3, 53);
+(1, 55, 3, 53),
+(1, 56, 3, 53),
+(1, 57, 3, 53),
+(1, 58, 3, 53);
 
 -- --------------------------------------------------------
 
@@ -398,7 +401,10 @@ INSERT INTO `mip_roles_node` (`id`, `pid`, `group_id`, `name`, `title`, `remark`
 (52, 21, 0, 'articleRecomment', '文章推荐', '', 3, 1, 50, 1, 0),
 (53, 2, 0, 'Link', '友情链接', '', 2, 1, 50, 1, 0),
 (54, 53, 0, 'friendlinkSelect', '友情链接查询', '', 3, 1, 50, 1, 0),
-(55, 53, 0, 'friendlinkAdd', '友情链接添加', '', 3, 1, 50, 1, 0);
+(55, 53, 0, 'friendlinkAdd', '友情链接添加', '', 3, 1, 50, 1, 0),
+(56, 53, 0, 'friendlinkAdd', '友情链接排序', '', 3, 1, 50, 1, 0),
+(57, 53, 0, 'friendlinkAdd', '友情链接修改', '', 3, 1, 50, 1, 0),
+(58, 53, 0, 'friendlinkAdd', '友情链接删除', '', 3, 1, 50, 1, 0);
 
 -- --------------------------------------------------------
 
@@ -444,7 +450,9 @@ INSERT INTO `mip_settings` (`id`, `key`, `val`) VALUES
 (24, 'baiduSpider', '1'),
 (25, 'baiduMip', '1'),
 (26, 'localCurrentVersionNum', '110'),
-(27, 'localCurrentVersion', 'v1.1.0');
+(27, 'localCurrentVersion', 'v1.1.0'),
+(28, 'titleSeparator', '_'),
+(29, 'pcStatistical', '_');
 
 -- --------------------------------------------------------
 
@@ -505,9 +513,9 @@ CREATE TABLE IF NOT EXISTS `mip_users` (
   `last_login_time` int(11) DEFAULT NULL COMMENT '最后登录时间',
   `friend_num` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '好友个数',
   `signature` varchar(255) DEFAULT NULL,
-  `article_num` tinyint(11) unsigned NOT NULL DEFAULT '0',
-  `article_comments_num` tinyint(11) unsigned NOT NULL DEFAULT '0',
-  `article_views_num` tinyint(11) unsigned NOT NULL DEFAULT '0',
+  `article_num` int(11) unsigned NOT NULL DEFAULT '0',
+  `article_comments_num` int(11) unsigned NOT NULL DEFAULT '0',
+  `article_views_num` int(11) unsigned NOT NULL DEFAULT '0',
   `status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '用户状态 1为停止使用',
   `collect` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `terminal` varchar(5) NOT NULL DEFAULT 'pc' COMMENT '用户终端',

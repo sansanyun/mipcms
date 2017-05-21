@@ -314,7 +314,7 @@
                 
             },
             groupAuthorization: function(index,param) {
-               window.location.href = '/admin/role_authorization?id='+param.group_id;
+               window.location.href = '/{$Think.config.admin}/role_authorization?id='+param.group_id;
             },
             groupAddDialog() {
                 this.groupStatus = false;

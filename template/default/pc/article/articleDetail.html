@@ -1,10 +1,13 @@
 {extend name="pc/main/main"/}
 
+{block name="link"}{__block__}
+    <link rel="stylesheet" type="text/css" href="/assets/plugin/simditor/styles/simditor.css" />
+{/block}
 {block name="style"}
 {__block__}
 {/block}
 
-{block name="title"}{$itemInfo['title']}_{__block__}{/block}
+{block name="title"}{$itemInfo['title']}{$mipInfo['titleSeparator']}{__block__}{/block}
 {block name='keywords'}{if condition='$tags'}{foreach name='$tags' key='k' id='v'}{if condition='$k!=0'},{/if}{$v['tags']['name']}{/foreach}{/if}{/block}
 {block name='description'}{:mb_substr($itemInfo['message_description'],0,88,'utf-8')}{/block}
 
@@ -38,7 +41,7 @@
                         </div>
                     </header>
                     <div class="mip-box-body space">
-                        <div class="article-detail-content">
+                        <div class="article-detail-content editor-style">
                             {$itemInfo['content']}
                         </div>
                     </div>

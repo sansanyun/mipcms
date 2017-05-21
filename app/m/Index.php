@@ -64,7 +64,7 @@ class Index extends Mip
                 foreach ($list as $k => $v){
                     $list[$k]->users;
                     $v['content'] = htmlspecialchars_decode($v['content']);
-                    if (preg_match_all('/<[img|IMG].*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.png]))[\'|\"].*?[\/]?>/', bbc2html($v['content']), $imgs)) {
+                    if (preg_match_all('/<[img|IMG].*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>/', bbc2html($v['content']), $imgs)) {
                         if (@preg_match($patern,$imgs[1][0])) {
                             $list[$k]['firstImg'] = $imgs[1][0];
                         } else {
@@ -115,7 +115,7 @@ class Index extends Mip
                 foreach ($val['articles']  as $k => $v) {
                     $v['content'] = htmlspecialchars_decode($v['content']);
                     $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
-                    if (preg_match_all('/<[img|IMG].*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.png]))[\'|\"].*?[\/]?>/', bbc2html($v['content']), $imgs)) {
+                    if (preg_match_all('/<[img|IMG].*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>/', bbc2html($v['content']), $imgs)) {
                         if (@preg_match($patern,$imgs[1][0])) {
                             $v['firstImg'] = $imgs[1][0];
                         } else {
@@ -137,7 +137,7 @@ class Index extends Mip
             foreach ($recommendList as $k => $v){
                 $v['content'] = htmlspecialchars_decode($v['content']);
                 $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
-                if (preg_match_all('/<[img|IMG].*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.png]))[\'|\"].*?[\/]?>/', bbc2html($v['content']), $imgs)) {
+                if (preg_match_all('/<[img|IMG].*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>/', bbc2html($v['content']), $imgs)) {
                     if (@preg_match($patern,$imgs[1][0])) {
                         $v['firstImg'] = $imgs[1][0];
                     } else {
@@ -149,8 +149,74 @@ class Index extends Mip
             };
             $this->assign('recommendList',$recommendList);
             
+            
+            $newsArticleList = Articles::order('publish_time desc')->where('publish_time','<',time())->limit(10)->select();
+            foreach ($newsArticleList as $k => $v){
+                $v['content'] = htmlspecialchars_decode($v['content']);
+                $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+                if (preg_match_all('/<[img|IMG].*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>/', bbc2html($v['content']), $imgs)) {
+                    $v['imgCount'] = count($imgs[1]);
+                    $v['imgList'] = $imgs[1];
+                    if (@preg_match($patern,$imgs[1][0])) {
+                        $v['firstImg'] = $imgs[1][0];
+                    } else {
+                        $v['firstImg'] = $this->domain.$imgs[1][0];
+                    }
+                } else {
+                    $v['firstImg'] = null;
+                    $v['imgCount'] = 0;
+                    $v['imgList'] = null;
+                }
+            };
+            
+            $this->assign('newsArticleList',$newsArticleList);
             return $this->mipView('m/index/index');
         }
+    }
+    
+     function sitemap() {
+       
+        
+        if ($this->mipInfo['systemType'] == 'ASK') {
+            $list = Asks::where('publish_time','<',time())->field('id,uuid,publish_time')->order('publish_time desc')->limit(5000)->select();
+        } else {
+            $list = Articles::where('publish_time','<',time())->field('id,uuid,publish_time')->order('publish_time desc')->limit(5000)->select();
+        }
+        foreach($list as $k => $v) {
+                $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+        }
+        $this->assign('list',$list);
+        
+       return   $this->display('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"> 
+<url>
+<loc>{$domain}</loc>
+<priority>1.00</priority>
+<lastmod><?php echo date("Y-m-d")?></lastmod>
+<changefreq>always</changefreq>
+</url>
+<?php foreach($list as $key => $val){ ?>
+<url>
+<?php if ($mipInfo["systemType"] == "ASK") {?>
+<loc>{$domain}/{$askModelUrl}/{$val["id"]}.html</loc>
+<?php } else { ?>
+<loc>{$domain}/{$articleModelUrl}/{$val["id"]}.html</loc>
+<?php }?>
+<priority>0.5</priority>
+<lastmod><?php echo date("Y-m-d", $val["publish_time"]); ?></lastmod>
+<changefreq>always</changefreq>
+</url>
+<?php } ?>
+</urlset>');
+        
+        //???
+//       $sitemap = '<?xml version="1.0" encoding="UTF-8"><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+//          foreach($list as $k=>$v){
+//              $sitemap .= "<url> "."<loc>".$this->domain."/".$this->articleModelUrl."/".$v['id'].".html</loc> "."<priority>0.6</priority> <lastmod>".date('Y-m-d',$v['publish_time'])."</lastmod> <changefreq>always</changefreq> </url> ";
+//          }
+//          $sitemap .= '</urlset>';
+//          $file = fopen("sitemap.xml","w");
+//          fwrite($file,$sitemap);
+//          fclose($file);
     }
     
 }

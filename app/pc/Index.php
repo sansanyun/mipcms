@@ -6,6 +6,7 @@ use app\api\model\Articles;
 use app\api\model\ArticlesCategory;
 use app\api\model\Asks;
 use think\Request;
+use think\Response;
 use mip\Pagination;
 use mip\Mip;
 class Index extends Mip 
@@ -63,7 +64,7 @@ class Index extends Mip
                 foreach ($list as $k=>$v){
                     $list[$k]->users;
                     $v['content'] = htmlspecialchars_decode($v['content']);
-                    if (preg_match_all('/<[img|IMG].*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.png]))[\'|\"].*?[\/]?>/', bbc2html($v['content']), $imgs)) {
+                    if (preg_match_all('/<[img|IMG].*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>/', bbc2html($v['content']), $imgs)) {
                         if (@preg_match($patern,$imgs[1][0])) {
                             $list[$k]['firstImg'] = $imgs[1][0];
                         } else {
@@ -124,7 +125,7 @@ class Index extends Mip
             foreach ($recommendList as $k=>$v){
                 $v['content'] = htmlspecialchars_decode($v['content']);
                 $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
-                if (preg_match_all('/<[img|IMG].*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.png]))[\'|\"].*?[\/]?>/', bbc2html($v['content']), $imgs)) {
+                if (preg_match_all('/<[img|IMG].*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>/', bbc2html($v['content']), $imgs)) {
                     if (@preg_match($patern,$imgs[1][0])) {
                         $recommendList[$k]['firstImg'] = $imgs[1][0];
                     } else {
@@ -155,7 +156,8 @@ class Index extends Mip
         
     
     function sitemap() {
-        Header('Content-type: text/xml');
+       
+        
         if ($this->mipInfo['systemType'] == 'ASK') {
             $list = Asks::where('publish_time','<',time())->field('id,uuid,publish_time')->order('publish_time desc')->limit(5000)->select();
         } else {
@@ -165,7 +167,28 @@ class Index extends Mip
                 $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
         }
         $this->assign('list',$list);
-        return $this->fetch($this->mipInfo['template'].'/'.'pc/index/sitemap'); 
+        
+       return   $this->display('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"> 
+<url>
+<loc>{$domain}</loc>
+<priority>1.00</priority>
+<lastmod><?php echo date("Y-m-d")?></lastmod>
+<changefreq>always</changefreq>
+</url>
+<?php foreach($list as $key => $val){ ?>
+<url>
+<?php if ($mipInfo["systemType"] == "ASK") {?>
+<loc>{$domain}/{$askModelUrl}/{$val["id"]}.html</loc>
+<?php } else { ?>
+<loc>{$domain}/{$articleModelUrl}/{$val["id"]}.html</loc>
+<?php }?>
+<priority>0.5</priority>
+<lastmod><?php echo date("Y-m-d", $val["publish_time"]); ?></lastmod>
+<changefreq>always</changefreq>
+</url>
+<?php } ?>
+</urlset>');
+        
         //???
 //       $sitemap = '<?xml version="1.0" encoding="UTF-8"><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
 //          foreach($list as $k=>$v){

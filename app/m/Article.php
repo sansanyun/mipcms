@@ -65,15 +65,18 @@ class Article extends Mip
             foreach ($list as $k => $v){
                 $list[$k]->users;
                 $v['content'] = htmlspecialchars_decode($v['content']);
-                if (preg_match_all('/<[img|IMG].*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.png]))[\'|\"].*?[\/]?>/', bbc2html($v['content']), $imgs)) {
+                if (preg_match_all("/<[img|IMG].*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>/", bbc2html($v['content']), $imgs)) {
+                    $list[$k]['imgCount'] = count($imgs[1]);
+                    $list[$k]['imgList'] = $imgs[1];
                     if (@preg_match($patern,$imgs[1][0])) {
                         $list[$k]['firstImg'] = $imgs[1][0];
                     } else {
                         $list[$k]['firstImg'] = $this->domain.$imgs[1][0];
                     }
-                    
                 } else {
                     $list[$k]['firstImg'] = null;
+                    $list[$k]['imgCount'] = 0;
+                    $list[$k]['imgList'] = null;
                 }
                 $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid']:$v['id'];
                 $v['content'] = strip_tags(htmlspecialchars_decode($v['content']));
@@ -111,7 +114,7 @@ class Article extends Mip
         $itemInfo->updateViews($itemInfo['id'], $itemInfo['uid']);
         $itemInfo['content'] = htmlspecialchars_decode($itemInfo['content']);
         
-            preg_match_all('/<[img|IMG].*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.png]))[\'|\"].*?[\/]?>/', $itemInfo['content'], $imagesArray);
+            preg_match_all('/<[img|IMG].*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>/', $itemInfo['content'], $imagesArray);
             $patern = '/^http[s]?:\/\/'.
             '(([0-9]{1,3}\.){3}[0-9]{1,3}'. 
             '|'. 
@@ -251,7 +254,9 @@ class Article extends Mip
         '(\/[0-9a-zA-Z_!~\*\'\(\)\.;\?:@&=\+\$,%#-\/]*)?)$/'; 
         foreach ($rand_list as $k => $v) {
             $v['content'] = htmlspecialchars_decode($v['content']);
-            if (preg_match_all('/<[img|IMG].*?src=[\'|\"](.*?(?:[\.gif|\.jpg|\.png]))[\'|\"].*?[\/]?>/', bbc2html($v['content']), $imgs)) {
+            if (preg_match_all('/<[img|IMG].*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>/', bbc2html($v['content']), $imgs)) {
+                $rand_list[$k]['imgCount'] = count($imgs[1]);
+                $rand_list[$k]['imgList'] = $imgs[1];
                 if (@preg_match($patern,$imgs[1][0])) {
                     $rand_list[$k]['firstImg'] = $imgs[1][0];
                 } else {
@@ -260,6 +265,8 @@ class Article extends Mip
                 
             } else {
                 $rand_list[$k]['firstImg'] = null;
+                $rand_list[$k]['imgCount'] = 0;
+                $rand_list[$k]['imgList'] = null;
             }
         }  
         foreach ($rand_list as $k => $v) {

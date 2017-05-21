@@ -32,7 +32,6 @@ class User extends AuthBase
                 'username'  => 'require|max:25',
                 'password'  => 'require|max:33',
                 'email' => 'email',
-                'mobile' => 'mobile',
             ];
             $msg = [
                 'username.require' => '用户名不能为空',
@@ -40,11 +39,15 @@ class User extends AuthBase
                 'password.require' => '密码不能为空',
                 'password.max'     => '密码超过最大长度',
                 'email'        => '邮箱格式错误',
-                'mobile'        => '手机号码格式错误',
             ];
             $result = $this->validate($request->param(), $rules, $msg);
             if (true !== $result) {
                 return $result;
+            }
+            if ($mobile) {
+                if (!preg_match("/^1[34578]\d{9}$/", $mobile)) {
+                    return jsonError('手机号码输入有误');
+                }
             }
             if ($terminal == 'pc') {
                 if(!captcha_check($captcha)){
@@ -82,7 +85,6 @@ class User extends AuthBase
                 'username'  => 'require|max:33',
                 'password'  => 'require|max:33',
                 'email' => 'email',
-                'mobile' => 'mobile',
             ];
             $msg = [
                 'username.require' => '用户名不能为空',
@@ -90,11 +92,15 @@ class User extends AuthBase
                 'password.require' => '密码不能为空',
                 'password.max'     => '密码超过最大长度',
                 'email'        => '邮箱格式错误',
-                'mobile'        => '手机号码格式错误',
             ];
             $result = $this->validate($request->param(), $rules, $msg);
             if (true !== $result) {
                 return $result;
+            }
+            if ($mobile) {
+                if (!preg_match("/^1[34578]\d{9}$/", $mobile)) {
+                    return jsonError('手机号码输入有误');
+                }
             }
             if (Users::getByUsername($username)) {
                 return jsonError('用户名已存在');

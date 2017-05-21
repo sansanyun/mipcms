@@ -66,6 +66,8 @@ if (!is_file(CONF_PATH . 'install' . DS .'install.lock')) {
                 Route::rule([$mipInfo['articleModelUrl'].'/cid_<id>' =>['m/Article/index?category=:id',[],['id'=>'\d+']]]);
                 Route::rule([$mipInfo['articleModelUrl'].'/' => 'm/Article/index']);
             }
+            
+            Route::rule('/sitemap.xml','m/Index/sitemap');
         },['ext'=>'html'],['id'=>'\d+','name'=>'\w+']);
     }
     Route::rule('/','pc/Index/index');
@@ -96,17 +98,7 @@ if (!is_file(CONF_PATH . 'install' . DS .'install.lock')) {
         ],[],['category'=>'[a-zA-Z]+','page'=>'\d+','ext'=>'html','keys'=>'index']);  
     }
 }
-
-Route::rule('admin','pc/Admin/index');
-Route::rule('admin/user','pc/Admin/user');
-Route::rule('admin/article','pc/Admin/article');
-Route::rule('admin/ask','pc/Admin/ask');
-Route::rule('admin/setting','pc/Admin/setting');
-Route::rule('admin/role','pc/Admin/role');
-Route::rule('admin/role_authorization','pc/Admin/role_authorization');
-Route::rule('admin/spider','pc/Admin/spider');
-Route::rule('admin/update','pc/Admin/update');
-Route::rule('admin/friendlink','pc/Admin/friendlink');
+require 'route_admin.php';
 $tpl_path = config('template')['view_path'];
 foreach (fetch_file_lists($tpl_path) as $key => $file){
     if(strstr($file,'route.php')){

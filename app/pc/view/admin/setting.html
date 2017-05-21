@@ -43,6 +43,9 @@
                  <el-form-item label="网站副标题">
                     <el-input v-model="setting.indexTitle" placeholder="例: - 国内最大的互联网创业交流社区"></el-input>
                   </el-form-item>
+                 <el-form-item label="层级分隔符">
+                    <el-input v-model="setting.titleSeparator"></el-input>
+                  </el-form-item>
                   <el-form-item label="关键词">
                     <el-input type="textarea" v-model="setting.keywords"></el-input>
                   </el-form-item>
@@ -58,6 +61,9 @@
                   <el-form-item label="引用路径">
                     <el-input v-model="setting.uploadUrl"></el-input>
                   </el-form-item>
+                    <el-form-item label="PC统计代码">
+                        <el-input type="textarea" v-model="setting.pcStatistical"></el-input>
+                    </el-form-item>
                     <el-popover
                       ref="statistical"
                       placement="top-start"
@@ -66,7 +72,7 @@
                       content='你输入的统计代码必须符合mip标准，否则将对整站页面造成收录问题，默认支持百度统计，其余统计请查看官方标准。输入示例：<mip-stats-baidu token="02890d4a309827eb62bc3335b2b28f7f"></mip-stats-baidu>'>
                     </el-popover>
                     <div class="el-form-item">
-                       <label for="name" class="el-form-item__label" style="width: 100px;"> <span class="mip-iconfont mip-wenhao" v-popover:statistical></span> 统计代码</label>
+                       <label for="name" class="el-form-item__label" style="width: 100px;"> <span class="mip-iconfont mip-wenhao" v-popover:statistical></span>M统计代码</label>
                         <div class="el-form-item__content" style="margin-left: 100px;">
                             <div class="el-input">
                                 <el-input type="textarea" v-model="setting.statistical"></el-input>
@@ -163,7 +169,7 @@
                        
                                <el-form-item label="模板切换">
                                 <el-select v-model="setting.template" placeholder="请选择模板主题">
-                                  <el-option label="default" value="default"></el-option>
+                                  <el-option v-for='item in templateList' :label="item" :value="item"></el-option>
                                 </el-select>
                               </el-form-item>
                         </el-form>
@@ -184,6 +190,7 @@
         el: '#app',
         data:{
             setting: '',
+            templateList: {$templateArray},
         },
         mounted: function() {
             this.getSettingData();

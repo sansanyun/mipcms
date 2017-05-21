@@ -87,10 +87,10 @@ class Role extends AuthBase
             if (!$name) {
               return jsonError('请输入节点路径');
             }
-            if (intval($pid)) {
+            if (empty($pid)) {
               return jsonError('缺少pid参数');
             }
-            if (intval($id)) {
+            if (empty($id)) {
               return jsonError('缺少id参数');
             }
             
@@ -115,9 +115,6 @@ class Role extends AuthBase
             $nodes = input('nodes/a');
             $group_id = input('post.group_id');
             
-            if (!$nodes) {
-              return jsonError('尚未选择');
-            }
             if (!$group_id) {
               return jsonError('缺少分组ID');
             }
@@ -127,7 +124,7 @@ class Role extends AuthBase
                     RolesAccess::create(array('node_id' => $val['id'], 'group_id' => $group_id,'level' => $val['level'], 'pid' => $val['pid']));
                 }
             }
-            return jsonSuccess('添加成功');
+            return jsonSuccess('授权成功');
         
         }
     }

@@ -6,6 +6,10 @@
 {__block__}
 <style>
   .simditor-item .el-form-item__content{line-height: inherit;}
+  .simditor-body {
+      height: 400px;
+      overflow-y: auto;
+  }
 </style>
 {/block}
 {block name="main"}
@@ -176,12 +180,18 @@
                         <el-col :span="12">
                         </el-col>
                     </el-row>
-                    <el-form-item label="内容" class="simditor-item">
-                        <textarea id="article_editor" class="simditor" placeholder="请输入内容..."></textarea>
-                    </el-form-item>
-                    <el-form-item class="pull-right">
-                        <el-button type="primary" @click="publishPost">立即发布</el-button>
-                    </el-form-item>
+                    <el-row>
+                        <el-col :span="23">
+                            <el-form-item label="内容" class="simditor-item">
+                                <textarea id="article_editor" class="simditor" placeholder="请输入内容..."></textarea>
+                            </el-form-item>
+                            <el-form-item class="pull-right">
+                                <el-button type="primary" @click="publishPost">立即发布</el-button>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="1">
+                        </el-col>
+                    </el-row>
                 </el-form>
             </el-tab-pane>
         </el-tabs>
@@ -218,7 +228,7 @@
     <script type="text/javascript" src="/assets/plugin/simditor/scripts/module.js"></script>
     <script type="text/javascript" src="/assets/plugin/simditor/scripts/hotkeys.js"></script>
     <script type="text/javascript" src="/assets/plugin/simditor/scripts/uploader.js"></script>
-    <script type="text/javascript" src="/assets/plugin/simditor/scripts/simditor.js"></script>
+    <script type="text/javascript" src="/assets/plugin/simditor/scripts/simditor.min.js"></script>
   
    <script type="text/javascript">
    	  new Vue({
@@ -263,7 +273,8 @@
             tagsList: [],
             tags: [],
             currentStatus: 'publish',
-            toolbar: ['title', 'bold', 'italic', 'underline', 'strikethrough', '|', 'ol', 'ul', 'blockquote', 'code',  '|', 'link', 'image', 'hr']
+            toolbar : ['title', 'bold', 'italic', 'underline', 'strikethrough', 'fontScale', 'color', '|', 'ol', 'ul', 'blockquote', 'code', '|', 'link', 'image', 'hr', '|', 'indent', 'outdent', 'alignment'],
+            mobileToolbar : ["bold", "underline", "strikethrough", "color", "ul", "ol"],
         }
     },
     mounted: function() {

@@ -16,6 +16,20 @@ class Admin extends AdminBase
         return $this->fetch('pc@admin/index');
     }
     public function setting() {
+        $templateDir = opendir(ROOT_PATH . 'template');
+        if ($templateDir) {
+            while (false !== ($file = readdir($templateDir))) {
+                if (substr($file, 0, 1) != '.' AND is_dir(ROOT_PATH . 'template/' . $file)) {
+                    $dirs[] = $file;
+                }
+            }
+            closedir($templateDir);
+        }
+        $templateArray = array();
+        foreach ($dirs as $key => $val) {
+            $templateArray[] = $val;
+        }
+        $this->assign('templateArray',json_encode($templateArray));
         return $this->fetch('pc@admin/setting');
     }
     public function user() {

@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <meta name="applicable-device"content="pc">
+    <meta name="applicable-device" content="pc">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
     <meta name="description" content="{block name="description"}{$mipInfo['description']}{/block}">
@@ -11,7 +11,7 @@
     <link rel="shortcut icon" href="{$domain}/favicon.ico" type="image/x-icon" />
     
     <link rel="stylesheet" type="text/css" href="/assets/css/mipui/mipcms.css"/>
-    
+    {block name="link"}{/block}
     <style>
  
       body {
@@ -93,7 +93,7 @@
                       </span>
                       <el-dropdown-menu slot="dropdown" class="members-dropdown">
                         {if condition='$role["admin"]'}
-                        <el-dropdown-item><a href="{$domain}/admin/">系统管理</a></el-dropdown-item>
+                        <el-dropdown-item><a href="{$domain}/{$Think.config.admin}/">系统管理</a></el-dropdown-item>
                         {/if}
                         <el-dropdown-item><a @click="loginOut">安全退出</a></el-dropdown-item>
                       </el-dropdown-menu>
@@ -118,25 +118,15 @@
 
 <footer class="mip-footer">
     <div class="container">
-        <div class="friend-link">
-        <ul> 
-            <li> 友情链接：</li>
-            {foreach name='$friendLink' id='v'}
-            <li>
-                <a href="{$v['url']}" title="{$v['description']?$v['description']:$v['name']}" target="_blank">{$v['name']}</a>
-            </li>
-            {/foreach}
-        </ul>
-    </div>
+        {include file='pc/main/friendLink'}
         <p class="text-center">Copyright &copy;<?php echo date('Y'); ?> 
             <a href="{$domain}" title="{$mipInfo['siteName']}">{$mipInfo['siteName']}</a> {if condition='$mipInfo["icp"]'} 
             <a href="http://www.miibeian.gov.cn/"> {$mipInfo['icp']}</a>{/if} <a href="{$domain}/sitemap.xml"> sitemap</a> Powered By 
-            <a href="http://www.mipcms.com" title="MIPCMS内容管理系统" target="_blank">MIPCMS {$mipInfo['localCurrentVersion']} </a>{$mipInfo['statistical']} 
+            <a href="http://www.mipcms.com" title="MIPCMS内容管理系统" target="_blank">MIPCMS {$mipInfo['localCurrentVersion']} </a>{$mipInfo['pcStatistical']} 
         </p>
     </div>
 </footer>
 {block name="script"}
- 
 <script src="/assets/min/?f=/assets/js/vue.min.js,/assets/js/axios.min.js,/assets/js/element.js,/assets/js/md5.js,/assets/js/utils.js,/assets/js/mipcms.js"></script>
 {/block}
 </body>

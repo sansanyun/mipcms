@@ -5,7 +5,23 @@
 {block name="style"}
 {__block__}
 <style>
-   
+   .safe-tip {
+       color: #FF6600;
+       font-size: 12px;
+       text-align: right;
+       float: right;
+   }
+   .isDown {
+       font-size: 12px;
+       margin-top: 10px;
+       margin-bottom: 0;
+   }
+   .hidden {
+       display: none;
+   }
+   .show {
+       display: block!important;
+   }
 </style>
 {/block}
 {block name="main"}
@@ -14,7 +30,7 @@
         
         <section class="mip-box mip-default">
             <div class="mip-box-heading">
-                <h3>系统升级</h3>
+                <h3>系统升级<span class="safe-tip">注：为了系统安全 暂不支持远程升级</span></h3>
             </div>
             <div class="mip-box-body">
                 <el-form label-width="100px">
@@ -49,6 +65,17 @@
 
             
 {/block}
+
+{block name="dialog"}
+<el-dialog title="升级提示" v-model="dialogUpdate" class="hidden" :class="show">
+   <p>有新版本，请去官网下载升级文件，进行升级。</p>
+   <p>升级期间如遇系统错误，或升级停止等突发情况，请联系我们的技术人员进行相应的处理</p>
+   <div class="text-center m-t">
+       <a :href="updateLink" target="_blank" class="el-button el-button--info is-plain">立即前去下载</a>
+       <p class="isDown"><a @click='dialogUpdate = false'>我已下载</a></p>
+   </div>
+</el-dialog>
+{/block}
 {block name="javascript"}
 {__block__}
 <script src="http://www.mipcms.com/assets/update/current.js" type="text/javascript" charset="utf-8"></script>
@@ -57,6 +84,7 @@
 <script type="text/javascript">
 	Vue.prototype.$onlineCurrentVersionNum = currtentVersion;
     Vue.prototype.$versionList = versionList;
+    Vue.prototype.$updateLink = updateLink;
 </script>
 <script>
     new Vue({
@@ -68,6 +96,9 @@
             onlineCurrentVersion: 'v1.0.0',
             versionList: [],
             value:'',
+            updateLink: 'http://www.mipcms.com',
+            dialogUpdate: false,
+            show: 'hidden',
         },
         mounted: function() {
             this.contrast();
@@ -97,10 +128,8 @@
                     });
                 }
                 if (parseInt(this.localCurrentVersionNum) < parseInt(this.onlineCurrentVersionNum)) {
-                    Vue.prototype.$message({
-                        message: '有新版本，请去官网升级',
-                        type: 'warning'
-                    });
+                    this.show = 'show';
+                    this.dialogUpdate = true;
                 }
                 this.onlineCurrentVersion = 'v'+(this.onlineCurrentVersionNum + "").split('').join('.');
                 

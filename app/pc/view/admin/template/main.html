@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="applicable-device"content="pc">
+    <meta name="renderer" content="webkit"> 
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
     <!-- 引入样式 -->
@@ -1837,7 +1838,7 @@
       </div>
         <div class="mip-switch">
           <a href="/" class="btn btn-default btn-sm"> <span class="mip-iconfont mip-pczhan"></span> 切换到前台</a>
-          <!--<a href="/admin/setting" class="btn btn-default btn-sm" style="margin-left: 10px;"> <span class="mip-iconfont mip-wangzhanshezhi"></span> 网站设置</a>-->
+          <!--<a href="/{$Think.config.admin}/setting" class="btn btn-default btn-sm" style="margin-left: 10px;"> <span class="mip-iconfont mip-wangzhanshezhi"></span> 网站设置</a>-->
         </div>
       <div class="mip-user-info">
           <ul class="nav navbar-nav navbar-right">
@@ -1847,22 +1848,22 @@
   <main class="mip-main clearfix">
     <aside class="mip-menu hidden-xs">
       <ul class="ul">
-        <li class="li {if condition='$act=="index"'}active{/if}"><a href="/admin" class="list-link"> <i class="mip-iconfont mip-kongzhitai"></i> <span class="span-kongzhitai">控制台</span></a></li>
-        <li class="li {if condition='$act=="article"'}active{/if}"><a href="/admin/article" class="list-link"> <i class="mip-iconfont mip-article"></i> <span class="span-article">{$articleModelName}管理</span></a></li>
-        <li class="li {if condition='$act=="user"'}active{/if}"><a href="/admin/user" class="list-link"> <i class="mip-iconfont mip-wangzhanyonghuqun"></i> <span class="span-users">{$userModelName}管理</span></a></li>
-        <li class="li {if condition='$act=="spider"'}active{/if}"><a href="/admin/spider" class="list-link"> <i class="mip-iconfont mip-zhizhu"></i> <span class="span-zhizhu">搜索引擎</span></a></li>
-        <li class="li {if condition='$act=="role"'}active{/if}"><a href="/admin/role" class="list-link"> <i class="mip-iconfont mip-quanxianguanli"></i> <span class="span-quanxianguanli">权限管理</span></a></li>
+        <li class="li {if condition='$act=="index"'}active{/if}"><a href="/{$Think.config.admin}" class="list-link"> <i class="mip-iconfont mip-kongzhitai"></i> <span class="span-kongzhitai">控制台</span></a></li>
+        <li class="li {if condition='$act=="article"'}active{/if}"><a href="/{$Think.config.admin}/article" class="list-link"> <i class="mip-iconfont mip-article"></i> <span class="span-article">{$articleModelName}管理</span></a></li>
+        <li class="li {if condition='$act=="user"'}active{/if}"><a href="/{$Think.config.admin}/user" class="list-link"> <i class="mip-iconfont mip-wangzhanyonghuqun"></i> <span class="span-users">{$userModelName}管理</span></a></li>
+        <li class="li {if condition='$act=="spider"'}active{/if}"><a href="/{$Think.config.admin}/spider" class="list-link"> <i class="mip-iconfont mip-zhizhu"></i> <span class="span-zhizhu">搜索引擎</span></a></li>
+        <li class="li {if condition='$act=="role"'}active{/if}"><a href="/{$Think.config.admin}/role" class="list-link"> <i class="mip-iconfont mip-quanxianguanli"></i> <span class="span-quanxianguanli">权限管理</span></a></li>
       </ul>
       <div class="menu-footer">
         
         <el-tooltip class="item" effect="dark" content="网站系统设置" placement="top">
-            <a href="/admin/setting" class="pull-left m-l-sm"><span class="mip-iconfont mip-xitongshezhi"></span></a>
+            <a href="/{$Think.config.admin}/setting" class="pull-left m-l-sm"><span class="mip-iconfont mip-xitongshezhi"></span></a>
         </el-tooltip>
         <el-tooltip class="item" effect="dark" content="系统升级" placement="top">
-            <a href="/admin/update" class="pull-left m-l-sm"><span class="mip-iconfont mip-shengji"></span></a>
+            <a href="/{$Think.config.admin}/update" class="pull-left m-l-sm"><span class="mip-iconfont mip-shengji"></span></a>
         </el-tooltip>
         <el-tooltip class="item" effect="dark" content="友情链接" placement="top">
-            <a href="/admin/friendlink" class="pull-left m-l-sm"><span class="mip-iconfont mip-lianjie"></span></a>
+            <a href="/{$Think.config.admin}/friendlink" class="pull-left m-l-sm"><span class="mip-iconfont mip-lianjie"></span></a>
         </el-tooltip>
         
         

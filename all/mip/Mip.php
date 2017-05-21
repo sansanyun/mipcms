@@ -133,6 +133,12 @@ class Mip extends Controller
         $this->assign('user_id',$this->userId);
         $this->user_id = $this->userId;
         
+        $tpl_path = config('template')['view_path'];
+        foreach (fetch_file_lists($tpl_path) as $key => $file){
+            if(strstr($file,'config.php')){
+                require_once $file;
+            }
+        }
 //      if( $this->CORS ){
 //          header('Access-Control-Allow-Origin: *');
 //          header('Access-Control-Allow-Credentials: true');
@@ -235,7 +241,21 @@ class Mip extends Controller
         }
     }
     public function friendLink() {
-        $friendLink = db('friendlink')->order('id desc')->select();
+        $friendLink = db('friendlink')->order('sort ASC')->select();
+        $friendLink['friendLinkAll'] = false;
+        $friendLink['friendLinkIndex'] = false;
+        $friendLink['friendLinkNotIndex'] = false;
+        foreach ($friendLink as $key => $val) {
+            if ($val['type'] == 'all') {
+                $friendLink['friendLinkAll'] = true;
+            }
+            if ($val['type'] == 'index') {
+                $friendLink['friendLinkIndex'] = true;
+            }
+            if ($val['type'] == 'notIndex') {
+                $friendLink['friendLinkNotIndex'] = true;
+            }
+        }
         $this->assign('friendLink',$friendLink);
         
     }
