@@ -29,9 +29,9 @@ ALTER TABLE `mip_friendlink` ADD `status` INT( 1 ) NULL DEFAULT '0';
 INSERT INTO `mip_roles_node` (`id`, `pid`, `group_id`, `name`, `title`, `remark`, `level`, `type`, `sort`, `status`, `isdelete`) VALUES (53, 2, 0, 'Link', '友情链接', '', 2, 1, 50, 1, 0);
 INSERT INTO `mip_roles_node` (`id`, `pid`, `group_id`, `name`, `title`, `remark`, `level`, `type`, `sort`, `status`, `isdelete`) VALUES (54, 53, 0, 'friendlinkSelect', '友情链接查询', '', 3, 1, 50, 1, 0);
 INSERT INTO `mip_roles_node` (`id`, `pid`, `group_id`, `name`, `title`, `remark`, `level`, `type`, `sort`, `status`, `isdelete`) VALUES (55, 53, 0, 'friendlinkAdd', '友情链接添加', '', 3, 1, 50, 1, 0);
-INSERT INTO `mip_roles_node` (`id`, `pid`, `group_id`, `name`, `title`, `remark`, `level`, `type`, `sort`, `status`, `isdelete`) VALUES (56, 53, 0, 'friendlinkAdd', '友情链接排序', '', 3, 1, 50, 1, 0);
-INSERT INTO `mip_roles_node` (`id`, `pid`, `group_id`, `name`, `title`, `remark`, `level`, `type`, `sort`, `status`, `isdelete`) VALUES (57, 53, 0, 'friendlinkAdd', '友情链接修改', '', 3, 1, 50, 1, 0);
-INSERT INTO `mip_roles_node` (`id`, `pid`, `group_id`, `name`, `title`, `remark`, `level`, `type`, `sort`, `status`, `isdelete`) VALUES (58, 53, 0, 'friendlinkAdd', '友情链接删除', '', 3, 1, 50, 1, 0);
+INSERT INTO `mip_roles_node` (`id`, `pid`, `group_id`, `name`, `title`, `remark`, `level`, `type`, `sort`, `status`, `isdelete`) VALUES (56, 53, 0, 'friendlinkSave', '友情链接排序', '', 3, 1, 50, 1, 0);
+INSERT INTO `mip_roles_node` (`id`, `pid`, `group_id`, `name`, `title`, `remark`, `level`, `type`, `sort`, `status`, `isdelete`) VALUES (57, 53, 0, 'friendlinkEdit', '友情链接修改', '', 3, 1, 50, 1, 0);
+INSERT INTO `mip_roles_node` (`id`, `pid`, `group_id`, `name`, `title`, `remark`, `level`, `type`, `sort`, `status`, `isdelete`) VALUES (58, 53, 0, 'friendlinkDel', '友情链接删除', '', 3, 1, 50, 1, 0);
 
 
 

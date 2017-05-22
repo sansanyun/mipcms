@@ -402,9 +402,9 @@ INSERT INTO `mip_roles_node` (`id`, `pid`, `group_id`, `name`, `title`, `remark`
 (53, 2, 0, 'Link', '友情链接', '', 2, 1, 50, 1, 0),
 (54, 53, 0, 'friendlinkSelect', '友情链接查询', '', 3, 1, 50, 1, 0),
 (55, 53, 0, 'friendlinkAdd', '友情链接添加', '', 3, 1, 50, 1, 0),
-(56, 53, 0, 'friendlinkAdd', '友情链接排序', '', 3, 1, 50, 1, 0),
-(57, 53, 0, 'friendlinkAdd', '友情链接修改', '', 3, 1, 50, 1, 0),
-(58, 53, 0, 'friendlinkAdd', '友情链接删除', '', 3, 1, 50, 1, 0);
+(56, 53, 0, 'friendlinkSave', '友情链接排序', '', 3, 1, 50, 1, 0),
+(57, 53, 0, 'friendlinkEdit', '友情链接修改', '', 3, 1, 50, 1, 0),
+(58, 53, 0, 'friendlinkDel', '友情链接删除', '', 3, 1, 50, 1, 0);
 
 -- --------------------------------------------------------
 
@@ -449,10 +449,10 @@ INSERT INTO `mip_settings` (`id`, `key`, `val`) VALUES
 (23, 'indexTitle', ''),
 (24, 'baiduSpider', '1'),
 (25, 'baiduMip', '1'),
-(26, 'localCurrentVersionNum', '110'),
-(27, 'localCurrentVersion', 'v1.1.0'),
+(26, 'localCurrentVersionNum', '111'),
+(27, 'localCurrentVersion', 'v1.1.1'),
 (28, 'titleSeparator', '_'),
-(29, 'pcStatistical', '_');
+(29, 'pcStatistical', '');
 
 -- --------------------------------------------------------
 
