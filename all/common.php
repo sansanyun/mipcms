@@ -186,7 +186,6 @@ function list_to_tree($list, $pk = 'id', $pid = 'pid', $child = '_child', $root 
     }
     return $tree;
 }
-
 function formatTime($value) {
     if(time() - $value < 60) {
         return (time() - $value).'秒前';
@@ -202,3 +201,29 @@ function formatTime($value) {
     }
     return date('Y-m-d H:i:s', $value);
 }
+
+    function isModel($param) {
+        require ALL_PATH . 'mip_config.php';
+        if ($isModel) {
+            return $param;
+        } else {
+            return '';
+        }
+    }
+    function isSlash() {
+        require ALL_PATH . 'mip_config.php';
+        if ($isModel) {
+            return '/';
+        } else {
+            return '';
+        }
+    }
+    
+    function isHtml($param) {
+        require ALL_PATH . 'mip_config.php';
+        if ($isHtml) {
+            return $param . '.html';
+        } else {
+            return $param;
+        }
+    }

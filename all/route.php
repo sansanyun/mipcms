@@ -33,7 +33,6 @@ if (!is_file(CONF_PATH . 'install' . DS .'install.lock')) {
     });
     if ($mipInfo['mipDomain']) {
         Route::domain($mipInfo['mipDomain'], function(){
-            
             $settings = db('Settings')->select();
             foreach ($settings as $k => $v){
                 if (is_serialized($v['val'])){
@@ -57,14 +56,30 @@ if (!is_file(CONF_PATH . 'install' . DS .'install.lock')) {
             });
             Route::rule('/login','m/Account/login');
             Route::rule('/register','m/Account/register');
-            if ($mipInfo['systemType'] == 'Blog' || $mipInfo['systemType'] == 'CMS' || $mipInfo['systemType'] == 'SNS') {
-                Route::rule([$mipInfo['articleModelUrl'].'/[:category]/index_<page>' => 'm/Article/index']);
-                Route::rule([$mipInfo['articleModelUrl'].'/index_<page>' => 'm/Article/index']);
-                Route::rule([$mipInfo['articleModelUrl'].'/:id'=>['m/Article/articleDetail',['ext'=>'html'],['id'=>'\w+']]]);
-                Route::rule([$mipInfo['articleModelUrl'].'/[:category]'  => ['m/Article/index',[],['id'=>'\d+']]]);
-                Route::rule([$mipInfo['articleModelUrl'].'/cid_<id>/index_<page>' => ['m/Article/index?category=:id',['ext'=>'html'],['id'=>'\d+']]]);
-                Route::rule([$mipInfo['articleModelUrl'].'/cid_<id>' =>['m/Article/index?category=:id',[],['id'=>'\d+']]]);
-                Route::rule([$mipInfo['articleModelUrl'].'/' => 'm/Article/index']);
+            require ALL_PATH . 'mip_config.php';
+            if ($isModel) {
+                if ($mipInfo['systemType'] == 'Blog' || $mipInfo['systemType'] == 'CMS' || $mipInfo['systemType'] == 'SNS') {
+                    Route::rule([$mipInfo['articleModelUrl'].'/[:category]/index_<page>' => 'm/Article/index']);
+                    Route::rule([$mipInfo['articleModelUrl'].'/index_<page>' => 'm/Article/index']);
+                    Route::rule([$mipInfo['articleModelUrl'].'/:id'=>['m/Article/articleDetail',[],['id'=>'\w+']]]);
+                    Route::rule([$mipInfo['articleModelUrl'].'/[:category]'  => ['m/Article/index',[],['id'=>'\d+']]]);
+                    Route::rule([$mipInfo['articleModelUrl'].'/cid_<id>/index_<page>' => ['m/Article/index?category=:id',['ext'=>'html'],['id'=>'\d+']]]);
+                    Route::rule([$mipInfo['articleModelUrl'].'/cid_<id>' =>['m/Article/index?category=:id',[],['id'=>'\d+']]]);
+                    Route::rule([$mipInfo['articleModelUrl'].'/' => 'm/Article/index']);
+                }
+            } else {
+                $pathinfo = request()->pathinfo();
+                if (strpos($pathinfo,'api') === false) {
+                    Route::rule(['cid_<id>/index_<page>' => ['m/Article/index?category=:id',['ext'=>'html'],['id'=>'\d+'],['page'=>'\d+']]]);
+                    Route::rule(['[:category]/index_<page>' => ['m/Article/index',['ext'=>'html'],['page'=>'\d+']]]);
+                    Route::rule(['index_<page>' => ['m/Article/index',['ext'=>'html'],['page'=>'\d+']]]);
+                    Route::rule(['/index' => ['m/Article/index',['ext'=>'html'],['id'=>'\d+']]]);
+                    Route::rule([$mipInfo['articleModelUrl'].'/:id'=>['m/Article/articleDetail',[],['id'=>'\w+']]]);
+                    Route::rule(['cid_<id>' => ['m/Article/index?category=:id',[],['id'=>'\d+']]]);
+                    Route::rule(['[:category]' => ['m/Article/index',[],[]]]);
+                    Route::rule(['[:category]/[:keys]' => ['m/Article/index',['ext'=>'html'],['keys'=>'index']]]);
+                    Route::rule($mipInfo['articleModelUrl'],'m/Article/index');
+                }
             }
             
             Route::rule('/sitemap.xml','m/Index/sitemap');
@@ -73,17 +88,35 @@ if (!is_file(CONF_PATH . 'install' . DS .'install.lock')) {
     Route::rule('/','pc/Index/index');
     Route::rule('login','pc/Account/login');
     Route::rule('register','pc/Account/register');
+    require 'route_admin.php';
+    
     if ($mipInfo['systemType'] == 'Blog' || $mipInfo['systemType'] == 'CMS' || $mipInfo['systemType'] == 'SNS') {
-         Route::group($mipInfo['articleModelUrl'], [
-        'cid_<id>/index_<page>'  => ['pc/Article/index?category=:id',['ext'=>'html'],['id'=>'\d+']], 
-        '[:category]/index_<page>'  =>'pc/Article/index',
-        'index_<page>'=>'pc/Article/index',
-        '/index'  =>['pc/Article/index',['ext'=>'html'],['id'=>'\d+']], 
-        '[:category]'  => ['pc/Article/index',[],['id'=>'\d+']],
-        'cid_<id>'  => ['pc/Article/index?category=:id',[],['id'=>'\d+']],
-        '[:category]/[:keys]'  =>['pc/Article/index',['ext'=>'html'],['id'=>'\d+']], 
-        ':id'=>  ['pc/Article/articleDetail',['ext'=>'html'],['id'=>'\w+']],
-        ],[],['category'=>'[a-zA-Z]+','page'=>'\d+','ext'=>'html','keys'=>'index']);  
+        require ALL_PATH . 'mip_config.php';
+        if ($isModel) {
+            Route::group($mipInfo['articleModelUrl'], [
+            'cid_<id>/index_<page>'  => ['pc/Article/index?category=:id',['ext'=>'html'],['id'=>'\d+']], 
+            '[:category]/index_<page>'  =>'pc/Article/index',
+            'index_<page>'=>'pc/Article/index',
+            '/index'  =>['pc/Article/index',['ext'=>'html'],['id'=>'\d+']], 
+            '[:category]'  => ['pc/Article/index',[],['id'=>'\d+']],
+            'cid_<id>'  => ['pc/Article/index?category=:id',[],['id'=>'\d+']],
+            '[:category]/[:keys]'  =>['pc/Article/index',['ext'=>'html'],['id'=>'\d+']], 
+            ':id'=>  ['pc/Article/articleDetail',[],['id'=>'\w+']],
+            ],[],['category'=>'[a-zA-Z]+','page'=>'\d+','ext'=>'html','keys'=>'index']);  
+        } else {
+            $pathinfo = request()->pathinfo();
+            if (strpos($pathinfo,'api') === false) {
+                Route::rule(['cid_<id>/index_<page>' => ['pc/Article/index?category=:id',['ext'=>'html'],['id'=>'\d+'],['page'=>'\d+']]]);
+                Route::rule(['[:category]/index_<page>' => ['pc/Article/index',['ext'=>'html'],['page'=>'\d+']]]);
+                Route::rule(['index_<page>' => ['pc/Article/index',['ext'=>'html'],['page'=>'\d+']]]);
+                Route::rule(['/index' => ['pc/Article/index',['ext'=>'html'],['id'=>'\d+']]]);
+                Route::rule([$mipInfo['articleModelUrl'].'/:id'=>['pc/Article/articleDetail',[],['id'=>'\w+']]]);
+                Route::rule(['cid_<id>' => ['pc/Article/index?category=:id',[],['id'=>'\d+']]]);
+                Route::rule(['[:category]' => ['pc/Article/index',[],[]]]);
+                Route::rule(['[:category]/[:keys]' => ['pc/Article/index',['ext'=>'html'],['keys'=>'index']]]);
+                Route::rule($mipInfo['articleModelUrl'],'pc/Article/index');
+            }
+        }
     }
     if ($mipInfo['systemType'] == 'ASK' || $mipInfo['systemType'] == 'SNS' ) {
     Route::group($mipInfo['askModelUrl'], [
@@ -94,11 +127,12 @@ if (!is_file(CONF_PATH . 'install' . DS .'install.lock')) {
         '[:category]'  => ['pc/Ask/index',[],['id'=>'\d+']],
         'cid_<id>'  => ['pc/Ask/index?category=:id',[],['id'=>'\d+']],
         '[:category]/[:keys]'  =>['pc/Ask/index',['ext'=>'html'],['id'=>'\d+']], 
-        ':id'=>  ['pc/Ask/askDetail',['ext'=>'html'],['id'=>'\w+']],
+        ':id'=>  ['pc/Ask/askDetail',[],['id'=>'\w+']],
         ],[],['category'=>'[a-zA-Z]+','page'=>'\d+','ext'=>'html','keys'=>'index']);  
     }
 }
-require 'route_admin.php';
+
+ 
 $tpl_path = config('template')['view_path'];
 foreach (fetch_file_lists($tpl_path) as $key => $file){
     if(strstr($file,'route.php')){

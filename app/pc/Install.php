@@ -99,7 +99,7 @@ class Install extends Controller
                 $dbconfig['database'] = $dbname;
                 $dbconfig['prefix']=trim(input('dbprefix'));
                 $tablepre = input("dbprefix");
-                $sql = file_get_contents(ROOT_PATH.'package'.DS.'mipcms_v_1_1_0.sql');
+                $sql = file_get_contents(ROOT_PATH.'package'.DS.'mipcms_v_1_1_1.sql');
                 $sql = str_replace("\r", "\n", $sql);
                 $sql = explode(";\n", $sql);
                 $default_tablepre = "mip_";

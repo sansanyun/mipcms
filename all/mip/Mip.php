@@ -47,8 +47,6 @@ class Mip extends Controller
         $tplName = $this->mipInfo['template'];
         $this->assign('tplName',$tplName);
         $this->config('view_name',$tplName);
-        //默认ui路径
-        $this->assign('mipui','./assets/mipui/dist/css/mipui.css');
         
         if ($this->mipInfo['mipDomain']) {
             //如果当前是手机访问

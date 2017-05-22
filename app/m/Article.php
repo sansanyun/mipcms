@@ -93,11 +93,20 @@ class Article extends Mip
         }
         $this->assign('recommendListByCid',$news_list_by_uid);
         
-        $pagination_array= array(
-            'base_url' => $this->domain.'/'.$this->articleModelUrl.'/'.$categoryUrlName,
-            'total_rows' => $count, //总共条数
-            'per_page' => 10 //每页展示数量
-        );
+        require ALL_PATH . 'mip_config.php';
+        if ($isModel) {
+            $pagination_array= array(
+                'base_url' => $this->domain.'/'.$this->articleModelUrl.'/'.$categoryUrlName,
+                'total_rows' => $count, //总共条数
+                'per_page' => 10 //每页展示数量
+            );
+        } else {
+            $pagination_array= array(
+                'base_url' => $this->domain.'/'.$categoryUrlName,
+                'total_rows' => $count, //总共条数
+                'per_page' => 10 //每页展示数量
+            );
+        }
         $pagination = new Paginationm($pagination_array);
         $this->assign('pagination',  $pagination->create_links());
         

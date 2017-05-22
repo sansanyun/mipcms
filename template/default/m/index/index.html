@@ -23,7 +23,7 @@
     buttonController
     >
      {foreach name='$recommendList' id='v'}
-    <a target="_blank" href="{$domain}/{$articleModelUrl}/{$v.id}.html">
+    <a target="_blank" href="{$domain}/{$articleModelUrl}/{$v.id | isHtml}">
         <mip-img 
             src="{$v.firstImg}" layout="responsive" 
         width="600" 
@@ -55,7 +55,7 @@
                     </div>
                 {/if}
                     <div class="news-list-content  {if condition='$v["firstImg"]'}hasImg{/if}">
-                        <h4 class="title"><mip-link target="_blank" href="{$domain}/{$articleModelUrl}/{$v.id}.html" title="{$v.title}">{$v.title}</mip-link></h4>
+                        <h4 class="title"><mip-link target="_blank" href="{$domain}/{$articleModelUrl}/{$v.id | isHtml}" title="{$v.title}">{$v.title}</mip-link></h4>
                         <p>{$v['users']['username']} {$v['publish_time']|date='Y-m-d',###} {$v['views']}
                         </p>
                     </div>
@@ -63,7 +63,7 @@
             {/foreach}
         </ul>
         <div class="p-xs text-center">
-            <mip-link target="_blank" class="mui-btn mui-btn-primary" href="{$domain}/{$articleModelUrl}/{$val['url_name']}/">查看更多</mip-link>
+            <mip-link target="_blank" class="mui-btn mui-btn-primary" href="{$domain}/{$articleModelUrl | isModel}{:isSlash()}{$val['url_name']}/">查看更多</mip-link>
         </div>
     </div>
     {/volist}

@@ -8,9 +8,9 @@
 <?php foreach($list as $key => $val){ ?>
 <url>
  <?php if ($mipInfo['systemType'] == 'ASK') {?>
-<loc>{$domain}/{$askModelUrl}/{$val['id']}.html</loc>
+<loc>{$domain}/{$askModelUrl}/{$val['id'] | isHtml}</loc>
 <?php } else { ?>
-<loc>{$domain}/{$articleModelUrl}/{$val['id']}.html</loc>
+<loc>{$domain}/{$articleModelUrl}/{$val['id'] | isHtml}</loc>
 <?php }?>
 <priority>0.5</priority>
 <lastmod><?php echo date('Y-m-d', $val['publish_time']); ?></lastmod>

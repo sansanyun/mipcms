@@ -12,7 +12,7 @@
  <div class="container m-b">
     <ul class="breadcrumb">
         <li><a href="{$domain}" title="{$mipInfo['siteName']}">{$mipInfo['siteName']}</a></li>
-        <li><a href="{$domain}/{$articleModelUrl}/{$categoryUrlName}/" title="{$categoryInfo->name}">{$categoryInfo->name}</a></li>
+        <li><a href="{$domain}/{$articleModelUrl | isModel}{:isSlash()}{$categoryUrlName}/" title="{$categoryInfo->name}">{$categoryInfo->name}</a></li>
     </ul>
 </div>
  {/if}
@@ -43,14 +43,14 @@
                         <li class="list">
                             {if condition="$v['firstImg']"}
                             <div class="list-img hidden-xs">
-                                <a class="list-img-a" title="{$v.title}" href="{$domain}/{$articleModelUrl}/{$v.id}.html">
+                                <a class="list-img-a" title="{$v.title}" href="{$domain}/{$articleModelUrl}/{$v.id | isHtml}">
                                     <img alt="{$v.title}" src="{$v.firstImg}" />
                                 </a>
                             </div>
                             {/if}
                             <div class="list-content {if condition='!$v["firstImg"]'}block{/if}">
                                 <h4 class="title">
-                                    <a href="{$domain}/{$articleModelUrl}/{$v.id}.html" title="{$v.title}">{$v.title}</a>
+                                    <a href="{$domain}/{$articleModelUrl}/{$v.id | isHtml}" title="{$v.title}">{$v.title}</a>
                                 </h4>
                                 <div class="description hidden-xs">
                                     {:mb_substr(preg_replace('# #', '',$v['content']),0,88,'utf-8')}
@@ -78,7 +78,7 @@
                     <ul class="list-unstyled">
                         {foreach  name='$hot_list_by_cid' id="v"}
                         <li class="li-box-list">
-                            <a href="{$domain}/{$articleModelUrl}/{$v.id}.html" title="{$v.title}">{$v.title}</a>
+                            <a href="{$domain}/{$articleModelUrl}/{$v.id | isHtml}" title="{$v.title}">{$v.title}</a>
                             <p>浏览 : <span>{$v.views}</span>  时间 : <span>{$v['publish_time']|date='Y-m-d',###}</span> </p>
                         </li>
                         {/foreach}
@@ -93,7 +93,7 @@
                     <ul class="list-unstyled">
                         {foreach  name='$recommendListByCid' id="v"}
                         <li class="li-box-list">
-                            <a href="{$domain}/{$articleModelUrl}/{$v.id}.html" title="{$v.title}">{$v.title}</a>
+                            <a href="{$domain}/{$articleModelUrl}/{$v.id | isHtml}" title="{$v.title}">{$v.title}</a>
                             <p>浏览 <span>{$v.views}</span>  时间 : <span>{$v['publish_time']|date='Y-m-d',###}</span>  </p>
                         </li>
                         {/foreach}

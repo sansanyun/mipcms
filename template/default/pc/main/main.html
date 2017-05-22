@@ -79,7 +79,7 @@
                     {if condition='$itemCategoryList'}
                         {foreach name='$itemCategoryList' id='v'}
                         <li class='{if condition="$categoryUrlName==$v['url_name']"}active{/if}'>
-                            <a href="{$domain}/{$itemCategoryUrlName}/{$v['url_name']}/" title="{$v['name']}">{$v['name']}</a>
+                            <a href="{$domain}/{$itemCategoryUrlName | isModel}{:isSlash()}{$v['url_name']}/" title="{$v['name']}">{$v['name']}</a>
                         </li>
                         {/foreach}
                     {/if}
