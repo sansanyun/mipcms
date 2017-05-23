@@ -1,6 +1,6 @@
 {extend name="m/main/main"/}
 
-{block name="title"}{$itemInfo['title']}_{__block__}{/block}
+{block name="title"}{$itemInfo['title']}{$mipInfo['titleSeparator']}{__block__}{/block}
 {block name='keywords'}{if condition='$tags'}{foreach name='$tags' key='k' id='v'}{if condition='$k!=0'},{/if}{$v['tags']['name']}{/foreach}{/if}{/block}
 {block name='description'}{:mb_substr($itemInfo['message_description'],0,88,'utf-8')}{/block}
 

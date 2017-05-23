@@ -1,8 +1,9 @@
 {extend name="m/main/main"/}
 
-{block name="title"}{if condition="$ctr=='Article'"}{if condition='!$categoryInfo'}{$articleModelName}_{else/}{$categoryInfo->name}_{/if}{/if}{__block__}{/block}
-{block name='keywords'}{if condition="$ctr=='Article'"}{if condition='$categoryInfo'}{if condition='$categoryInfo->keywords'}{else/}{$categoryInfo->name}{/if}{else /}{$articleModelName}{/if}{else /}{$mipInfo['keywords']}{/if}{/block}
-{block name='description'}{if condition="$ctr=='Article'"}{if condition='$categoryInfo'}{if condition='$categoryInfo->description'}{$categoryInfo->description}{else/}{$categoryInfo->name}{/if}{else/}{$articleModelName}{/if}{else/}{$mipInfo['description']}{/if}{/block}
+
+{block name="title"}{if condition='$categoryUrlName'}{if condition="$ctr=='Article'"}{if condition='!$categoryInfo'}{$articleModelName}{$mipInfo['titleSeparator']}{else/}{$categoryInfo->name}{$mipInfo['titleSeparator']}{/if}{/if}{__block__}{/if}{/block}
+{block name='keywords'}{if condition='$categoryUrlName'}{if condition='$categoryInfo'}{if condition='$categoryInfo->keywords'}{$categoryInfo->keywords}{else/}{$categoryInfo->name}{/if}{else /}{$articleModelName}{/if}{else /}{$mipInfo['keywords']}{/if}{/block}
+{block name='description'}{if condition='$categoryUrlName'}{if condition='$categoryInfo'}{if condition='$categoryInfo->description'}{$categoryInfo->description}{else/}{$categoryInfo->name}{/if}{else/}{$articleModelName}{/if}{else/}{$mipInfo['description']}{/if}{/block}
 
  
 {block name="style"}{__block__}
