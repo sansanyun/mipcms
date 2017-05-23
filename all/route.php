@@ -63,8 +63,9 @@ if (!is_file(CONF_PATH . 'install' . DS .'install.lock')) {
                     Route::rule([$mipInfo['articleModelUrl'].'/cid_<id>$' =>['m/Article/index?category=:id',[],['id'=>'\d+']]]);
                     Route::rule([$mipInfo['articleModelUrl'].'/index_<page>$' => ['m/Article/index',['ext'=>'html'],['page'=>'\d+']]]);
                     Route::rule([$mipInfo['articleModelUrl'].'/:category/index_<page>$' => 'm/Article/index']);
+                    Route::rule([$mipInfo['articleModelUrl'].'/:id' => ['m/Article/articleDetail',[],['id'=>'\d+']]]);
+                    Route::rule([$mipInfo['articleModelUrl'].'/:id' => ['m/Article/articleDetail',[],['id'=>'[a-zA-Z0-9]{24}']]]);
                     Route::rule([$mipInfo['articleModelUrl'].'/[:category]$'  => ['m/Article/index',[],['category'=>'^[A-Za-z]\w+']]]);
-                    Route::rule([$mipInfo['articleModelUrl'].'/:id' => ['m/Article/articleDetail',[],['id'=>'\w+']]]);
                     Route::rule([$mipInfo['articleModelUrl'].'/' => 'm/Article/index']);
                 }
             } else {
