@@ -59,12 +59,12 @@ if (!is_file(CONF_PATH . 'install' . DS .'install.lock')) {
             require ALL_PATH . 'mip_config.php';
             if ($isModel) {
                 if ($mipInfo['systemType'] == 'Blog' || $mipInfo['systemType'] == 'CMS' || $mipInfo['systemType'] == 'SNS') {
-                    Route::rule([$mipInfo['articleModelUrl'].'/[:category]/index_<page>' => 'm/Article/index']);
-                    Route::rule([$mipInfo['articleModelUrl'].'/index_<page>' => 'm/Article/index']);
-                    Route::rule([$mipInfo['articleModelUrl'].'/:id'=>['m/Article/articleDetail',[],['id'=>'\w+']]]);
-                    Route::rule([$mipInfo['articleModelUrl'].'/[:category]'  => ['m/Article/index',[],['id'=>'\d+']]]);
-                    Route::rule([$mipInfo['articleModelUrl'].'/cid_<id>/index_<page>' => ['m/Article/index?category=:id',['ext'=>'html'],['id'=>'\d+']]]);
-                    Route::rule([$mipInfo['articleModelUrl'].'/cid_<id>' =>['m/Article/index?category=:id',[],['id'=>'\d+']]]);
+                    Route::rule([$mipInfo['articleModelUrl'].'/cid_<id>/index_<page>$' => ['m/Article/index?category=:id',['ext'=>'html'],['id'=>'\d+','page'=>'\d+']]]);
+                    Route::rule([$mipInfo['articleModelUrl'].'/cid_<id>$' =>['m/Article/index?category=:id',[],['id'=>'\d+']]]);
+                    Route::rule([$mipInfo['articleModelUrl'].'/index_<page>$' => ['m/Article/index',['ext'=>'html'],['page'=>'\d+']]]);
+                    Route::rule([$mipInfo['articleModelUrl'].'/:category/index_<page>$' => 'm/Article/index']);
+                    Route::rule([$mipInfo['articleModelUrl'].'/[:category]$'  => ['m/Article/index',[],['category'=>'^[A-Za-z]\w+']]]);
+                    Route::rule([$mipInfo['articleModelUrl'].'/:id' => ['m/Article/articleDetail',[],['id'=>'\w+']]]);
                     Route::rule([$mipInfo['articleModelUrl'].'/' => 'm/Article/index']);
                 }
             } else {
