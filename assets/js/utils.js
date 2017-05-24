@@ -145,30 +145,39 @@ var mip = {
                         resolve(res.data);
                     }
                 } else {
-                    if (res.status == 500) {
-                        Vue.prototype.$message({
-                            type: 'error',
-                            message: '错误500,如果是mysql5.7 请修改数据库模式'
-                        });
-                        return false;
-                    }
-                    if (res.status == 404) {
-                        Vue.prototype.$message({
-                            type: 'error',
-                            message: '错误404,您很有可能伪静态没有配置好'
-                        });
-                        return false;
-                    }
                     Vue.prototype.$message({
                         type: 'error',
                         message: '系统错误'
                     });
                 }
             }, function(err){
-                Vue.prototype.$message({
-                    type: 'error',
-                    message: '系统错误'
-                });
+                if (err.config.url == '/install/installPost') {
+                    if (err.response.status == 404) {
+                        if (err.response.headers.server.indexOf('nginx') > -1) {
+                            Vue.prototype.$message({
+                                type: 'error',
+                                message: '404错误，nginx环境需要配置伪静态规则'
+                            });
+                        } else {
+                            Vue.prototype.$message({
+                                type: 'error',
+                                message: '404错误，您需要配置环境的伪静态'
+                            });
+                        }
+                    }
+                    if (res.response.status == 500) {
+                        Vue.prototype.$message({
+                            type: 'error',
+                            message: '500错误,如果是mysql5.7 请降低版本'
+                        });
+                        return false;
+                    }
+                } else {
+                    Vue.prototype.$message({
+                        type: 'error',
+                        message: '系统错误，错误代码：err.response.status'
+                    });
+                }
             })
         });
     },

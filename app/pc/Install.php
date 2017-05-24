@@ -35,6 +35,9 @@ class Install extends Controller
                       <el-col :span="12">
                           <h2 style="text-align: center;">欢迎使用MIPCMS内容管理系统</h2>
                           <p style="text-align: center;">交流QQ群576199348</p>
+                          <p style="text-align: center;">PHP版本支持：PHP5.4.x、PHP5.5.x、PHP7.0.x 暂不支持：PHP5.6.x、php7.1.x</p>
+                          <p style="text-align: center;">推荐使用PHP7.0，支持Apache、Nginx、lamp、lnmp、wamp、xampp </p>
+                          <p style="text-align: center;">注意：请先配置环境伪静态（必须）</p>
                           <p style="text-align: center;"><a href="http://demo.mipcms.com/article/c0de4338a4625a748932f2e8.html">安装不成功？点击查看原因</a></p>
                           <el-form ref="form" :rules="rules" :model="form" label-width="120px">
                               <el-form-item label="数据库地址" prop="dbhost">
