@@ -1,4 +1,6 @@
 <?php
+use mip\Mip; 
+    
 //判断是否属于序列化数据
 function is_serialized( $data ) {
     $data = trim( $data );
@@ -119,88 +121,79 @@ function bbc2html($tmpText){
   }
   
 	function fetch_file_lists($dir, $file_type = null) {
-	  if ($file_type)
-	  {
-	    if (substr($file_type, 0, 1) == '.')
-    {
-      $file_type = substr($file_type, 1);
-    }
-  }
-
-  $base_dir = realpath($dir);
- 
-  if (!file_exists($base_dir))
-  {
-    return false;
-  }
-
-  $dir_handle = opendir($base_dir);
-
-  $files_list = array();
-
-  while (($file = readdir($dir_handle)) !== false)
-  {
-    if (substr($file, 0, 1) != '.' AND !is_dir($base_dir . '/' . $file))
-    {
-      if (($file_type AND end(explode('.', $file)) == $file_type) OR !$file_type)
-      {
-        $files_list[] = $base_dir . '/' . $file;
-      }
-    }
-    else if (substr($file, 0, 1) != '.' AND is_dir($base_dir . '/' . $file))
-    {
-      if ($sub_dir_lists = fetch_file_lists($base_dir . '/' . $file, $file_type))
-      {
-        $files_list = array_merge($files_list, $sub_dir_lists);
-      }
-    }
-  }
-
-  return $files_list;
-}
-
-function list_to_tree($list, $pk = 'id', $pid = 'pid', $child = '_child', $root = 0) {
-    $tree = [];
-    if (is_array($list)) {
-        $refer = [];
-        foreach ($list as $key => $data) {
-            if ($data instanceof \think\Model) {
-                $list[$key] = $data->toArray();
+	   if ($file_type) {
+    	    if (substr($file_type, 0, 1) == '.') {
+                $file_type = substr($file_type, 1);
             }
-            $refer[$data[$pk]] =& $list[$key];
         }
-        foreach ($list as $key => $data) {
-            if (!isset($list[$key][$child])) {
-                $list[$key][$child] = [];
+
+        $base_dir = realpath($dir);
+     
+        if (!file_exists($base_dir)) {
+            return false;
+        }
+    
+        $dir_handle = opendir($base_dir);
+        
+        $files_list = array();
+        
+        while (($file = readdir($dir_handle)) !== false) {
+            if (substr($file, 0, 1) != '.' AND !is_dir($base_dir . '/' . $file)) {
+                if (($file_type AND end(explode('.', $file)) == $file_type) OR !$file_type) {
+                    $files_list[] = $base_dir . '/' . $file;
+                }
             }
-            $parentId = $data[$pid];
-            if ($root == $parentId) {
-                $tree[] =& $list[$key];
-            } else {
-                if (isset($refer[$parentId])) {
-                    $parent =& $refer[$parentId];
-                    $parent[$child][] =& $list[$key];
+            else if (substr($file, 0, 1) != '.' AND is_dir($base_dir . '/' . $file)) {
+                if ($sub_dir_lists = fetch_file_lists($base_dir . '/' . $file, $file_type)) {
+                    $files_list = array_merge($files_list, $sub_dir_lists);
                 }
             }
         }
+        return $files_list;
     }
-    return $tree;
-}
-function formatTime($value) {
-    if(time() - $value < 60) {
-        return (time() - $value).'秒前';
+
+    function list_to_tree($list, $pk = 'id', $pid = 'pid', $child = '_child', $root = 0) {
+        $tree = [];
+        if (is_array($list)) {
+            $refer = [];
+            foreach ($list as $key => $data) {
+                if ($data instanceof \think\Model) {
+                    $list[$key] = $data->toArray();
+                }
+                $refer[$data[$pk]] =& $list[$key];
+            }
+            foreach ($list as $key => $data) {
+                if (!isset($list[$key][$child])) {
+                    $list[$key][$child] = [];
+                }
+                $parentId = $data[$pid];
+                if ($root == $parentId) {
+                    $tree[] =& $list[$key];
+                } else {
+                    if (isset($refer[$parentId])) {
+                        $parent =& $refer[$parentId];
+                        $parent[$child][] =& $list[$key];
+                    }
+                }
+            }
+        }
+        return $tree;
     }
-    if(time() - $value > 60 && time() - $value < 3600) {
-        return ceil((time() - $value)/60).'分钟前';
+    function formatTime($value) {
+        if(time() - $value < 60) {
+            return (time() - $value).'秒前';
+        }
+        if(time() - $value > 60 && time() - $value < 3600) {
+            return ceil((time() - $value)/60).'分钟前';
+        }
+        if(time() - $value > 3600 && time() - $value < 86400) {
+            return ceil((time() - $value)/3600).'小时前';
+        }
+        if(time() - $value > 86400 && time() - $value < 172800) {
+            return '1天前';
+        }
+        return date('Y-m-d H:i:s', $value);
     }
-    if(time() - $value > 3600 && time() - $value < 86400) {
-        return ceil((time() - $value)/3600).'小时前';
-    }
-    if(time() - $value > 86400 && time() - $value < 172800) {
-        return '1天前';
-    }
-    return date('Y-m-d H:i:s', $value);
-}
 
     function isModel($param) {
         require ALL_PATH . 'mip_config.php';
@@ -226,4 +219,9 @@ function formatTime($value) {
         } else {
             return $param;
         }
+    }
+    
+    function getAvatarUrl($uid, $size = 'max') {
+      $imagesData =  new Mip();
+      return $imagesData->getimages($uid, $size);
     }

@@ -47,7 +47,7 @@
                     layout="full" 
                     width="100" 
                     height="100"
-                    src="<?php echo($domain);?>/assets/images/icon/success.png">
+                    src="<?php echo($domain);?>/<?php echo($assets);?>/common/images/icon/success.png">
                 </mip-img>
                <div class="success">
                     <?php echo(strip_tags($msg));?>
@@ -60,7 +60,7 @@
                     layout="full" 
                     width="100" 
                     height="100"
-                    src="<?php echo($domain);?>/assets/images/icon/error.png">
+                    src="<?php echo($domain);?>/<?php echo($assets);?>/common/images/icon/error.png">
                 </mip-img>
                <div>
                     <?php echo(strip_tags($msg));?>

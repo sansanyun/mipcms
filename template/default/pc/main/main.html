@@ -10,7 +10,7 @@
     <title>{block name="title"}{/block}{$mipInfo['siteName']}{if condition="$ctr=='Index'"}{$mipInfo['indexTitle']}{/if}</title>
     <link rel="shortcut icon" href="{$domain}/favicon.ico" type="image/x-icon" />
     
-    <link rel="stylesheet" type="text/css" href="/assets/css/mipui/mipcms.css"/>
+    <link rel="stylesheet" type="text/css" href="{$domain}/{$assets}/{$tplName}/css/mipcms.css"/>
     {block name="link"}{/block}
     <style>
  
@@ -62,10 +62,10 @@
 <div class="mip-header mip-header-default" id="mip_header">
     <div class="container">
         <div class="row">
-            <div class="col-lg-8">
+            <div class="col-lg-12">
                 <div class="logo">
                     <a class="logo-link" href="{$domain}">
-                        <img class="mip-fill-content mip-replaced-content" src="{$domain}/assets/images/logo.png" alt="{$mipInfo['siteName']}">
+                        <img class="mip-fill-content mip-replaced-content" src="{$domain}/{$assets}/{$tplName}/images/logo.png" alt="{$mipInfo['siteName']}">
                     </a>
                 </div>
                 <ul class="mip-menu">
@@ -85,30 +85,7 @@
                     {/if}
                 </ul>
             </div>
-            <div class="col-lg-4">
-                {if condition="$userId"}
-                    <el-dropdown trigger="click" class="members-header-dropdown">
-                      <span class="el-dropdown-link">
-                          <img :src="avatarImg" class="avatar-img"/>{$userInfo['username']}<i class="el-icon-caret-bottom el-icon--right"></i>
-                      </span>
-                      <el-dropdown-menu slot="dropdown" class="members-dropdown">
-                        {if condition='$role["admin"]'}
-                        <el-dropdown-item><a href="{$domain}/{$Think.config.admin}/">系统管理</a></el-dropdown-item>
-                        {/if}
-                        <el-dropdown-item><a @click="loginOut">安全退出</a></el-dropdown-item>
-                      </el-dropdown-menu>
-                    </el-dropdown>
-                {else /}
-                        <div class="pull-right m-t-sm">
-                            {if condition="$mipInfo['loginStatus'] == 1"}
-                                <a href="{$domain}/login.html" class="mip-btn mip-btn-primary">登录</a>
-                            {/if}
-                            {if condition="$mipInfo['registerStatus'] == 1"}
-                            <a href="{$domain}/register.html" class="mip-btn mip-btn-default m-l">注册</a>
-                            {/if}
-                        </div>
-                {/if}
-        </div>
+            
         </div>
     </div>
 </div>
@@ -127,7 +104,6 @@
     </div>
 </footer>
 {block name="script"}
-<script src="/assets/min/?f=/assets/js/vue.min.js,/assets/js/axios.min.js,/assets/js/element.js,/assets/js/md5.js,/assets/js/utils.js,/assets/js/mipcms.js"></script>
 {/block}
 </body>
 </html>

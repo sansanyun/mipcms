@@ -8,6 +8,6 @@ class ArticlesCategory extends Model
 {
     public function articles()
     {
-        return $this->hasMany('articles','cid','id')->order('publish_time desc')->where('publish_time','<',time())->field('id,uuid,publish_time,title')->limit(9);
+        return $this->hasMany('articles','cid','id')->order('publish_time desc')->field('id,uuid,publish_time,title')->limit(9);
     }
 }

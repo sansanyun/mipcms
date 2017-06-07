@@ -61,23 +61,16 @@ class AuthBase extends Mip
             $this->accessTokenId = $header['uid'];
             $this->accessToken = $header['access-token'];
             $this->passStatus = false;
-            $roleAccessList = db('RolesAccess')->where('group_id',$accessTokenInfo['client']['client_group_id'])->select(); 
-            if ($roleAccessList) {
-                foreach ($roleAccessList as $k => $v) {
-                    $modeIds[$k] = $v['node_id'];
-                    $rolesAccessPids[$k] = $v['pid'];
-                }
-                $roleList = db('RolesNode')->where(['id' => ['in', $modeIds]])->whereOr(['id' => ['in', $rolesAccessPids]])->select();
-                foreach ($roleList as $key => $val) {
-                    if (strtoupper($val['name']) == strtoupper($this->request->action())) {
-                        $this->passStatus = true;
-                    }
-                }
+            if ($this->userInfo['group_id'] == 1) {
+                $this->passStatus = true;
             }
             if (!$this->passStatus) {
                 header('Content-Type:application/json; charset=utf-8');
                 exit(json_encode(['code'=>1006, 'msg'=>'无权限操作']));
             }
+            $userInfo = db('Users')->where('uid',$header['uid'])->find();
+            $this->userInfo = $userInfo;
+            $this->userId = $userInfo['uid'];
         }
     }
     

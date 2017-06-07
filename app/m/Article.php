@@ -31,9 +31,9 @@ class Article extends Mip
                 $categoryUrlName = null;
             }
             
-            $list = Articles::order('publish_time desc')->where('publish_time','<',time())->where($whereCategory)->page($page,10)->select();
+            $list = Articles::order('publish_time desc')->where($whereCategory)->page($page,10)->select();
             
-            $count = Articles::where($whereCategory)->where('publish_time','<',time())->count('id');
+            $count = Articles::where($whereCategory)->count('id');
             $hot_list_by_cid = Articles::where('cid',$categoryInfo->id)->order('views desc')->limit(5)->select();
             foreach($hot_list_by_cid as $k => $v) {
                     $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
@@ -43,10 +43,10 @@ class Article extends Mip
             $categoryUrlName = null;
             $categoryInfo = null;
             
-            $list = Articles::page($page,10)->order('publish_time desc')->where('publish_time','<',time())->select();
+            $list = Articles::page($page,10)->order('publish_time desc')->select();
             
-            $count = Articles::where('publish_time','<',time())->count('id');
-            $hot_list_by_cid = Articles::order('views desc')->limit(5)->where('publish_time','<',time())->select();
+            $count = Articles::count('id');
+            $hot_list_by_cid = Articles::order('views desc')->limit(5)->select();
             foreach($hot_list_by_cid as $k => $v) {
                     $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
             }
@@ -67,6 +67,13 @@ class Article extends Mip
                 $v['content'] = htmlspecialchars_decode($v['content']);
                 if (preg_match_all("/<[img|IMG].*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>/", bbc2html($v['content']), $imgs)) {
                     $list[$k]['imgCount'] = count($imgs[1]);
+                    foreach ($imgs[1] as $key => $value) {
+                       if (@preg_match($patern,$value)) {
+                           $imgs[1][$key] = $value;
+                        } else {
+                           $imgs[1][$key] = $this->domain. $value;
+                        }
+                    }
                     $list[$k]['imgList'] = $imgs[1];
                     if (@preg_match($patern,$imgs[1][0])) {
                         $list[$k]['firstImg'] = $imgs[1][0];
@@ -87,7 +94,7 @@ class Article extends Mip
         $this->assign('categoryUrlName',$categoryUrlName); //当前URL名称
         $this->assign('categoryInfo',$categoryInfo); //用于SEO
         $this->assign('list',$list);
-        $news_list_by_uid = Articles::where('is_recommend',1)->order('publish_time desc')->where('publish_time','<',time())->limit(5)->select();
+        $news_list_by_uid = Articles::where('is_recommend',1)->order('publish_time desc')->limit(5)->select();
         foreach($news_list_by_uid as $k => $v) {
             $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
         }
@@ -116,12 +123,12 @@ class Article extends Mip
     public function articleDetail() {
       $id = input('param.id');
         $whereId = $this->mipInfo['idStatus'] ? 'uuid' : 'id';
-        $itemInfo = Articles::where('publish_time','<',time())->where($whereId,$id)->find();
+        $itemInfo = Articles::where($whereId,$id)->find();
         if(!$itemInfo){
             return $this->error($this->articleModelName.'不存在','/');
         }
         $itemInfo->updateViews($itemInfo['id'], $itemInfo['uid']);
-        $itemInfo['content'] = htmlspecialchars_decode($itemInfo['content']);
+        $itemInfo['content'] = htmlspecialchars_decode(bbc2html($itemInfo['content']));
         
             preg_match_all('/<[img|IMG].*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>/', $itemInfo['content'], $imagesArray);
             $patern = '/^http[s]?:\/\/'.
@@ -134,64 +141,26 @@ class Article extends Mip
             '((\/\?)|'.  
             '(\/[0-9a-zA-Z_!~\*\'\(\)\.;\?:@&=\+\$,%#-\/]*)?)$/'; 
             foreach($imagesArray[0] as $key => $val) {
-                @preg_match('/width="\d+/',$val,$tempWidth);
-                @$width = explode('="',$tempWidth[0]);
-                @preg_match('/height="\d+/',$val,$tempHeight);
-                @$height = explode('="',$tempHeight[0]);
                 @preg_match('/alt=".+?"/',$val,$tempAlt);
                 @$alt = explode('=',$tempAlt[0]);
                 @$alt = explode('"',$alt[1]);
-                if ($this->isMobile) {
-                    if (@$width[1]) {
-                        $tempRes = $width[1]/$height[1];
-                        $width = 'width="290"';
-                        $layout = 'layout="fixed"';
-                    } else {
-                        $width = '';
-                        $layout = 'layout="container"';
-                    }
-                    if (@$height[1]) {
-                        $tempHeightRes = 290/$tempRes;
-                        $height = 'height="'.$tempHeightRes.'"';
-                    } else {
-                        $height = '';
-                    }
-                } else {
-                    if (@$width[1]) {
-                        $tempRes = $width[1]/$height[1];
-                        if ($width[1] < 728) {
-                            $width = 'width="'.$width[1].'"';
-                        } else {
-                             $width = 'width="728"';
-                        }
-                        $layout = 'layout="fixed"';
-                    } else {
-                        $width = '450';
-                        $layout = 'layout="fixed"';
-                    }
-                    if (@$height[1]) {
-                        if ($width[1] < 728) {
-                            $height = 'height="'.$height[1].'"';
-                        } else {
-                            $tempHeightRes = 728/$tempRes;
-                            $height = 'height="'.$tempHeightRes.'"';
-                        }
-                    } else {
-                        $height = 150;
-                    }
+                if (count($alt) == 1) {
+                    $alt = $alt[0];
+                } 
+                if (count($alt) == 2) {
+                    $alt = $alt[1] ;
                 }
-                
                 if (@preg_match($patern,$imagesArray[1][$key])) {
                     $src = $imagesArray[1][$key];
                 } else {
                     $src = $this->domain.$imagesArray[1][$key];
                 }
-                 
-                $tempImg = '<mip-img '.$layout.' alt="'.$alt[1].'" '.$width.' '.$height.'  src="'.$src.'" popup></mip-img>';
+                $layout = 'layout="container"';
+                $tempImg = '<mip-img '.$layout.' alt="'.$alt.'" src="'.$src.'" popup></mip-img>';
                 $itemInfo['content'] =  str_replace($val,$tempImg,$itemInfo['content']);
             }
-            $itemInfo['content'] =  preg_replace("/style=.+?['|\"]/i",'', $itemInfo['content']);
-            @preg_match_all('/<a[^>]+>[^>]+a>/',$itemInfo['content'],$tempLink);
+            $itemInfo['content'] =  preg_replace("/style=.+?['|\"]/i",'', bbc2html($itemInfo['content']));
+            @preg_match_all('/<a[^>]*>[^>]+a>/',$itemInfo['content'],$tempLink);
             foreach($tempLink[0] as $k => $v) {
                 if(strpos($v,"href")) {
                     @preg_match('/href\s*=\s*(?:"([^"]*)"|\'([^\']*)\'|([^"\'>\s]+))/',$v,$hrefRes);
@@ -205,7 +174,7 @@ class Article extends Mip
             }
         
         $itemInfo->users;
-        $itemInfo['message_description']= trim(preg_replace("/\[attach\](.*)\[\/attach\]/","",str_replace("\r\n", ' ', strip_tags(bbc2html($itemInfo['content'])))),"\r\n\t");
+        $itemInfo['message_description']= trim(preg_replace("/ /","",str_replace("\r\n", ' ', strip_tags($itemInfo['content']))),"\r\n\t");
         $itemInfo['categoryInfo'] = ArticlesCategory::get($itemInfo['cid']);
         if ($itemInfo['categoryInfo']) {
             if (!Validate::regex($itemInfo['categoryInfo']['url_name'],'\d+') AND $itemInfo['categoryInfo']['url_name']) {
@@ -224,8 +193,8 @@ class Article extends Mip
         }
         $this->assign('tags',$tags);
 
-        $item_up_page = Articles::where('publish_time','<',$itemInfo['publish_time'])->where('publish_time','<',time())->order('publish_time desc')->limit(1)->select();
-        $item_down_page = Articles::where('publish_time','>',$itemInfo['publish_time'])->where('publish_time','<',time())->limit(1)->order('publish_time asc')->select();
+        $item_up_page = Articles::where('publish_time','<',$itemInfo['publish_time'])->order('publish_time desc')->limit(1)->select();
+        $item_down_page = Articles::where('publish_time','>',$itemInfo['publish_time'])->limit(1)->order('publish_time asc')->select();
         foreach($item_up_page as $k => $v) {
             $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
         }     
@@ -251,7 +220,7 @@ class Article extends Mip
             for ($i = 0; $i <8; $i++) {
                 $tempNum[] = rand($articleMinNum,$articleMaxNum);
             }
-        $rand_list = Articles::where('publish_time','<',time())->where('id','in', implode(',', $tempNum))->select();
+        $rand_list = Articles::where('id','in', implode(',', $tempNum))->select();
         $patern = '/^http[s]?:\/\/'.
         '(([0-9]{1,3}\.){3}[0-9]{1,3}'. 
         '|'. 
@@ -265,6 +234,13 @@ class Article extends Mip
             $v['content'] = htmlspecialchars_decode($v['content']);
             if (preg_match_all('/<[img|IMG].*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>/', bbc2html($v['content']), $imgs)) {
                 $rand_list[$k]['imgCount'] = count($imgs[1]);
+                 foreach ($imgs[1] as $key => $value) {
+                   if (@preg_match($patern,$value)) {
+                       $imgs[1][$key] = $value;
+                    } else {
+                       $imgs[1][$key] = $this->domain. $value;
+                    }
+                }
                 $rand_list[$k]['imgList'] = $imgs[1];
                 if (@preg_match($patern,$imgs[1][0])) {
                     $rand_list[$k]['firstImg'] = $imgs[1][0];
@@ -285,7 +261,7 @@ class Article extends Mip
 
 
         //获取发布者发布的最新数据
-        $news_list_by_uid = Articles::where('uid',$itemInfo['uid'])->order('publish_time desc')->where('publish_time','<',time())->limit(5)->select();
+        $news_list_by_uid = Articles::where('uid',$itemInfo['uid'])->order('publish_time desc')->limit(5)->select();
         foreach($news_list_by_uid as $k => $v) {
             $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
         }

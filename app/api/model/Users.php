@@ -23,6 +23,7 @@ class Users extends Model
         }
         $salt = create_salt(12);
         return  $this->create(array(
+                'uuid' => uuid(),
                 'username' => $username,
                 'password' => create_md5($password,$salt),
                 'salt' => $salt,

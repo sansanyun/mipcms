@@ -39,7 +39,6 @@ class Mip extends Controller
         } else {
             $this->mipInfo = null;
         }
-        $this->assign('main',$this->mipInfo['template'].'/main/main');
         $this->assign('mipInfo',$this->mipInfo);
         /*设置模板名称*/
         $tplPath = config('template')['view_path'];
@@ -67,7 +66,8 @@ class Mip extends Controller
         $this->mipInit();
         $this->categoryInit();
         $this->friendLink(); 
-        $this->spider(); 
+        $this->spider();
+        $this->articleSetting();
     }
     //用户信息初始化
     public function mipInit(){
@@ -85,24 +85,8 @@ class Mip extends Controller
                 $this->isAdmin = false;
             }
             $this->isLogin = true;
-            
-            $roleAccessList = db('RolesAccess')->where('group_id',$this->groupId)->select(); 
-            if ($roleAccessList) {
-                foreach ($roleAccessList as $k => $v) {
-                    $modeIds[$k] = $v['node_id'];
-                    $rolesAccessPids[$k] = $v['pid'];
-                }
-                $rolesNodeList = db('RolesNode')->select();
-                foreach ($rolesNodeList as $k => $v) {
-                   $role[$v['name']] = '';
-                }
-                $roleList = db('RolesNode')->where(['id' => ['in', $modeIds]])->whereOr(['id' => ['in', $rolesAccessPids]])->select();
-                foreach ($roleList as $k => $v) {
-                   $role[$v['name']] = $v['name'];
-                }
-                $this->role = $role;
-                $this->assign('role',$this->role);
-            }
+         
+            $this->assign('role',null);
             
             if ($this->userInfo['status'] == 1) {
                 Session::delete('userInfo');
@@ -113,6 +97,7 @@ class Mip extends Controller
             $this->userId = '';
             $this->passStatus = false;
         }
+        
         if (!$this->mipInfo['systemStatus']) {
             if ($request->controller() != 'Account') {
                 if ($this->userInfo['group_id'] != 1) {
@@ -137,6 +122,22 @@ class Mip extends Controller
                 require_once $file;
             }
         }
+        
+        $this->assign('return_url','');
+        $this->assign('itemDetailId','');
+        
+        if (MIP_HOST) {
+            $this->assign('assets','public/assets');
+            $this->assets = 'public/assets';
+            $this->assign('public','public');
+            $this->public = 'public';
+        } else {
+            $this->assign('assets','assets');
+            $this->assets = 'assets';
+            $this->assign('public','');
+            $this->public = '';
+        }
+        
 //      if( $this->CORS ){
 //          header('Access-Control-Allow-Origin: *');
 //          header('Access-Control-Allow-Credentials: true');
@@ -155,19 +156,14 @@ class Mip extends Controller
         $this->assign('userModelName',$this->mipInfo['userModelName']);
         $this->assign('userModelUrl',$this->mipInfo['userModelUrl']);
         $this->userModelUrl = $this->mipInfo['userModelUrl'];
-        $categoryUrlName = null;
         $itemCategoryList = null;
         $articleCategoryList = null;
         $askCategoryList = null;
         $itemCategoryUrlName = '';
-        if ($this->mipInfo['systemType'] == 'CMS' || $this->mipInfo['systemType'] == 'Blog') {
-            $itemCategoryList = db('ArticlesCategory')->order('sort desc')->select();
-            $itemCategoryUrlName = $this->mipInfo['articleModelUrl'];
-        }
-        if ($this->mipInfo['systemType'] == 'ASK') {
-            $itemCategoryList = db('AsksCategory')->order('sort desc')->select();
-            $itemCategoryUrlName = $this->mipInfo['askModelUrl'];
-        }
+        
+        $itemCategoryList = db('ArticlesCategory')->order('sort desc')->select();
+        $itemCategoryUrlName = $this->mipInfo['articleModelUrl'];
+        
         if($itemCategoryList) {
             foreach ($itemCategoryList as $key => $val) {
                 if(!Validate::regex($itemCategoryList[$key]['url_name'],'\d+') AND $itemCategoryList[$key]['url_name']){
@@ -179,32 +175,7 @@ class Mip extends Controller
         }
         $this->assign('itemCategoryUrlName',$itemCategoryUrlName); 
         $this->assign('itemCategoryList',$itemCategoryList); 
-        if ($this->mipInfo['systemType'] == 'SNS') {
-            $articleCategoryList = db('ArticlesCategory')->order('sort desc')->select();
-            if($articleCategoryList) {
-                foreach ($articleCategoryList as $key => $val) {
-                    if(!Validate::regex($articleCategoryList[$key]['url_name'],'\d+') AND $articleCategoryList[$key]['url_name']){
-                        $articleCategoryList[$key]['url_name']=$articleCategoryList[$key]['url_name'];
-                    }else{
-                        $articleCategoryList[$key]['url_name']='cid_'.$articleCategoryList[$key]['id'];
-                    }
-                }
-            }
-            $this->assign('articleCategoryList',$articleCategoryList); 
-            $askCategoryList = db('AsksCategory')->order('sort desc')->select();
-            if($askCategoryList) {
-                foreach ($askCategoryList as $key => $val) {
-                    if(!Validate::regex($askCategoryList[$key]['url_name'],'\d+') AND $askCategoryList[$key]['url_name']){
-                        $askCategoryList[$key]['url_name']=$askCategoryList[$key]['url_name'];
-                    }else{
-                        $askCategoryList[$key]['url_name']='cid_'.$askCategoryList[$key]['id'];
-                    }
-                }
-            }
-            $this->assign('askCategoryList',$askCategoryList); 
-        }
-        
-        $this->assign('categoryUrlName',$categoryUrlName);
+       
         
     }
     public function spider() {
@@ -224,17 +195,6 @@ class Mip extends Controller
                         db('spiders')->insert(array('uuid' => uuid(),'add_time' => time(),'type' => 'pc','pageUrl' => $this->siteUrl, 'ua' => $userAgent, 'vendor' => 'baidu'));
                     }
                 }
-            }
-        }
-        if ($this->mipInfo['baiduMip']) {
-            if (strpos($userAgent,"baidumip")) {
-                db('spiders')->insert(array('uuid' => uuid(),'add_time' => time(),'type' => 'baidumip','pageUrl' => $this->siteUrl, 'ua' => $userAgent, 'vendor' => 'baidu'));
-            }
-            if (strpos($userAgent,"baidumib")) {
-                db('spiders')->insert(array('uuid' => uuid(),'add_time' => time(),'type' => 'baidumib','pageUrl' => $this->siteUrl, 'ua' => $userAgent, 'vendor' => 'baidu'));
-            }
-            if (strpos($userAgent,"mip")) {
-                db('spiders')->insert(array('uuid' => uuid(),'add_time' => time(),'type' => 'mip','pageUrl' => $this->siteUrl, 'ua' => $userAgent, 'vendor' => 'baidu'));
             }
         }
     }
@@ -257,6 +217,50 @@ class Mip extends Controller
         $this->assign('friendLink',$friendLink);
         
     }
+    public function articleSetting() {
+        $articleSetting = db('articlesSetting')->select();
+        if ($articleSetting) {
+            foreach ($articleSetting as $k => $v){
+                $this->articleSetting[$v['key']] = $v['val'];
+            }
+        } else {
+            $this->articleSetting = null;
+        }
+        $this->assign('articleSetting',$this->articleSetting);
+    }
+    
+    //获取头像
+    public function getimages($uid, $size){
+        
+        if (!$size) {
+            $size = 'max';
+        }
+        $uid = intval($uid);
+        
+        $uid = sprintf("%09d", $uid);
+        $dir1 = substr($uid, 0, 3);
+        $dir2 = substr($uid, 3, 2);
+        $dir3 = substr($uid, 5, 2);
+        
+        if (!$this->mipInfo['uploadPath']) {
+            $tempUploadPath = ROOT_PATH . DS . $this->mipInfo['uploadUrl'];
+        } else {
+            $tempUploadPath = $this->mipInfo['uploadPath'];
+        }
+        if (!$uid) {
+            if (file_exists($tempUploadPath . DS . 'avatar' . DS . $dir1 . DS . $dir2 . DS . $dir3 . DS . substr($uid, - 2) . '_avatar_max.jpg')) {
+                return $this->mipInfo['https'].'://'.$this->mipInfo['domain'].'/'.$this->mipInfo['uploadUrl'] . '/avatar/' . $dir1 . '/' . $dir2 . '/' . $dir3 . '/' . substr($uid, - 2) . '_avatar__max.jpg';
+            } else {
+                return $this->mipInfo['https'].'://'.$this->mipInfo['domain'] . '/' . $this->assets . '/' . '/common/images/avatar.jpg';
+            }
+        }
+        if (file_exists($tempUploadPath . DS . 'avatar' . DS . $dir1 . DS . $dir2 . DS . $dir3 . DS . substr($uid, - 2) . '_avatar_' . $size . '.jpg')) {
+            return $this->mipInfo['https'].'://'.$this->mipInfo['domain'].'/'.$this->mipInfo['uploadUrl'] . '/avatar/' . $dir1 . '/' . $dir2 . '/' . $dir3 . '/' . substr($uid, - 2) . '_avatar_' . $size . '.jpg';
+        } else {
+            return  $this->mipInfo['https'].'://'.$this->mipInfo['domain'] . '/' . $this->assets . '/' . '/common/images/avatar.jpg';
+        }
+    }
+    
     //模板渲染处理
     public function mipView($parent){
         $tplName = $this->mipInfo['template'];
@@ -266,7 +270,6 @@ class Mip extends Controller
             return $this->fetch($tplName.'/'.$parent);
         }
     }
-
 
 
 

@@ -68,11 +68,12 @@ class Install extends Controller
                   </div>
                 </body>
                 </html>
-                    <script src="https://unpkg.com/vue/dist/vue.js"></script>
-                    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
-                    <script src="/assets/js/axios.min.js"></script>
-                    <script src="/assets/js/utils.js"></script>
-                    <script src="/assets/js/install.js"></script>
+                    <script src="https://cdn.staticfile.org/vue/2.2.6/vue.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="https://cdn.staticfile.org/axios/0.15.3/axios.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="https://cdn.staticfile.org/element-ui/1.2.5/index.js" type="text/javascript" charset="utf-8"></script>
+<script src="{$domain}/{$assets}/common/js/utils.js" type="text/javascript" charset="utf-8"></script>
+<script src="{$domain}/{$assets}/common/js/mipcms.js" type="text/javascript" charset="utf-8"></script>
+<script src="https://cdn.staticfile.org/blueimp-md5/2.7.0/js/md5.min.js" type="text/javascript" charset="utf-8"></script>
                     <script>
                     var _hmt = _hmt || [];
                     (function() {
@@ -102,7 +103,7 @@ class Install extends Controller
                 $dbconfig['database'] = $dbname;
                 $dbconfig['prefix']=trim(input('dbprefix'));
                 $tablepre = input("dbprefix");
-                $sql = file_get_contents(ROOT_PATH.'package'.DS.'mipcms_v_1_1_1.sql');
+                $sql = file_get_contents(ROOT_PATH.'package'.DS.'mipcms_v_2_0_0.sql');
                 $sql = str_replace("\r", "\n", $sql);
                 $sql = explode(";\n", $sql);
                 $default_tablepre = "mip_";
@@ -122,12 +123,12 @@ class Install extends Controller
                     }
                 }
                 try {
-                    touch(CONF_PATH.'install'.DS.'install.lock');
+                    touch(PUBLIC_PATH.'install'.DS.'install.lock');
                 } catch (\PDOException $e) {
-                    return jsonError('install.lock文件写入失败，请检查system/config/install 文件夹是否可写入');
+                    return jsonError('install.lock文件写入失败，请检查public/install 文件夹是否可写入');
                 }
                 if(is_array($dbconfig)){
-                    $conf = file_get_contents(ROOT_PATH.'package'.DS.'database.php');
+                    $conf = file_get_contents(PUBLIC_PATH.'package'.DS.'database.php');
                     foreach ($dbconfig as $key => $value) {
                         $conf = str_replace("#{$key}#", $value, $conf);
                     }

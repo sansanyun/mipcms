@@ -65,7 +65,7 @@
             </el-table-column>
             <el-table-column label="UID" prop="uid" width="70"></el-table-column>
             <el-table-column label="用户名" inline-template width="180">
-                <div class="avatar-username"><img src="/assets/images/avatar.jpg" class="avatar-img"/><span class="username"> {{row.username}}</span></div>
+                <div class="avatar-username"><img src="/{$assets}/common/images/avatar.jpg" class="avatar-img"/><span class="username"> {{row.username}}</span></div>
             </el-table-column>
             <el-table-column inline-template label="用户组" width="90">
                 <template><span :class="row.usernameColor">{{row.usersGroup ? row.usersGroup.name : '-' }}</span></template>

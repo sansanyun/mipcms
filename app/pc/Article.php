@@ -11,9 +11,9 @@ use think\Cache;
 use think\Db;
 use think\Request;
 use think\Loader;
+use mip\Cutpage;
 use mip\Mip;
 use mip\Pagination;
-
 class Article extends Mip {
 	protected $beforeActionList = ['start'];
     public function start() {
@@ -23,7 +23,7 @@ class Article extends Mip {
         $page = input('param.page');
         $category = input('param.category');
         if (!$page) {
-            $page=1;
+            $page = 1;
         }
         if ($category) {
             $categoryInfo = ArticlesCategory::get($category);
@@ -36,66 +36,53 @@ class Article extends Mip {
             } else {
                 $categoryUrlName = null;
             }
-            
-            $list = Articles::order('publish_time desc')->where('publish_time','<',time())->where($whereCategory)->page($page,10)->select();
-            
+            $articleList = Articles::order('publish_time desc')->where($whereCategory)->page($page,10)->select();
             $count = Articles::where($whereCategory)->count('id');
             $hot_list_by_cid = Articles::where('cid',$categoryInfo->id)->order('views desc')->limit(5)->select();
             foreach($hot_list_by_cid as $k => $v) {
-                    $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+                $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
             }
             $this->assign('hot_list_by_cid',$hot_list_by_cid);
         } else {
             $categoryUrlName = null;
             $categoryInfo = null;
             
-            $list = Articles::page($page,10)->order('publish_time desc')->where('publish_time','<',time())->select();
+            $articleList = Articles::page($page,10)->order('publish_time desc')->select();
             
             $count = Articles::count('id');
-            $hot_list_by_cid = Articles::order('views desc')->limit(5)->where('publish_time','<',time())->select();
+            $hot_list_by_cid = Articles::order('views desc')->limit(5)->select();
             foreach($hot_list_by_cid as $k => $v) {
                     $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
             }
             $this->assign('hot_list_by_cid',$hot_list_by_cid);
         }
-        if ($list) {
-             $patern = '/^http[s]?:\/\/'.
-            '(([0-9]{1,3}\.){3}[0-9]{1,3}'. 
-            '|'. 
-            '([0-9a-z_!~*\'()-]+\.)*'. 
-            '([0-9a-z][0-9a-z-]{0,61})?[0-9a-z]\.'. 
-            '[a-z]{2,6})'.   
-            '(:[0-9]{1,4})?'.  
-            '((\/\?)|'.  
-            '(\/[0-9a-zA-Z_!~\*\'\(\)\.;\?:@&=\+\$,%#-\/]*)?)$/'; 
-            foreach ($list as $k=>$v){
-        		$list[$k]->users;
-                $v['content'] = htmlspecialchars_decode($v['content']);
-                if (preg_match_all('/<[img|IMG].*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>/', bbc2html($v['content']), $imgs)) {
-                    if (@preg_match($patern,$imgs[1][0])) {
-                        $list[$k]['firstImg'] = $imgs[1][0];
-                    } else {
-                        $list[$k]['firstImg'] = $this->domain.$imgs[1][0];
-                    }
-                    
-                } else {
-                    $list[$k]['firstImg'] = null;
-                }
-                $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid']:$v['id'];
-                $v['content'] = strip_tags(htmlspecialchars_decode($v['content']));
-            }
+        if ($articleList) {
+           $articleList = model('api/Articles')->filter($articleList, $this->mipInfo['idStatus'], $this->domain, $this->public);
         } else {
-            $list=null;
+            $articleList = null;
         }
         $this->assign('categoryUrlName',$categoryUrlName); //当前URL名称
         $this->assign('categoryInfo',$categoryInfo); //用于SEO
-        $this->assign('list',$list);
-        $news_list_by_uid = Articles::where('is_recommend',1)->order('publish_time desc')->where('publish_time','<',time())->limit(5)->select();
-        foreach($news_list_by_uid as $k => $v) {
+        $this->assign('articleList',$articleList);
+        $recommendListByCid = Articles::where('is_recommend',1)->order('publish_time desc')->limit(5)->select();
+        foreach($recommendListByCid as $k => $v) {
             $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
         }
-        $this->assign('recommendListByCid',$news_list_by_uid);
+        $this->assign('recommendListByCid',$recommendListByCid);
         
+        if ($this->mipInfo["systemType"] == 'CMS') {
+            //随机推荐
+            $articleMaxNum = Articles::count('id');
+                $articleMinNum = 1;
+                for ($i = 0; $i < 5; $i++) {
+                    $tempNum[] = rand($articleMinNum,$articleMaxNum);
+                }
+            $rand_list = Articles::where('publish_time','<',time())->where('id','in', implode(',', $tempNum))->select();
+            foreach ($rand_list as $k => $v) {
+                $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+            }
+            $this->assign('rand_list',$rand_list);
+        }
         require ALL_PATH . 'mip_config.php';
         if ($isModel) {
             $pagination_array= array(
@@ -119,36 +106,42 @@ class Article extends Mip {
     public function articleDetail() {
         $id = input('param.id');
         $whereId = $this->mipInfo['idStatus'] ? 'uuid' : 'id';
-        $itemInfo = Articles::where('publish_time','<',time())->where($whereId,$id)->find();
-        if(!$itemInfo){
+        $itemInfo = Articles::where($whereId,$id)->find();
+        if (!$itemInfo) {
             return $this->error($this->articleModelName.'不存在','/');
         }
         $itemInfo->updateViews($itemInfo['id'], $itemInfo['uid']);
-        $itemInfo['content'] = htmlspecialchars_decode($itemInfo['content']);
-        
-        
+        $itemInfo['content'] = htmlspecialchars_decode($itemInfo->getContentByArticleId($itemInfo['id'],$itemInfo['content_id'])['content']);
         $itemInfo->users;
-        $itemInfo['message_description']= trim(preg_replace("/\[attach\](.*)\[\/attach\]/","",str_replace("\r\n", ' ', strip_tags(bbc2html($itemInfo['content'])))),"\r\n\t");
+        $itemInfo['message_description']= trim(preg_replace("/ /","",str_replace("\r\n", ' ', strip_tags($itemInfo['content']))),"\r\n\t");
         $itemInfo['categoryInfo'] = ArticlesCategory::get($itemInfo['cid']);
         if ($itemInfo['categoryInfo']) {
             if (!Validate::regex($itemInfo['categoryInfo']['url_name'],'\d+') AND $itemInfo['categoryInfo']['url_name']) {
-                $itemInfo['categoryInfo']['url_name']=$itemInfo['categoryInfo']['url_name'];
+                $itemInfo['categoryInfo']['url_name'] = $itemInfo['categoryInfo']['url_name'];
             } else {
-                $itemInfo['categoryInfo']['url_name']='cid_'.$itemInfo['categoryInfo']['id'];
+                $itemInfo['categoryInfo']['url_name'] = 'cid_'.$itemInfo['categoryInfo']['id'];
             }
         }
+        $this->assign('itemDetailId',$itemInfo['id']);
         $this->assign('itemInfo',$itemInfo);
         
-        $tags= ItemTags::where('item_id',$itemInfo['id'])->where('item_type','article')->select();
-        if($tags){
-            foreach ($tags as $k=>$v){
+        $content = $itemInfo['content'];
+        $currentPageNum = input('param.page') ? intval(input('param.page')) : 1;
+        $CP = new Cutpage($content,$currentPageNum);
+        $page = $CP->cut_str();
+        $itemInfo['content'] = $page[$currentPageNum-1];
+        $itemInfo['pageCode'] = $CP->pagenav($currentPageNum,$this->domain.'/'.$this->articleModelUrl . '/' . $id);
+         
+        $tags = ItemTags::where('item_id',$itemInfo['id'])->where('item_type','article')->select();
+        if ($tags) {
+            foreach ($tags as $k => $v){
                 $tags[$k]->tags;
             }
         }
         $this->assign('tags',$tags);
 
-       	$item_up_page = Articles::where('publish_time','<',$itemInfo['publish_time'])->where('publish_time','<',time())->order('publish_time desc')->limit(1)->select();
-        $item_down_page = Articles::where('publish_time','>',$itemInfo['publish_time'])->where('publish_time','<',time())->limit(1)->order('publish_time asc')->select();
+       	$item_up_page = Articles::where('publish_time','<',$itemInfo['publish_time'])->order('publish_time desc')->limit(1)->select();
+        $item_down_page = Articles::where('publish_time','>',$itemInfo['publish_time'])->limit(1)->order('publish_time asc')->select();
         foreach($item_up_page as $k => $v) {
             $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
         }     
@@ -158,71 +151,75 @@ class Article extends Mip {
         $this->assign('item_up_page',$item_up_page);
         $this->assign('item_down_page',$item_down_page);
 
-        //评论区域
-        $comments= ArticlesComments::where('item_id',$itemInfo['id'])->order('create_time desc')->select();
+        $comments = ArticlesComments::where('item_id',$itemInfo['id'])->order('create_time desc')->select();
         if ($comments) {
-            foreach ($comments as $k=>$v){
-                $comments[$k]['content']= str_replace("\r\n", ' ', strip_tags(bbc2html($v['content'])));
+            foreach ($comments as $k => $v){
+                $comments[$k]['content']= str_replace("\r\n", ' ', strip_tags($v['content']));
                 $comments[$k]->users;
             }
         }
         $this->assign('comments',$comments);
-
-        //随机数据
-        $articleMaxNum = Articles::count('id');
-            $articleMinNum = 1;
-            for ($i = 0; $i <8; $i++) {
-                $tempNum[] = rand($articleMinNum,$articleMaxNum);
-            }
-        $rand_list = Articles::where('publish_time','<',time())->where('id','in', implode(',', $tempNum))->select();
-        $patern = '/^http[s]?:\/\/'.
-        '(([0-9]{1,3}\.){3}[0-9]{1,3}'. 
-        '|'. 
-        '([0-9a-z_!~*\'()-]+\.)*'. 
-        '([0-9a-z][0-9a-z-]{0,61})?[0-9a-z]\.'. 
-        '[a-z]{2,6})'.   
-        '(:[0-9]{1,4})?'.  
-        '((\/\?)|'.  
-        '(\/[0-9a-zA-Z_!~\*\'\(\)\.;\?:@&=\+\$,%#-\/]*)?)$/'; 
-        foreach ($rand_list as $k => $v) {
-            $v['content'] = htmlspecialchars_decode($v['content']);
-            if (preg_match_all('/<[img|IMG].*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>/', bbc2html($v['content']), $imgs)) {
-                if (@preg_match($patern,$imgs[1][0])) {
-                    $rand_list[$k]['firstImg'] = $imgs[1][0];
-                } else {
-                    $rand_list[$k]['firstImg'] = $this->domain.$imgs[1][0];
+        
+        if ($tags) {
+            $tagName = $tags[0]['tags']['name'];
+        } else {
+            $tagName = null;
+        }
+        
+        if ($tagName) {
+            $sq = "%".$tagName."%";
+            $tagWhere['title']  = ['like',$sq];
+            $aboutLoveList = Articles::where($tagWhere)->limit(8)->select();
+            $aboutLoveList = model('api/Articles')->filter($aboutLoveList, $this->mipInfo['idStatus'], $this->domain, $this->public);
+        } else {
+            $aboutLoveList = null;
+        }
+        $this->assign('aboutLoveList',$aboutLoveList);
+        if ($this->mipInfo["systemType"] == 'CMS') {
+            //随机推荐
+            $articleMaxNum = Articles::count('id');
+                $articleMinNum = 1;
+                for ($i = 0; $i < 5; $i++) {
+                    $tempNum[] = rand($articleMinNum,$articleMaxNum);
                 }
-                
-            } else {
-                $rand_list[$k]['firstImg'] = null;
+            $rand_list = Articles::where('publish_time','<',time())->where('id','in', implode(',', $tempNum))->select();
+            foreach ($rand_list as $k => $v) {
+                $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
             }
-        }  
-        foreach ($rand_list as $k => $v) {
-            $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+            $this->assign('rand_list',$rand_list);
+            
+            $hot_list_by_cid = Articles::order('views desc')->limit(5)->select();
+            foreach($hot_list_by_cid as $k => $v) {
+                    $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+            }
+            $this->assign('hot_list_by_cid',$hot_list_by_cid);
+        } else {
+            //获取发布者发布的最新数据
+            $newsListByUid = Articles::where('uid',$itemInfo['uid'])->order('publish_time desc')->limit(5)->select();
+            foreach($newsListByUid as $k => $v) {
+                $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+            }
+            $this->assign('news_list_by_uid',$newsListByUid);
         }
-        $this->assign('rand_list',$rand_list);
-
-
- 		//获取发布者发布的最新数据
-        $news_list_by_uid = Articles::where('uid',$itemInfo['uid'])->order('publish_time desc')->where('publish_time','<',time())->limit(5)->select();
-        foreach($news_list_by_uid as $k => $v) {
-            $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
-        }
-        $this->assign('news_list_by_uid',$news_list_by_uid);
-
+        
         $categoryList = ArticlesCategory::order('sort desc')->select();
         if ($categoryList) {
             foreach ($categoryList as $key => $val) {
                 if (!Validate::regex($categoryList[$key]['url_name'],'\d+') AND $categoryList[$key]['url_name']) {
-                    $categoryList[$key]['url_name']=$categoryList[$key]['url_name'];
+                    $categoryList[$key]['url_name'] = $categoryList[$key]['url_name'];
                 } else {
-                    $categoryList[$key]['url_name']='cid_'.$categoryList[$key]['id'];
+                    $categoryList[$key]['url_name'] = 'cid_'.$categoryList[$key]['id'];
                 }
             }
         }
         $this->assign('categoryList',$categoryList);
 
         return $this->mipView('pc/article/articleDetail');
+    }
+    
+    public function publish() {
+        
+        return $this->mipView('pc/article/articlePublish');
     }
 
 }

@@ -7,9 +7,11 @@ use think\Loader;
 use app\api\model\Articles;
 use app\api\model\ArticlesComments;
 use app\api\model\ArticlesCategory;
+use app\api\model\ArticlesContent;
 use app\api\model\Users;
 use app\api\model\Tags;
 use app\api\model\ItemTags;
+use think\Db;
 use mip\Htmlp;
 use mip\AuthBase;
 class Article extends AuthBase
@@ -47,14 +49,20 @@ class Article extends AuthBase
 	      	} else {
 	      	    $createInfo = Articles::create(array(
                    'title'=>htmlspecialchars($title),
-                   'content' => htmlspecialchars($content),
                    'uid' => $this->userId,
                    'cid' => $cid,
                    'create_time' => time(),
                    'publish_time' => $publish_time,
                    'uuid' => uuid(),
                    'is_recommend' => $is_recommend,
+                   'content_id' => uuid(),
                     ));
+                if ($createInfo) {
+                    ArticlesContent::create(array(
+                       'id' => $createInfo['content_id'],
+                       'content' => htmlspecialchars($content),
+                    ));
+                }
 	      		if ($createInfo) {
                     if (is_array($tags)) {
                         ItemTags::where('item_id',$createInfo['id'])->where('item_type',$itemType)->delete();
@@ -78,9 +86,9 @@ class Article extends AuthBase
                     Users::where('uid',$this->userId)->update([
                         'article_num' => Articles::where('uid',$this->userId)->count(),
                     ]);
-	      			return jsonSuccess('添加成功');
+	      			return jsonSuccess('提交成功');
 		        } else {
-		        	return  jsonError('添加失败');
+		        	return  jsonError('提交失败');
 		        }
 	      	}
 	      	
@@ -122,12 +130,35 @@ class Article extends AuthBase
 	      	
         }
     }
+    public function articleTransferAll(Request $request) {
+        if (Request::instance()->isPost()) {
+            $cid = input('post.cid');
+            $ids = input('post.ids');
+            if (!$ids) {
+              return jsonError('缺少参数');
+            }
+            if (empty($cid)) {
+              return jsonError('缺少分类ID');
+            }
+            $ids = explode(',',$ids);
+            if(is_array($ids)){
+                foreach ($ids as $id){
+                    Articles::where('id',$id)->update(['cid' => $cid]);
+                }
+                return jsonSuccess('操作成功');
+            } else {
+                return  jsonError('参数错误');
+            }
+        }
+    }
     public function articlesSelect(Request $request){
 		if (Request::instance()->isPost()) {
 	      	$page = input('post.page');
 			$limit = input('post.limit');
 			$orderBy = input('post.orderBy');
 			$order = input('post.order');
+            $cid = input('post.cid');
+            $keywords = input('post.keywords');
 			if(!$page){
 			  $page = 1;
 			}
@@ -140,14 +171,31 @@ class Article extends AuthBase
 			if(!$order){
 				$order = 'desc';
 			}
-		    $articleList = Articles::limit($limit)->page($page)->order($orderBy, $order)->select();
+            if ($keywords) {
+                if($cid) {
+                    $where['cid'] = $cid;
+                } 
+                $sq = "%".$keywords."%";
+                $where['title']  = ['like',$sq];
+                $articleList = Articles::where($where)->limit($limit)->page($page)->order($orderBy, $order)->select();
+                $itemCount = Articles::where($where)->count();
+            } else {
+                if(empty($cid)) {
+                    $articleList = Articles::limit($limit)->page($page)->order($orderBy, $order)->select();
+                    $itemCount = Articles::count();
+                } else {
+                    $where['cid'] = $cid;
+                    $articleList = Articles::where($where)->limit($limit)->page($page)->order($orderBy, $order)->select();
+                    $itemCount = Articles::where($where)->count();
+                }
+            }
 		    foreach ($articleList as $key => $val) {
-		        $val['content'] = htmlspecialchars_decode($val['content']);
+                $val['content'] = htmlspecialchars_decode($articleList[$key]->getContentByArticleId($val['id'],$val['content_id'])['content']);
                 $articleList[$key]->users;
                 $articleList[$key]->articlesCategory;
                 $val['tempId'] = $this->mipInfo['idStatus'] ? $val['uuid'] : $val['id'];
 		    }
-		    return jsonSuccess('',['articleList' => $articleList,'total' => Articles::count(),'page' => $page]); 
+		    return jsonSuccess('',['articleList' => $articleList,'total' => $itemCount,'page' => $page]); 
         }
     }
     public function articleEdit(Request $request){

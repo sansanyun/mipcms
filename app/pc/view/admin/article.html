@@ -5,11 +5,33 @@
 {block name="style"}
 {__block__}
 <style>
-  .simditor-item .el-form-item__content{line-height: inherit;}
-  .simditor-body {
-      height: 400px;
-      overflow-y: auto;
-  }
+    .simditor-item .el-form-item__content{line-height: inherit;}
+    .simditor-body {
+        height: 400px;
+        overflow-y: auto;
+    }
+    .mip-box-body {
+        position: relative;
+    }
+    .tap-setting {
+        color: #99a9bf;
+        font-size: 16px;
+        position: absolute;
+        z-index: 10;
+        right: 20px;
+        top: 10px;
+        padding: 10px;
+        cursor: pointer;
+        transition: .3s;
+    }
+    .tap-setting i {
+        transition: .3s;
+        color: #d9def1;
+        vertical-align: baseline;
+    }
+    .tap-setting:hover i {
+        color: #00AAEE;
+    }
 </style>
 {/block}
 {block name="main"}
@@ -23,38 +45,39 @@
 </section>
 <section class="mip-box mip-default" style="display: none;" :style="showAction">
     <section class="mip-box-body">
+        <span class="tap-setting" style="display: none;"><a href="/{$Think.config.admin}/article_setting"><i class="el-icon-setting"></i></a></span>
         <el-tabs type="card" v-model="tabsValue" @tab-remove="removeTab">
             <el-tab-pane label="全部{$articleModelName}" name="list">
                 <template>
                     <el-row :gutter="24" style="margin-bottom: 15px;">
-                        <el-col :span="6">
-                            <el-input
-                                placeholder="标题/内容/发布者"
-                                icon="search"
-                                v-model="searchData"
-                                :on-icon-click="handleSearchClick">
-                            </el-input>
+                        <el-col :span="4">
+                            <el-select v-model="itemCategorySearchId" @change='itemCategorySearchChange' placeholder="选择分类">
+                                <el-option v-for='item in itemCategorySearchList' :label="item.name" :value="item.id"></el-option>
+                            </el-select>
                         </el-col>
-                        <el-col :span="18">
+                        <el-col :span="6">
+                            <el-input placeholder="标题/内容/发布者" icon="search" v-model="searchData" :on-icon-click="handleSearchClick"></el-input>
+                        </el-col>
+                        <el-col :span="14">
                             <el-button-group style="float: right;">
-                              <el-button type="primary" @click="itemAddTap" icon="plus">发布{$articleModelName}</el-button>
-                              <el-button type="primary" @click="itemsDel" icon="delete" :disabled="isDelDisabled">批量删除</el-button>
+                                <el-button type="primary" @click="itemAddTap" icon="plus">发布{$articleModelName}</el-button>
+                                <el-button type="primary" @click="itemsDel" icon="delete" :disabled="isDelDisabled">批量删除</el-button>
                             </el-button-group>
                         </el-col>
                     </el-row>
                     <el-table v-loading="loading" :data="articleList" @selection-change="handleListSelectionChange" style="width: 100%">
                         <el-table-column type="selection" width="30"></el-table-column>
                         <el-table-column label="ID" prop="tempId" width="70" show-overflow-tooltip></el-table-column>
-                        <el-table-column label="分类" show-overflow-tooltip width="90" inline-template>
-                            <template>{{row.articlesCategory ? row.articlesCategory.name : '-'}}</template>
+                        <el-table-column label="分类" width="90" inline-template>
+                            <template><span style="white-space: nowrap;">{{row.articlesCategory ? row.articlesCategory.name : '-'}}</span></template>
                         </el-table-column>
-                        <el-table-column label="标题" show-overflow-tooltip inline-template>
-                            <template><a :href="'{$domain}/{$articleModelUrl}/'+row.tempId+'.html'" target="_blank">{{row.title}}</a></template>
+                        <el-table-column label="标题" inline-template >
+                            <template><a :href="'{$domain}/{$articleModelUrl}/'+row.tempId+'.html'" style="white-space: nowrap;" target="_blank" :title="row.title">{{row.title}}</a></template>
                         </el-table-column>
                         <el-table-column label="推荐" inline-template width="70">
                             <template v-if="row.is_recommend == 1"><i class="mip-iconfont mip-tuijian2"></i></template><template v-else> - </template>
                         </el-table-column>
-                        <el-table-column label="发布时间" inline-template width="160">
+                        <el-table-column label="发布时间" inline-template width="170">
                             <template>{{row.publish_time | time}}</template>
                         </el-table-column>
                         <el-table-column label="浏览" prop="" width="80" inline-template>
@@ -64,32 +87,31 @@
                             <template>{{row.comments}}</template>
                         </el-table-column>
                             <el-table-column label="发布者" inline-template width="180">
-                                <div class="avatar-username"><img src="/assets/images/avatar.jpg" class="avatar-img"/><span class="username"> {{row.users ? row.users.username : '-'}}</span></div>
+                                <div class="avatar-username"><img src="/{$assets}/common/images/avatar.jpg" class="avatar-img"/><span class="username"> {{row.users ? row.users.username : '-'}}</span></div>
                             </el-table-column>
-                        <el-table-column label="操作" width="100">
+                        <el-table-column label="操作" width="110">
                             <template scope="scope">
-                                 <el-dropdown  size="small"  type="primary" trigger="click" split-button @click="articleEditTap(scope.$index, scope.row)">
-                                  <span>编辑</span>
-                                  <el-dropdown-menu slot="dropdown" class="dropdown-menu">
-                                    <el-dropdown-item><div @click="articleEditTap(scope.$index, scope.row)"><i class="el-icon-edit"></i> 编辑{$articleModelName}</div></el-dropdown-item>
-                                    <el-dropdown-item v-if='scope.row.is_recommend == 1'><div @click="articleRecomment(scope.$index, scope.row)"><i class="mip-iconfont mip-tuijian2"></i> 取消推荐</div></el-dropdown-item>
-                                    <el-dropdown-item v-else><div @click="articleRecomment(scope.$index, scope.row)"><i class="mip-iconfont mip-tuijian1"></i> 推荐{$articleModelName}</div></el-dropdown-item>
-                                    <el-dropdown-item divided><div @click="articleDel(scope.$index, scope.row)" class="red"><i class="el-icon-delete"></i> 删除{$articleModelName}</div></el-dropdown-item>
-                                  </el-dropdown-menu>
+                                <el-dropdown  size="small"  type="primary" trigger="click" split-button @click="articleEditTap(scope.$index, scope.row)">
+                                    <span>编辑</span>
+                                    <el-dropdown-menu slot="dropdown" class="dropdown-menu">
+                                        <el-dropdown-item><div @click="articleEditTap(scope.$index, scope.row)"><i class="el-icon-edit"></i> 编辑{$articleModelName}</div></el-dropdown-item>
+                                        <el-dropdown-item v-if='scope.row.is_recommend == 1'><div @click="articleRecomment(scope.$index, scope.row)"><i class="mip-iconfont mip-tuijian2"></i> 取消推荐</div></el-dropdown-item>
+                                        <el-dropdown-item v-else><div @click="articleRecomment(scope.$index, scope.row)"><i class="mip-iconfont mip-tuijian1"></i> 推荐{$articleModelName}</div></el-dropdown-item>
+                                        <el-dropdown-item divided><div @click="articleDel(scope.$index, scope.row)" class="red"><i class="el-icon-delete"></i> 删除{$articleModelName}</div></el-dropdown-item>
+                                    </el-dropdown-menu>
                                 </el-dropdown>
                             </template>
                         </el-table-column>
                     </el-table>
-                    <el-pagination
-                        @size-change="handleSizeChange"
-                        @current-change="handleCurrentChange"
-                        :current-page="currentPage"
-                        :page-sizes="[10, 20, 50]"
-                        :page-size="limit"
-                        layout="total, sizes, prev, pager, next, jumper"
-                        :total="total">
-                    </el-pagination>
-                </template>
+                    <template>
+                        <div>
+                            <!--<el-checkbox class="m-l-xs m-r-md" v-model="checkedAll" >全选</el-checkbox>-->
+                            <el-button type="primary" @click='transferAll' :disabled="isDelDisabled">批量转移</el-button>
+                            <el-button type="primary" @click='mipPostAll' :disabled="isDelDisabled">MIP提交</el-button>
+                            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[10, 20, 50]" :page-size="limit" layout="total, sizes, prev, pager, next, jumper" style="margin-top: 0px;" :total="total"></el-pagination>
+                        </div>
+                    </template>
+                   </template>
             </el-tab-pane>
             
             <el-tab-pane label="分类管理" name="category">
@@ -99,43 +121,19 @@
                               <el-button type="primary" class="pull-right"  @click="addCategoryDialog" icon="plus">添加分类</el-button>
                         </el-col>
                     </el-row>
-                    <el-table
-                        :data="category.categoryList"
-                        style="width: 100%">
-                        <el-table-column
-                            prop="name"
-                            label="分类名称">
-                        </el-table-column>
-                        <el-table-column
-                            prop="id"
-                            label="分类ID">
-                        </el-table-column>
-                        <el-table-column
-                            prop="url_name"
-                            label="别名">
-                        </el-table-column>
-                        <el-table-column
-                            prop="keywords"
-                            label="关键词">
-                        </el-table-column>
-                        <el-table-column
-                            prop="description"
-                            label="描述">
-                        </el-table-column>
-                        <el-table-column
-                            label="操作">
+                    <el-table :data="category.categoryList" style="width: 100%">
+                        <el-table-column prop="name" label="分类名称"></el-table-column>
+                        <el-table-column prop="id" label="分类ID"></el-table-column>
+                        <el-table-column prop="url_name" label="别名"></el-table-column>
+                        <el-table-column prop="keywords" label="关键词"></el-table-column>
+                        <el-table-column prop="description" label="描述"></el-table-column>
+                        <el-table-column label="操作">
                             <template scope="scope">
-                                <el-button
-                                    size="small"
-                                    type="danger"
-                                    @click="categoryDel(scope.$index, scope.row)">删除
+                                <el-button size="small" type="danger" @click="categoryDel(scope.$index, scope.row)">删除
                                 </el-button>
-                                <el-button
-                                    size="small"
-                                    type="info" 
-                                    @click="categoryEditDialog(scope.$index, scope.row)">编辑
+                                <el-button size="small" type="info" @click="categoryEditDialog(scope.$index, scope.row)">编辑
                                 </el-button>
-                        </template>
+                            </template>
                         </el-table-column>
                     </el-table>
                 </template>
@@ -149,7 +147,7 @@
                                 <el-input v-model="publish.title" placeholder="请输入标题..."></el-input>
                             </el-form-item>
                             <el-form-item label="分类">
-                                <el-select v-model="publish.cid" clearable  placeholder="请选择分类">
+                                <el-select v-model="publish.cid" clearable placeholder="请选择分类">
                                     <el-option v-for='item in publish.categoryList' :label="item.name" :value="item.id"></el-option>
                                 </el-select>
                             </el-form-item>
@@ -159,19 +157,10 @@
                                 </el-col>
                             </el-form-item>
                             <el-form-item label="标签">
-                                 <el-select
-                                    v-model="publish.tags"
-                                    multiple
-                                    filterable
-                                    style="width: 355px;"
-                                    allow-create
-                                    placeholder="请选择标签,支持直接输入">
-                                    <el-option
-                                      v-for="item in publish.tagsList"
-                                      :label="item.name"
-                                      :value="item.name">
+                                <el-select v-model="publish.tags" multiple filterable style="width: 355px;" allow-create placeholder="请选择标签,支持直接输入">
+                                    <el-option v-for="item in publish.tagsList" :label="item.name" :value="item.name">
                                     </el-option>
-                                  </el-select>
+                                </el-select>
                             </el-form-item>
                             <el-form-item label="推荐">
                                 <el-switch on-text="" off-text="" v-model="publish.is_recommend"></el-switch>
@@ -199,7 +188,7 @@
 </section>
 {/block}
 {block name="dialog"}
-<el-dialog :title="category.dialogCategoryTitle" v-model="category.dialogCategory" size="tiny">
+<el-dialog :title="category.dialogCategoryTitle" v-model="category.dialogCategory" size="small">
   <el-form :model="category" :rules="category.categoryRules" ref="category" label-width="90px">
     <el-form-item label="名称" prop="name">
       <el-input v-model="category.name" placeholder="例：搜索引擎优化"></el-input>
@@ -211,7 +200,7 @@
       <el-input type="textarea" v-model="category.keywords" placeholder="例：SEO,SEO优化,搜索引擎优化,网站排名"></el-input>
     </el-form-item>
     <el-form-item label="描述">
-      <el-input type="textarea" v-model="category.description" placeholder="例：SEO是搜索引擎优化的简称，而MIPCMS始终把SEO放在首要位置" ></el-input>
+      <el-input type="textarea" v-model="category.description" placeholder="请输入description描述信息" ></el-input>
     </el-form-item>
   </el-form>
   <div slot="footer" class="dialog-footer">
@@ -219,16 +208,48 @@
     <el-button type="primary" @click="categoryPost('category',category)">确 定</el-button>
   </div>
 </el-dialog>
+
+<el-dialog title="批量转移" v-model="dialogTransferAll" size="tiny">
+    <template>
+        <el-form label-width="80px">
+        <el-form-item label="目标分类">
+            <el-select v-model="transferAllCategoryId" placeholder="请选择分类">
+                <el-option v-for='item in transferAllCategoryList' :label="item.name" :value="item.id"></el-option>
+            </el-select>
+        </el-form-item>
+        </el-form>
+    </template>
+  <span slot="footer" class="dialog-footer">
+    <el-button @click="dialogTransferAll = false">取 消</el-button>
+    <el-button type="primary" @click="dialogTransferAllPost">确 定</el-button>
+  </span>
+</el-dialog>
+
+<el-dialog title="MIP提交" v-model="dialogMipPostAll" size="small">
+    <template>
+       <p>以下是本次提交的地址共{{dialogMipPostAllList.length}}篇</p>
+       <ul class="list-unstyled">
+       	<li class="text-999 font-12" style="line-height: 20px;" v-for='item in dialogMipPostAllList'>{{item}}</li>
+       </ul>
+       <p class="m-t">百度站长平台提交的API接口：</p>
+       <pre class="selected m-t-n-xs">{{mipApiAddress}}</pre>
+    </template>
+  <span slot="footer" class="dialog-footer">
+    <el-button @click="dialogMipPostAll = false">取 消</el-button>
+    <el-button type="primary" @click="mipPostAllPost">确 定</el-button>
+  </span>
+</el-dialog>
+
 {/block}
 {block name="javascript"}
 {__block__}
-    <link rel="stylesheet" type="text/css" href="/assets/plugin/simditor/styles/simditor.css" />
+    <link rel="stylesheet" type="text/css" href="/{$assets}/plugin/simditor/styles/simditor.css" />
 
-    <script type="text/javascript" src="/assets/plugin/simditor/scripts/jquery.min.js"></script>
-    <script type="text/javascript" src="/assets/plugin/simditor/scripts/module.js"></script>
-    <script type="text/javascript" src="/assets/plugin/simditor/scripts/hotkeys.js"></script>
-    <script type="text/javascript" src="/assets/plugin/simditor/scripts/uploader.js"></script>
-    <script type="text/javascript" src="/assets/plugin/simditor/scripts/simditor.min.js"></script>
+    <script type="text/javascript" src="/{$assets}/plugin/simditor/scripts/jquery.min.js"></script>
+    <script type="text/javascript" src="/{$assets}/plugin/simditor/scripts/module.js"></script>
+    <script type="text/javascript" src="/{$assets}/plugin/simditor/scripts/hotkeys.js"></script>
+    <script type="text/javascript" src="/{$assets}/plugin/simditor/scripts/uploader.js"></script>
+    <script type="text/javascript" src="/{$assets}/plugin/simditor/scripts/simditor.min.js"></script>
   
    <script type="text/javascript">
    	  new Vue({
@@ -243,6 +264,15 @@
         articleList:'',
         multipleSelection:[],
         loading: false,
+        checkedAll: false,
+        dialogTransferAll: false,
+        transferAllCategoryId: '',
+        transferAllCategoryList: [],
+        dialogMipPostAll: false,
+        dialogMipPostAllList: [],
+        mipApiAddress: '{$mipInfo["mipApiAddress"]}',
+        itemCategorySearchId: '',
+        itemCategorySearchList: [],
         currentPage: 1,
         limit:10,
         total:this.total,
@@ -283,7 +313,76 @@
         this.getTags();
     },
     methods:{
-
+        mipPostAll: function() {
+            this.multipleSelection;
+            var mipPostData = [];
+            for (var i = 0; i < this.multipleSelection.length; i++) {
+                mipPostData.push("{$mipInfo['https']}://{$mipInfo['mipDomain']}/{$articleModelUrl}/"+this.multipleSelection[i].tempId+".html");
+            }
+            console.log(mipPostData);
+            this.dialogMipPostAllList = mipPostData;
+            
+            this.dialogMipPostAll = true;
+        },
+        mipPostAllPost: function() {
+            var itemIds = [];
+            for (var i = 0; i < this.dialogMipPostAllList.length; i++) {
+                itemIds.push(this.dialogMipPostAllList[i]);
+            }
+            itemIds = itemIds.join(',');
+            this.$mip.ajax('/api/Mip_post/mippost', {
+                urls:itemIds,
+                mipApiAddress: this.mipApiAddress,
+            }).then(function (res) {
+                if (res.code == 1) {
+                    var resMIp = JSON.parse(res.msg);
+                    Vue.prototype.$message({
+                      type: 'success',
+                      message: '推送成功：'+ resMIp.success + '条，当天剩余条数：' + resMIp.remain
+                    });
+                    _this.dialogMipPostAll = false;
+                } else {
+                    Vue.prototype.$message({
+                        type: 'error',
+                        message: res.msg
+                    });
+                    return false;
+                }
+            });
+        },
+        itemCategorySearchChange: function() {
+            _this.getPageList();
+        },
+        transferAll: function() {
+            this.dialogTransferAll = true;
+            this.transferAllCategoryId = '';
+        },
+        dialogTransferAllPost: function() {
+            var itemIds = [];
+            for (var i = 0; i < this.multipleSelection.length; i++) {
+                itemIds.push(this.multipleSelection[i].id);
+            }
+            itemIds = itemIds.join(',');
+            this.$mip.ajax('/api/article/articleTransferAll', {
+                cid: this.transferAllCategoryId,
+                ids:itemIds,
+            }).then(function (res) {
+                if (res.code == 1) {
+                    Vue.prototype.$message({
+                      type: 'success',
+                      message: res.msg
+                    });
+                    _this.getPageList();
+                    _this.dialogTransferAll = false;
+                } else {
+                    Vue.prototype.$message({
+                        type: 'error',
+                        message: res.msg
+                    });
+                    return false;
+                }
+            });
+        },
         createEditor: function() {
             var _this = this ;
             this.publish.editor = new Simditor({
@@ -489,6 +588,14 @@
                 if (res.code == 1) {
                     _this.category.categoryList = res.data.categoryList;
                     _this.publish.categoryList =  _this.category.categoryList;
+                    _this.transferAllCategoryList = _this.category.categoryList;
+                    var itemCategorySearchList = [];
+                    for (var i = 0; i < res.data.categoryList.length; i++) {
+                    	itemCategorySearchList[i] = res.data.categoryList[i];
+                    }
+                    itemCategorySearchList.unshift({name:"全部分类",id:0});
+                    console.log(itemCategorySearchList);
+                    _this.itemCategorySearchList = itemCategorySearchList;
                 } else {
                     Vue.prototype.$message({
                         type: 'error',
@@ -533,9 +640,35 @@
           }
         },
         itemsDel:function() {
-          this.$message({
-            message: '不着急 尚未开通'
-          });
+            this.$confirm('注意：你现在操作的是批量删除，删除的数据将不可恢复, 确定批量删除?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                var itemIds = [];
+                for (var i = 0; i < this.multipleSelection.length; i++) {
+                    itemIds.push(this.multipleSelection[i].id);
+                }
+                itemIds = itemIds.join(',');
+                this.$mip.ajax('/api/article/articlesDel', {
+                    ids:itemIds,
+                }).then(function (res) {
+                    if (res.code == 1) {
+                        Vue.prototype.$message({
+                          type: 'success',
+                          message: res.msg
+                        });
+                    } else {
+                        Vue.prototype.$message({
+                            type: 'error',
+                            message: res.msg
+                        });
+                    }
+                    _this.getPageList();
+                });
+            }).catch(() => {
+                return false;   
+            });
         },
         articleRecomment: function(index, row) {
             this.$mip.ajax('/api/article/articleRecomment', {
@@ -585,9 +718,11 @@
             this.loading = true;
             _this = this;
             this.$mip.ajax('/api/article/articlesSelect', {
-                  page:this.currentPage,
-                  status:'all',
-                  limit:this.limit,
+                cid: this.itemCategorySearchId,
+                keywords: this.searchData,
+                page:this.currentPage,
+                status:'all',
+                limit:this.limit,
             }).then(function (res) {
                 if (res.code == 1) {
                     _this.articleList = res.data.articleList;
@@ -649,9 +784,6 @@
         },
         handleSearchClick:function() {
           this.getPageList();
-          this.$message({
-            message: '尚未开通'
-          });
         },
     },
 

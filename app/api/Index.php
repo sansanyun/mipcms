@@ -11,7 +11,7 @@ class Index extends AuthBase
     public function index(){
         if (Request::instance()->isPost()) {
         	
-        }else{
+        } else {
         	echo '欢迎使用MIPCMS内容管理系统api接口';
         }
         

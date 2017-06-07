@@ -30,9 +30,9 @@ class Index extends Mip
                     $categoryUrlName = null;
                 }
                 
-                $list = Articles::order('publish_time desc')->where('publish_time','<',time())->where($whereCategory)->page($page,10)->select();
+                $list = Articles::order('publish_time desc')->where($whereCategory)->page($page,10)->select();
                 
-                $count = Articles::where($whereCategory)->where('publish_time','<',time())->count('id');
+                $count = Articles::where($whereCategory)->count('id');
                 $hot_list_by_cid = Articles::where('cid',$categoryInfo->id)->order('views desc')->limit(5)->select();
                 foreach($hot_list_by_cid as $k => $v) {
                         $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
@@ -42,10 +42,10 @@ class Index extends Mip
                 $categoryUrlName = null;
                 $categoryInfo = null;
                 
-                $list = Articles::page($page,10)->order('publish_time desc')->where('publish_time','<',time())->select();
+                $list = Articles::page($page,10)->order('publish_time desc')->select();
                 
-                $count = Articles::where('publish_time','<',time())->count('id');
-                $hot_list_by_cid = Articles::order('views desc')->limit(5)->where('publish_time','<',time())->select();
+                $count = Articles::count('id');
+                $hot_list_by_cid = Articles::order('views desc')->limit(5)->select();
                 foreach($hot_list_by_cid as $k => $v) {
                         $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
                 }
@@ -83,7 +83,7 @@ class Index extends Mip
             $this->assign('categoryUrlName',$categoryUrlName); //当前URL名称
             $this->assign('categoryInfo',$categoryInfo); //用于SEO
             $this->assign('list',$list);
-            $news_list_by_uid = Articles::where('is_recommend',1)->order('publish_time desc')->where('publish_time','<',time())->limit(5)->select();
+            $news_list_by_uid = Articles::where('is_recommend',1)->order('publish_time desc')->limit(5)->select();
             foreach($news_list_by_uid as $k => $v) {
                 $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
             }
@@ -99,7 +99,7 @@ class Index extends Mip
             
             return $this->mipView('m/article/article');
         }
-        if ($this->mipInfo['systemType'] == 'CMS') {
+        if ($this->mipInfo['systemType'] == 'CMS' || $this->mipInfo['systemType'] == 'ZMT') {
             $categoryList = ArticlesCategory::order('sort desc')->select();
             $patern = '/^http[s]?:\/\/'.
             '(([0-9]{1,3}\.){3}[0-9]{1,3}'. 
@@ -111,7 +111,7 @@ class Index extends Mip
             '((\/\?)|'.  
             '(\/[0-9a-zA-Z_!~\*\'\(\)\.;\?:@&=\+\$,%#-\/]*)?)$/'; 
             foreach ($categoryList as $key => $val) {
-                $val['articles'] = Articles::where('publish_time','<',time())->where('cid',$val['id'])->order('publish_time desc')->limit(10)->select();
+                $val['articles'] = Articles::where('cid',$val['id'])->order('publish_time desc')->limit(10)->select();
                 foreach ($val['articles']  as $k => $v) {
                     $v['content'] = htmlspecialchars_decode($v['content']);
                     $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
@@ -133,7 +133,7 @@ class Index extends Mip
             }
             $this->assign('categoryList',$categoryList);
             
-            $recommendList = Articles::where('publish_time','<',time())->limit(4)->where('is_recommend',1)->order('publish_time desc')->select();
+            $recommendList = Articles::limit(4)->where('is_recommend',1)->order('publish_time desc')->select();
             foreach ($recommendList as $k => $v){
                 $v['content'] = htmlspecialchars_decode($v['content']);
                 $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
@@ -150,12 +150,19 @@ class Index extends Mip
             $this->assign('recommendList',$recommendList);
             
             
-            $newsArticleList = Articles::order('publish_time desc')->where('publish_time','<',time())->limit(10)->select();
+            $newsArticleList = Articles::order('publish_time desc')->limit(10)->select();
             foreach ($newsArticleList as $k => $v){
                 $v['content'] = htmlspecialchars_decode($v['content']);
                 $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
                 if (preg_match_all('/<[img|IMG].*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>/', bbc2html($v['content']), $imgs)) {
                     $v['imgCount'] = count($imgs[1]);
+                    foreach ($imgs[1] as $key => $value) {
+                       if (@preg_match($patern,$value)) {
+                           $imgs[1][$key] = $value;
+                        } else {
+                           $imgs[1][$key] = $this->domain. $value;
+                        }
+                    }
                     $v['imgList'] = $imgs[1];
                     if (@preg_match($patern,$imgs[1][0])) {
                         $v['firstImg'] = $imgs[1][0];
@@ -178,9 +185,9 @@ class Index extends Mip
        
         
         if ($this->mipInfo['systemType'] == 'ASK') {
-            $list = Asks::where('publish_time','<',time())->field('id,uuid,publish_time')->order('publish_time desc')->limit(5000)->select();
+            $list = Asks::field('id,uuid,publish_time')->order('publish_time desc')->limit(5000)->select();
         } else {
-            $list = Articles::where('publish_time','<',time())->field('id,uuid,publish_time')->order('publish_time desc')->limit(5000)->select();
+            $list = Articles::field('id,uuid,publish_time')->order('publish_time desc')->limit(5000)->select();
         }
         foreach($list as $k => $v) {
                 $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];

@@ -91,135 +91,14 @@
                           <el-button
                             size="small"
                             type="success"
+                            style="display:none"
                             @click="groupAuthorization(scope.$index, scope.row)">授权</el-button>
                         </template>
                       </el-table-column>
                     </el-table>
                   </template>
             </el-tab-pane>
-            <el-tab-pane label="节点管理" name="nodeManage">
-                <el-row :gutter="24" class="m-b">
-                    <el-col :span="24">
-                        <el-button type="primary" @click="nodeAddDialog" class="pull-right" icon="plus" :disabled="true">新建节点</el-button>
-                    </el-col>
-                </el-row>
-                
-                  <template>
-                        <div class="el-table el-table--fit el-table--border el-table--enable-row-hover el-table--enable-row-transition" style="width: 100%;">
-                            <div class="el-table__header-wrapper" style="background-color: rgb(238, 242, 246);font-weight: 700;">
-                                <div colspan="1" rowspan="1" class="el-table_1_column_72 is-leaf">
-                                    <div class="cell">节点名称</div>
-                                </div>
-                                <div colspan="1" rowspan="1" class="el-table_1_column_73 is-leaf">
-                                    <div class="cell">节点路径</div>
-                                </div>
-                                <div colspan="1" rowspan="1" class="el-table_1_column_74 is-leaf">
-                                    <div class="cell">操作</div>
-                                </div>
-                            </div>
-                            <div class="el-table__body-wrapper">
-                                <div cellspacing="0" cellpadding="0" border="0" class="el-table__body" style="width: 100%;">
-                                    <div v-for='(row,index) in nodeList'>
-                                        <div class="">
-                                            <div class="clearfix">
-                                                <div class="el-table_1_column_72">
-                                                    <div class="cell">
-                                                        <span v-if='row.level == 1' class="level1"><i class="mip-hengxian mip-iconfont"></i></span>
-                                                        <el-tag type="danger">{{row.title}}</el-tag>
-                                                        <span v-if='row.level == 1'><el-tag type="danger">模块</el-tag></span>
-                                                    </div>
-                                                </div>
-                                                <div class="el-table_1_column_73">
-                                                    <div class="cell">{{row.name}}</div>
-                                                </div>
-                                                <div class="el-table_1_column_74">
-                                                    <div class="cell">
-                                                            <el-button
-                                                            size="small"
-                                                            type="danger"
-                                                            :disabled="true">删除</el-button>
-                                                          <el-button
-                                                            size="small"
-                                                            type="info" 
-                                                            @click="nodeEditDialog(index, row)">修改</el-button>
-                                                          <el-button
-                                                            size="small"
-                                                            type="success"
-                                                            v-if='row.level != 3'
-                                                            @click="nodeAddDialog(index, row)">添加</el-button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="" v-for='(item,index) in row._child'>
-                                                <div class="clearfix">
-                                                    <div class="el-table_1_column_72">
-                                                        <div class="cell">
-                                                            <span v-if='item.level == 2' class="level2"><i class="mip-zhijiao mip-iconfont"></i></span>
-                                                             <el-tag type="warning">{{item.title}}</el-tag
-                                                            <span v-if='item.level == 2'><el-tag type="warning">控制器</el-tag></span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="el-table_1_column_73">
-                                                        <div class="cell">{{item.name}}</div>
-                                                    </div>
-                                                    <div class="el-table_1_column_74">
-                                                        <div class="cell">
-                                                                <el-button
-                                                                size="small"
-                                                                type="danger"
-                                                                @click="nodeDelete(index, item)" :disabled="item.isdelete == 1">删除</el-button>
-                                                              <el-button
-                                                                size="small"
-                                                                type="info" 
-                                                                @click="nodeEditDialog(index, item)">修改</el-button>
-                                                              <el-button
-                                                                size="small"
-                                                                type="success"
-                                                                v-if='item.level != 3'
-                                                                @click="nodeAddDialog(index, item)">添加</el-button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="clearfix" v-for='(sub,index) in item._child'>
-                                                    <div class="el-table_1_column_72">
-                                                        <div class="cell">
-                                                            <span v-if='sub.level == 3' class="level3"> <i class="mip-zhijiao mip-iconfont"></i></span>
-                                                             <span v-html='sub.title'></span>
-                                                            <span v-if='sub.level == 1'><el-tag type="danger">模块</el-tag></span>
-                                                            <span v-if='sub.level == 2'><el-tag type="warning">控制器</el-tag></span>
-                                                            <span v-if='sub.level == 3'><el-tag type="success">方法</el-tag></span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="el-table_1_column_73">
-                                                        <div class="cell">{{sub.name}}</div>
-                                                    </div>
-                                                    <div class="el-table_1_column_74">
-                                                        <div class="cell">
-                                                                <el-button
-                                                                size="small"
-                                                                type="danger"
-                                                                @click="nodeDelete(index, sub)">删除</el-button>
-                                                              <el-button
-                                                                size="small"
-                                                                type="info" 
-                                                                @click="nodeEditDialog(index, sub)">修改</el-button>
-                                                              <el-button
-                                                                size="small"
-                                                                type="success"
-                                                                v-if='sub.level != 3'
-                                                                @click="nodeAddDialog(index, sub)">添加</el-button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                  </template>
-            </el-tab-pane>
+           
           </el-tabs>
         </template>
     </section>

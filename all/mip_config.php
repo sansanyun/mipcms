@@ -6,5 +6,4 @@ $isHtml = true; //文章是否带有.html后缀 （默认带有）
 
 
 
-
 require ALL_PATH . 'mip_config_extension.php';

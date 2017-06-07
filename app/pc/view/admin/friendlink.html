@@ -6,8 +6,29 @@
 {__block__}
 
 <style type="text/css">
+    .el-collapse-item__header .header div {
+        color: #697276;
+        font-weight: 700;
+    }
     .el-collapse-item__header {
         position: relative;
+        padding-right: 15px;
+        cursor: move;
+    }
+    .sortable-chosen .el-collapse-item__header {
+        background-color: #EEF2F6;
+    }
+    .el-collapse-item__header .el-button {
+        display: none;
+    }
+    .el-collapse-item__header:hover .el-button {
+        display: inline-block;
+    }
+    .el-collapse-item__header .text-overflow {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        display: block;
     }
     .linkEdit {
         margin-top: 10px;
@@ -48,7 +69,7 @@
                 <div class="el-collapse" v-if='itemList.length > 0'>
                         <div class="el-collapse-item">
                             <div class="el-collapse-item__header">
-                                <div class="row">
+                                <div class="row header">
                                     <div class="col-md-2">顺序</div>
                                     <div class="col-md-2">链接类型</div>
                                     <div class="col-md-3">网站名称</div>
@@ -61,12 +82,14 @@
                             <div class="el-collapse-item" v-for='(item,index) in itemList'>
                                 <div class="el-collapse-item__header">
                                     <div class="row">
-                                        <div class="col-md-2">{{index+1}}</div>
-                                        <div class="col-md-2"><span v-if='item.type == "all"'>整站</span><span v-if='item.type == "index"'>首页</span><span v-if='item.type == "notIndex"'>非首页</span></div>
+                                        <div class="col-md-2 text-999">{{index+1}}</div>
+                                        <div class="col-md-2 text-999"><span v-if='item.type == "all"'>整站</span><span v-if='item.type == "index"'>首页</span><span v-if='item.type == "notIndex"'>非首页</span></div>
                                         <div class="col-md-3">{{item.name}}</div>
-                                        <div class="col-md-3">{{item.url}} </div>
-                                        <div class="col-md-1"><a class="btn btn-danger btn-xs" @click='linkDel(item)'>删除</a></div>
-                                        <div class="col-md-1"><a class="btn btn-primary btn-xs" @click='dialogLinkEdit(item)'>修改</a></div>
+                                        <div class="col-md-3 text-overflow">{{item.url}} </div>
+                                        <div class="col-md-2 text-right p-r-md">
+                                            <el-button type="danger" size="small" @click='linkDel(item)'>删除</el-button>
+                                            <el-button type="primary" size="small" @click='dialogLinkEdit(item)'>修改</el-button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>  

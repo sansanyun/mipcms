@@ -38,32 +38,7 @@
                    
                 </div>
                 <div class="mip-box-body">
-                    <ul class="mip-article-list-001 list-unstyled">
-                        {foreach name='$list' id='v'}
-                        <li class="list">
-                            {if condition="$v['firstImg']"}
-                            <div class="list-img hidden-xs">
-                                <a class="list-img-a" title="{$v.title}" href="{$domain}/{$articleModelUrl}/{$v.id | isHtml}">
-                                    <img alt="{$v.title}" src="{$v.firstImg}" />
-                                </a>
-                            </div>
-                            {/if}
-                            <div class="list-content {if condition='!$v["firstImg"]'}block{/if}">
-                                <h4 class="title">
-                                    <a href="{$domain}/{$articleModelUrl}/{$v.id | isHtml}" title="{$v.title}">{$v.title}</a>
-                                </h4>
-                                <div class="description hidden-xs">
-                                    {:mb_substr(preg_replace('# #', '',$v['content']),0,88,'utf-8')}
-                                </div>
-                                <ul class="info clearfix list-unstyled">
-                                    <li>发布：<span>{$v['users']['username']}</span></li>
-                                    <li>时间：<time>{$v['publish_time']|date='Y-m-d',###}</time></li>
-                                    <li>浏览：<span class="views">{$v['views']}</span></li>
-                                </ul>
-                            </div>
-                        </li>
-                        {/foreach}
-                    </ul>
+                    {include file="pc/article/articleBlock"/}
                     {$pagination}
                 </div>
             </div>
@@ -86,6 +61,19 @@
                 </div>
             </div>
             {/if}
+            <section class="mip-box">
+                <div class="mip-box-heading"><h3>随机推荐</h3></div>
+                <div class="mip-box-body ">
+                    <ul class="list-unstyled">
+                        {foreach  name='$rand_list' id="v"}
+                        <li class="li-box-list">
+                            <a href="/{$articleModelUrl}/{$v.id | isHtml}" title="{$v.title}">{$v.title}</a>
+                            <p>浏览 <span>{$v.views}</span>  时间 : <span>{$v['publish_time']|date='Y-m-d',###}</span></p>
+                        </li>
+                        {/foreach}
+                    </ul>
+                </div>
+            </section>
             {if condition="$recommendListByCid"}
             <div class="mip-box">
                 <div class="mip-box-heading"><h3 class="title">推荐{$articleModelName}</h3></div>

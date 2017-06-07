@@ -58,4 +58,12 @@ class Admin extends AdminBase
     public function friendlink() {
         return $this->fetch('pc@admin/friendlink');
     }
+    
+    public function article_setting() {
+        return $this->fetch('pc@admin/articleSetting');
+    }
+    
+    public function data() {
+        return $this->fetch('pc@admin/data');
+    }
 }

@@ -21,14 +21,12 @@ class User extends AuthBase
             if (!$this->mipInfo['registerStatus']) {
                 return jsonError('该功能已被管理员关闭');
             }
-            $terminal = input('post.terminal');
             $username = Htmlp::htmlp(trim(input('post.username')," \t\n\r\0\x0B"));
             $password = Htmlp::htmlp(trim(input('post.password')," \t\n\r\0\x0B"));
             $email = input('post.email');
             $mobile = input('post.mobile');
             $captcha = input('post.captcha');
             $rules = [
-                'terminal'  => 'require',
                 'username'  => 'require|max:25',
                 'password'  => 'require|max:33',
                 'email' => 'email',
@@ -49,7 +47,7 @@ class User extends AuthBase
                     return jsonError('手机号码输入有误');
                 }
             }
-            if ($terminal == 'pc') {
+            if ($this->terminal == 'pc') {
                 if(!captcha_check($captcha)){
                     return jsonError('验证码错误');
                 }
@@ -67,7 +65,7 @@ class User extends AuthBase
 	                return jsonError('手机已存在');
 	            }
             }
-            if($userInfo = Loader::model('Users')->regUser($username,$password,$terminal,$email,$mobile)){
+            if($userInfo = Loader::model('Users')->regUser($username,$password,$this->terminal,$email,$mobile)){
 		        return jsonSuccess('注册成功',$username,'/');
             }else{
                 return jsonError('注册失败');
@@ -258,74 +256,86 @@ class User extends AuthBase
     public function userFind(Request $request){
 		if (Request::instance()->isPost()) {
 			$uid = input('post.uid');
-			if(!$uid){
-				return jsonError('请输入用户ID');
-			}
+		    if (!$uid) {
+                    return jsonError('参数错误');
+            }
 			if(!Users::getByUid($uid)){
 				return jsonError('用户不存在');
 			}
 		    $usersInfo = Users::where('uid',$uid)->field(['password'], true)->find();
-		    return json(['usersInfo' => $usersInfo]); 
+		    return jsonSuccess('',['usersInfo' => $usersInfo]); 
 		}
     }
     public function userEdit(Request $request){
 		if (Request::instance()->isPost()) {
+		    
 			$uid = input('post.uid');
-			$password = input('post.password');
-			$qq = input('post.qq');
-            $sex = input('post.sex');
-			$mobile = input('post.mobile');
-			$email = input('post.email');
-			$signature = input('post.signature');
-			$nickname = input('post.nickname');
-			$status = input('post.status');
+            $username = Htmlp::htmlp(input('post.username'));
+            $nickname = Htmlp::htmlp(input('post.nickname'));
+            $email = Htmlp::htmlp(input('post.email'));
+            $mobile = Htmlp::htmlp(input('post.mobile'));
+            $qq = Htmlp::htmlp(input('post.qq'));
+            $sex = Htmlp::htmlp(input('post.sex'));
+            $signature = Htmlp::htmlp(input('post.signature'));
+            $status = Htmlp::htmlp(input('post.status'));
+			$password = Htmlp::htmlp(input('post.password'));
             $group_id = input('post.group_id');
 			$data = '';
-
-			if(!empty($qq)){
-				$data['qq'] = $qq;
-			}
-			if(!empty($sex)){
-				$data['sex'] = $sex;
-			}
-            if(!empty($mobile)){
-                $data['mobile'] = $mobile;
+            
+            if (!$uid) {
+                return jsonError('缺少用户UID');
             }
-			if(!empty($email)){
-				$data['email'] = $email;
-			}
-			if(!empty($signature)){
-				$data['signature'] = $signature;
-			}
-			if(!empty($status)){
-				$data['status']=$status;
-			}
-            if(!empty($nickname)){
-                $data['nickname'] = $nickname;
-            }            
-            if (!$group_id) {
-                return jsonError('请为该用户分配用户组');
+            if(!$userInfo = Users::getByUid($uid)){
+                return jsonError('用户不存在');
             }
-            $data['group_id'] = $group_id;
-			$rules = [
+            
+            if ($username) {
+                if ($username != $userInfo['username'] AND Users::getByUsername($username)) {
+                    return jsonError('用户名已存在');
+                }
+            }
+            if (!empty($username)) {
+                $data['username'] = $username;
+            }
+            
+            if (!$sex) {
+                $sex = 1;
+            }
+            
+            $data['qq'] = $qq;
+            $data['sex'] = $sex;
+            $data['signature'] = $signature;
+            $data['nickname'] = $nickname;
+            $data['status'] = $status;
+            
+            $rules = [
                 'email' => 'email',
-                'mobile' => 'mobile',
             ];
             $msg = [
-                'email'        => '邮箱格式错误',
-                'mobile'        => '手机号码格式错误',
+                'email' => '邮箱格式错误',
             ];
             $result = $this->validate($request->param(), $rules, $msg);
             if (true !== $result) {
                 return $result;
             }
-			if(!$uid){
-				return jsonError('请输入用户ID');
-			}
-			if(!$userInfo = Users::getByUid($uid)){
-				return jsonError('用户不存在');
-			}
-            if ($userInfo['group_id'] == 1 && $group_id != 1) {
+            if($email){
+                if ($email != $userInfo['email'] AND Users::getByEmail($email)) {
+                    return jsonError('邮箱已存在');
+                }
+            }
+            $data['email'] = $email;
+            
+            if ($mobile) {
+                if (!preg_match("/^1[34578]\d{9}$/", $mobile)) {
+                    return jsonError('手机号码输入有误');
+                }
+                if (Users::getByMobile($mobile)) {
+                    return jsonError('手机已存在');
+                }
+            }
+            $data['mobile'] = $mobile;
+            
+            if ($userInfo['uid'] == 1 && $group_id != 1) {
                 return jsonError('超级管理员组禁止变更');
             }
 			if(!empty($password)){
@@ -337,7 +347,6 @@ class User extends AuthBase
     		return jsonSuccess('修改成功');
 		}
     }
-    
     public function loginOut(){
         @session::delete('userInfo');
         @Cache::set('accessToken_' . $this->terminal . $this->accessToken, NULL);

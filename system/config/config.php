@@ -124,7 +124,7 @@ return [
         // 模板引擎类型 支持 php think 支持扩展
         'type'         => 'Think',
         // 模板路径
-        'view_path'    => './template/',
+        'view_path'    => ROOT_PATH . 'template' . DS,
         // 模板后缀
         'view_suffix'  => 'html',
         // 模板文件名分隔符
@@ -150,7 +150,7 @@ return [
     // +----------------------------------------------------------------------
 
     // 异常页面的模板文件
-    'exception_tmpl'         => ROOT_PATH . 'template'. DS . 'default'. DS . 'pc'. DS . 'main'. DS . '404.html',
+      'exception_tmpl'         => ROOT_PATH . 'template'. DS . 'default'. DS . 'pc'. DS . 'main'. DS . '404.html',
 
     // 错误显示信息,非调试模式有效
     'error_message'          => '你访问的页面不存在或者发生错误',
@@ -165,7 +165,7 @@ return [
 
     'log'                    => [
         // 日志记录方式，内置 file socket 支持扩展
-        'type'  => 'File',
+        'type'  => 'Test',
         // 日志保存目录
         'path'  => LOG_PATH,
         // 日志记录级别

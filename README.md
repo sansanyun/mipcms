@@ -1,4 +1,4 @@
-# MIPCMS内容管理系统 介绍
+# MIPCMS内容管理系统 v2.0.0 TC版 介绍
 > #### 官网地址
 > http://www.mipcms.com
 > #### 主要使用技术栈：
@@ -33,7 +33,7 @@ MIPCMS是一套免费开源的基于百度移动加速器MIP引擎基础上而�
     - 安装时请允许upload目录有可写权限
     - 安装时请允许cache目录有可写权限
     - 安装时请允许system\config目录有可写权限
-    - 安装时请允许system\config\install目录有可写权限
+    - 安装时请允许public\install目录有可写权限
     - 推荐使用 PHP7.0
 
 #### 安装教程：
@@ -44,15 +44,15 @@ MIPCMS是一套免费开源的基于百度移动加速器MIP引擎基础上而�
         1、请检查PHP版本 必须>=5.4;
         2、Nginx环境请配置伪静态
         3、Apache伪静态规则是否开启
-        4、system\config\install目录是否有可写权限
+        4、public\\install目录是否有可写权限
     - 登录后 修改密码
     - 默认网站布局blog模式 如需要cms模式，请在后台切换
     - M站开启方式，后台配置m域名即可
     - 后台统计代码 M站请输入mip统计代码（M站禁止输入非mip支持统计代码）
     - 
 #### 手动安装：
-    1、 system\config\install  新建 install.lock 文件（不是文件夹）
-    2、 在phpMyAdmin 新建数据库，将package\下的 mipcms_v_1_1_0.sql 文件导入
+    1、 public\install  新建 install.lock 文件（不是文件夹）
+    2、 在phpMyAdmin 新建数据库，将public\package\下的 mipcms_v_1_1_0.sql 文件导入
     3、复制\package\database.php文件到system\config\目录下，修改如下标识
         '#hostname#'      修改为 'localhost' 或者 '127.0.0.1' 
         '#database#'      修改为 'mipcms' （你的数据库名称）
