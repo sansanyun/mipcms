@@ -3,127 +3,47 @@
 {block name="title"}登录{$mipInfo['titleSeparator']}{__block__}{/block}
 {block name='keywords'}登录{/block}
 {block name='description'}登录{/block}
-{block name="style"}
 
-{__block__}
- 
-.login-reg-left {
-    padding-top:50px;
-    padding-bottom:50px;
-}
-.login-reg-right {
-    padding-top:20px;
-    padding-bottom:50px;
-    width:350px;
-    float:none;
-    margin:0 auto;    
-}
-.login-reg{
-    visibility: hidden;
-    min-height:300px;
-   background: url(/assets/images/account/bg-white-lock.png);
-    margin: 0 auto;
-    margin-top: 30px;
-    -webkit-border-radius: 7px;
-    -moz-border-radius: 7px;
-    -ms-border-radius: 7px;
-    -o-border-radius: 7px;
-    border-radius: 7px
-}
-.login-reg .login-title {
-    font-size:20px;
-    text-align:center;
-}
-.login-reg .el-form-item__label{
-    color:#fff;
-}
-.mip-reg-heading {
-    margin: 0;
-    padding: 20px 15px;
-    text-align: center;
-    border-bottom: 1px solid #ccc;
-    border-radius: 5px 5px 0 0;
-    -webkit-border-radius: 5px 5px 0 0;
-    color: #f1f1f1;
-    font-size: 18px;
-    text-transform: uppercase;
-    font-weight: 300;
-}
-.mip-reg-body{
-    padding: 20px 20px 1px 0;
-}
-.captcha input{
-    width:95px;
-    border-top-right-radius: 4px!important;
-    border-bottom-right-radius: 4px!important;
-}
-.captcha .el-input-group__append{
-    width:auto;
-    padding:0;
-    border:0;
-    background-color:inherit;
-    padding-left: 10px;
-}
-.captcha .el-input-group__append img{
-    border-radius: 4px;    
-    width:100%;
-}
-.show {
-    visibility: inherit;
-}
+{block name="link"}{__block__}
+    <link rel="stylesheet" type="text/css" href="{$domain}/{$assets}/{$tplName}/css/account/login.css"/>
 {/block}
+{block name="style"}{__block__}{/block}
 
 {block name="main"}
 <div class="container" id="app">
     <div class="row login">
         <aside class="col-lg-5 login-reg-right">
-               <section class="login-reg" :class="show">
-                        <h3 class="mip-reg-heading">账号登录</h3>
-                         <div class="mip-reg-body">
-                      <el-form ref="ruleForm" :rules="rules" :model="ruleForm" label-width="90px">
-                         <el-form-item label="账号" prop="username">
+            <section class="login-reg" :class="show">
+                <h3 class="mip-reg-heading">账号登录</h3>
+                <div class="mip-reg-body">
+                    <el-form ref="ruleForm" :rules="rules" :model="ruleForm" label-width="90px">
+                        <el-form-item label="账号" prop="username">
                             <el-input v-model="ruleForm.username" placeholder="用户名/手机/邮箱"></el-input>
-                          </el-form-item>  
-                          <el-form-item label="密码" prop="password">
+                        </el-form-item>  
+                        <el-form-item label="密码" prop="password">
                             <el-input type="password" v-model="ruleForm.password" placeholder="请输入密码"></el-input>
-                          </el-form-item>
-                          <el-form-item label="验证码" prop="captcha"  @keyup.enter.native="submitForm('ruleForm')">
-                              <div>
-                                  <el-input class="captcha" v-model="ruleForm.captcha" placeholder="4位字符">
+                        </el-form-item>
+                        <el-form-item label="验证码" prop="captcha"  @keyup.enter.native="submitForm('ruleForm')">
+                            <div>
+                                <el-input class="captcha" v-model="ruleForm.captcha" placeholder="4位字符">
                                     <template slot="append"><img @click="refreshCaptcha" :src="captchaImg" alt="点击刷新" /></template>
-                                  </el-input>
-                                </div>
-                          </el-form-item>
-                          <el-form-item>
-                              <el-button type="primary" class="w-100" @click="submitForm('ruleForm')">登录</el-button>
-                          </el-form-item>
-                        </el-form>
-                        </div>
-                </section>
+                                </el-input>
+                            </div>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" class="w-100" @click="submitForm('ruleForm')">登录</el-button>
+                        </el-form-item>
+                    </el-form>
+                </div>
+            </section>
         </aside>
     </div>
 </div>
 <div class="backstretch" style="left: 0px; top: 0px; overflow: hidden; margin: 0px; padding: 0px; height: 100%; width: 100%; z-index: -999999; position: fixed;">
-    <img src="/assets/images/account/bg_1.jpg"></div>
+    <img src="{$domain}/{$assets}/{$tplName}/images/account/bg_1.jpg">
+</div>
 {/block}
 
-{block name="script"}
-{__block__}
-<script type="text/javascript">
-    var mipGlobal = {
-        domain: '{$domain}',
-        assets: '{$assets}',
-        tplName: '{$tplName}',
-        returnUrl: '{$return_url}',
-        itemDetailId: '{$itemDetailId}',
-    }
-</script>
-<script src="https://cdn.staticfile.org/vue/2.2.6/vue.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="https://cdn.staticfile.org/axios/0.15.3/axios.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="https://cdn.staticfile.org/element-ui/1.2.5/index.js" type="text/javascript" charset="utf-8"></script>
-<script src="{$domain}/{$assets}/common/js/utils.js" type="text/javascript" charset="utf-8"></script>
-<script src="{$domain}/{$assets}/common/js/mipcms.js" type="text/javascript" charset="utf-8"></script>
-<script src="https://cdn.staticfile.org/blueimp-md5/2.7.0/js/md5.min.js" type="text/javascript" charset="utf-8"></script>
+{block name="script"}<script src="https://cdn.staticfile.org/blueimp-md5/2.7.0/js/md5.min.js" type="text/javascript" charset="utf-8"></script>{__block__}
 <script src="{$domain}/{$assets}/{$tplName}/js/account/login.js" type="text/javascript" charset="utf-8"></script>
-<script src="https://cdn.staticfile.org/es6-promise/4.1.0/es6-promise.auto.min.js" type="text/javascript" charset="utf-8"></script>
 {/block}

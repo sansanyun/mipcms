@@ -79,11 +79,13 @@
                         <div class="article-detail-content editor-style">
                             {$itemInfo['content']}
                         </div>
-                        <div class="mip-page-pagination">
-                            <ul class="mip-page">
-                                {$itemInfo['pageCode']}
-                            </ul>
-                        </div>
+                        {if condition="$mipInfo['articlePages']"} 
+                            <div class="mip-page-pagination">
+                                <ul class="mip-page">
+                                    {$itemInfo['pageCode']}
+                                </ul>
+                            </div>
+                        {/if}
                     </div>
                      {if condition="$item_up_page || $item_down_page"}
                       <div class="mip-box-footer item-up-down-page ">

@@ -2014,16 +2014,8 @@
           <a href="/" class="btn btn-default btn-sm"> <span class="mip-iconfont mip-pczhan"></span> 切换到前台</a>
         </div>
       <div class="mip-user-info">
-             
-                    <el-dropdown trigger="click" class="members-header-dropdown">
-                      <span class="el-dropdown-link">
-                          <div class="header-avatar-block">{$userInfo['username']}<i class="el-icon-caret-bottom el-icon--right"></i>
-                      </span>
-                      <el-dropdown-menu slot="dropdown" class="members-dropdown">
-                        <el-dropdown-item><a href="{$domain}">网站首页</a></el-dropdown-item>
-                        <el-dropdown-item><a @click="loginOut">安全退出</a></el-dropdown-item>
-                      </el-dropdown-menu>
-                    </el-dropdown>
+          <ul class="nav navbar-nav navbar-right">
+          </ul>
       </div>
   </header>
   <main class="mip-main clearfix">
@@ -2033,7 +2025,6 @@
         <li class="li {if condition='$act=="article"'}active{/if}"><a href="/{$Think.config.admin}/article" class="list-link"> <i class="mip-iconfont mip-article"></i> <span class="span-article">{$articleModelName}管理</span></a></li>
         <li class="li {if condition='$act=="user"'}active{/if}"><a href="/{$Think.config.admin}/user" class="list-link"> <i class="mip-iconfont mip-wangzhanyonghuqun"></i> <span class="span-users">{$userModelName}管理</span></a></li>
         <li class="li {if condition='$act=="spider"'}active{/if}"><a href="/{$Think.config.admin}/spider" class="list-link"> <i class="mip-iconfont mip-zhizhu"></i> <span class="span-zhizhu">搜索引擎</span></a></li>
-        <li class="li {if condition='$act=="role"'}active{/if}"><a href="/{$Think.config.admin}/role" class="list-link"> <i class="mip-iconfont mip-quanxianguanli"></i> <span class="span-quanxianguanli">分组管理</span></a></li>
       </ul>
       <div class="menu-footer">
         
@@ -2066,20 +2057,10 @@
 </div>
 </body>
 {block name="javascript"}
-<script type="text/javascript">
-    var mipGlobal = {
-        domain: '{$domain}',
-        assets: '{$assets}',
-        tplName: '{$tplName}',
-        returnUrl: '{$return_url}',
-        itemDetailId: '{$itemDetailId}',
-    }
-</script>
 <script src="https://cdn.staticfile.org/vue/2.2.6/vue.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="https://cdn.staticfile.org/axios/0.15.3/axios.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="https://cdn.staticfile.org/element-ui/1.2.5/index.js" type="text/javascript" charset="utf-8"></script>
 <script src="https://cdn.staticfile.org/blueimp-md5/2.7.0/js/md5.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="{$domain}/{$assets}/common/js/utils.js" type="text/javascript" charset="utf-8"></script>
-<script src="{$domain}/{$assets}/common/js/mipcms.js" type="text/javascript" charset="utf-8"></script>
 {/block}
 </html>

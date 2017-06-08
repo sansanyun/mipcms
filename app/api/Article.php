@@ -235,12 +235,17 @@ class Article extends AuthBase
 	        
 	        $articleInfo->where('id',$id)->update([
                 'title' => htmlspecialchars($title),
-                'content' => htmlspecialchars($content),
                 'cid' => $cid,
                 'edit_time'=>time(),
                 'publish_time' => $publish_time,
                 'is_recommend' => $is_recommend,
                ]);
+               
+            if ($createInfo) {
+                ArticlesContent::where('id',$createInfo['content_id'])->update(array(
+                   'content' => htmlspecialchars($content),
+                ));
+            }
 	        if ($articleInfo) {
                 if (is_array($tags)) {
                     ItemTags::where('item_id',$articleInfo['id'])->where('item_type',$itemType)->delete();

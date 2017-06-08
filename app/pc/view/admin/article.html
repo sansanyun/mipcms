@@ -151,11 +151,6 @@
                                     <el-option v-for='item in publish.categoryList' :label="item.name" :value="item.id"></el-option>
                                 </el-select>
                             </el-form-item>
-                            <el-form-item label="时间">
-                                <el-col :span="11">
-                                    <el-date-picker type="datetime" placeholder="选择日期" v-model="publish.publish_time" style="width: 100%;"></el-date-picker>
-                                </el-col>
-                            </el-form-item>
                             <el-form-item label="标签">
                                 <el-select v-model="publish.tags" multiple filterable style="width: 355px;" allow-create placeholder="请选择标签,支持直接输入">
                                     <el-option v-for="item in publish.tagsList" :label="item.name" :value="item.name">

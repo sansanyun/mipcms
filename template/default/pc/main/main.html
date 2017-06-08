@@ -62,7 +62,7 @@
 <div class="mip-header mip-header-default" id="mip_header">
     <div class="container">
         <div class="row">
-            <div class="col-lg-12">
+            <div class="col-lg-8">
                 <div class="logo">
                     <a class="logo-link" href="{$domain}">
                         <img class="mip-fill-content mip-replaced-content" src="{$domain}/{$assets}/{$tplName}/images/logo.png" alt="{$mipInfo['siteName']}">
@@ -84,6 +84,22 @@
                         {/foreach}
                     {/if}
                 </ul>
+                
+            </div>
+            <div class="col-lg-4">
+                {if condition="$userId"}
+                    <el-dropdown trigger="click" class="members-header-dropdown">
+                          <span class="el-dropdown-link">
+                              <div class="header-avatar-block"></div>{$userInfo['username']}
+                          </span>
+                          <el-dropdown-menu slot="dropdown" class="members-dropdown">
+                        {if condition='$isAdmin'}
+                        <el-dropdown-item><a href="{$domain}/{$Think.config.admin}/">系统管理</a></el-dropdown-item>
+                        {/if}
+                        <el-dropdown-item><a @click="loginOut">安全退出</a></el-dropdown-item>
+                      </el-dropdown-menu>
+                    </el-dropdown>
+                {/if}
             </div>
             
         </div>
@@ -103,6 +119,21 @@
         </p>
     </div>
 </footer>
+    <script type="text/javascript">
+        var mipGlobal = {
+            domain: '{$domain}',
+            assets: '{$assets}',
+            tplName: '{$tplName}',
+            returnUrl: '{$return_url}',
+            itemDetailId: '{$itemDetailId}',
+        }
+    </script>
+    <script src="https://cdn.staticfile.org/vue/2.2.6/vue.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://cdn.staticfile.org/axios/0.15.3/axios.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://cdn.staticfile.org/element-ui/1.2.5/index.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{$domain}/{$assets}/common/js/utils.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{$domain}/{$assets}/common/js/mipcms.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://cdn.staticfile.org/es6-promise/4.1.0/es6-promise.auto.min.js" type="text/javascript" charset="utf-8"></script>
 {block name="script"}
 {/block}
 </body>

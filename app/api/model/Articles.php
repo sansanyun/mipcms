@@ -33,16 +33,7 @@ class Articles extends Model
         if (!$id) {
             return false;
         }
-        $countNum = $id/1000000;
-        if ($countNum < 1) {
-            return ArticlesContent::where('id',$content_id)->find();
-        } else {
-            if (intval($countNum) > 10) {
-                    $countNum = 10;
-            }
-            $dbName = 'ArticlesContent'.intval($countNum);
-            return Db::name($dbName)->where('id',$content_id)->find();
-        }
+        return ArticlesContent::where('id',$content_id)->find();
     }
     public function filter($list, $idStatus, $domain, $public) {
         if (!$list) {

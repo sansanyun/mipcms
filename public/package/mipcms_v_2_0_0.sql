@@ -442,6 +442,7 @@ INSERT INTO `mip_settings` VALUES ('28', 'titleSeparator', '_');
 INSERT INTO `mip_settings` VALUES ('29', 'pcStatistical', '');
 INSERT INTO `mip_settings` VALUES ('30', 'https', 'http');
 INSERT INTO `mip_settings` VALUES ('31', 'mipApiAddress', '');
+INSERT INTO `mip_settings` VALUES ('32', 'articlePages', '');
 
 -- ----------------------------
 -- Table structure for mip_spiders

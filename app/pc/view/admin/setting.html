@@ -79,6 +79,9 @@
                             </div>
                         </div>
                     </div>
+                    <el-form-item label="MIP提交地址">
+                        <el-input type="textarea" v-model="setting.mipApiAddress" placeholder="请到百度站长平台获取"></el-input>
+                    </el-form-item>
                   <el-form-item label="备案号">
                     <el-input v-model="setting.icp"></el-input>
                   </el-form-item>
@@ -121,8 +124,20 @@
                           
                             <div class="row">
                                 <div class="col-md-6">
-                                    <el-form-item label="百度蜘蛛">
+                                    <el-form-item label="蜘蛛统计">
                                         <el-switch on-text="开启" off-text="关闭" v-model="setting.baiduSpider"></el-switch>
+                                    </el-form-item>
+                                </div>
+                                <div class="col-md-6">
+                                    <el-form-item label="文章分页">
+                                        <el-switch on-text="开启" off-text="关闭" v-model="setting.articlePages"></el-switch>
+                                    </el-form-item>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <el-form-item label="HTTPS">
+                                        <el-switch on-text="开启" off-text="关闭" v-model="setting.https"></el-switch>
                                     </el-form-item>
                                 </div>
                             </div>
@@ -160,7 +175,6 @@
                                 </div>
                             </div>
                             
-                       
                                <el-form-item label="模板切换">
                                 <el-select v-model="setting.template" placeholder="请选择模板主题">
                                   <el-option v-for='item in templateList' :label="item" :value="item"></el-option>
@@ -200,6 +214,11 @@
                         });
                         return false;
                     }
+                }
+                if (this.setting.https) {
+                    this.setting.https = 'https'
+                } else {
+                    this.setting.https = 'http'
                 }
                 this.$mip.ajax('/api/Setting/settingEdit', {
                     setting: JSON.stringify(this.setting),
@@ -253,12 +272,16 @@
                         } else {
                             temp.baiduSpider = false;
                         }
-                        if (temp.baiduMip) {
-                            temp.baiduMip = true;
+                        if (temp.articlePages) {
+                            temp.articlePages = true;
                         } else {
-                            temp.baiduMip = false;
+                            temp.articlePages = false;
                         }
-                        
+                        if (temp.https == 'https') {
+                            temp.https = true;
+                        } else {
+                            temp.https = false;
+                        }
                         _this.setting = temp;
                     } else {
                         Vue.prototype.$message({

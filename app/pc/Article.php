@@ -124,13 +124,14 @@ class Article extends Mip {
         }
         $this->assign('itemDetailId',$itemInfo['id']);
         $this->assign('itemInfo',$itemInfo);
-        
-        $content = $itemInfo['content'];
-        $currentPageNum = input('param.page') ? intval(input('param.page')) : 1;
-        $CP = new Cutpage($content,$currentPageNum);
-        $page = $CP->cut_str();
-        $itemInfo['content'] = $page[$currentPageNum-1];
-        $itemInfo['pageCode'] = $CP->pagenav($currentPageNum,$this->domain.'/'.$this->articleModelUrl . '/' . $id);
+        if ($this->mipInfo['articlePages']) {
+            $content = $itemInfo['content'];
+            $currentPageNum = input('param.page') ? intval(input('param.page')) : 1;
+            $CP = new Cutpage($content,$currentPageNum);
+            $page = $CP->cut_str();
+            $itemInfo['content'] = $page[$currentPageNum-1];
+            $itemInfo['pageCode'] = $CP->pagenav($currentPageNum,$this->domain.'/'.$this->articleModelUrl . '/' . $id);
+        }
          
         $tags = ItemTags::where('item_id',$itemInfo['id'])->where('item_type','article')->select();
         if ($tags) {

@@ -3,83 +3,18 @@
 {block name="title"}注册{$mipInfo['titleSeparator']}{__block__}{/block}
 {block name='keywords'}注册{/block}
 {block name='description'}注册{/block}
+{block name="link"}
+{__block__}
+<link rel="stylesheet" type="text/css" href="{$domain}/{$assets}/{$tplName}/css/account/register.css"/>
+{/block}
+
 {block name="style"}
 {__block__}
-   
-  
-.login-reg-center {
-    float:none;
-    margin:0 auto;
-    padding-top:20px;
-    padding-bottom:50px;
-}
-.login-reg{
-    visibility: hidden;
-    min-height:300px;
-   background: url(/assets/images/account/bg-white-lock.png);
-    margin: 0 auto;
-    margin-top:20px;
-    -webkit-border-radius: 7px;
-    -moz-border-radius: 7px;
-    -ms-border-radius: 7px;
-    -o-border-radius: 7px;
-    border-radius: 7px
-}
-.login-reg .el-form-item__label{
-    color:#fff;
-}
-.mip-reg-heading {
-    margin: 0;
-    padding: 20px 15px;
-    text-align: center;
-    border-bottom: 1px solid #ccc;
-    border-radius: 5px 5px 0 0;
-    -webkit-border-radius: 5px 5px 0 0;
-    color: #f1f1f1;
-    font-size: 18px;
-    text-transform: uppercase;
-    font-weight: 300;
-}
-.mip-reg-body{
-    padding: 20px 70px 15px 0;
-}
-.captcha input{
-    border-top-right-radius: 4px!important;
-    border-bottom-right-radius: 4px!important;
-}
-.captcha .el-input-group__append{
-    width:auto;
-    padding:0;
-    border:0;
-    background-color:inherit;
-    padding-left: 10px;
-}
-.captcha .el-input-group__append img{
-    border-radius: 4px;    
-}
-.show {
-    visibility: inherit;
-}
-.registrationAgreement {
-    margin-top:-10px;
-    margin-bottom:10px;
-}
-.registrationAgreement .el-checkbox {
-    color:#fff;
-}
-
-.registrationAgreement .el-checkbox a,.registrationAgreement .el-button.el-button--text{
-    color:#fff;
-}
-.registrationAgreement .el-button.el-button--text:hover{
-    color:#00aaee;
-}
 {/block}
 
 {block name="main"}
 <div class="container" id="app">
     <div class="row">
-    
         <aside class="col-md-5 login-reg-center">
                <section class="login-reg" :class="show">
                         <h3 class="mip-reg-heading">注册账号</h3>
@@ -141,26 +76,11 @@
 
 
 <div class="backstretch" style="left: 0px; top: 0px; overflow: hidden; margin: 0px; padding: 0px; height: 100%; width: 100%; z-index: -999999; position: fixed;">
-    <img src="/assets/images/account/bg_2.jpg"></div>
+    <img src="{$domain}/{$assets}/{$tplName}/images/account/bg_2.jpg"></div>
 {/block}
 
 {block name="script"}
+    <script src="https://cdn.staticfile.org/blueimp-md5/2.7.0/js/md5.min.js" type="text/javascript" charset="utf-8"></script>
 {__block__}
-<script type="text/javascript">
-    var mipGlobal = {
-        domain: '{$domain}',
-        assets: '{$assets}',
-        tplName: '{$tplName}',
-        returnUrl: '{$return_url}',
-        itemDetailId: '{$itemDetailId}',
-    }
-</script>
-<script src="https://cdn.staticfile.org/vue/2.2.6/vue.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="https://cdn.staticfile.org/axios/0.15.3/axios.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="https://cdn.staticfile.org/element-ui/1.2.5/index.js" type="text/javascript" charset="utf-8"></script>
-<script src="{$domain}/{$assets}/common/js/utils.js" type="text/javascript" charset="utf-8"></script>
-<script src="{$domain}/{$assets}/common/js/mipcms.js" type="text/javascript" charset="utf-8"></script>
-<script src="https://cdn.staticfile.org/blueimp-md5/2.7.0/js/md5.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="{$domain}/{$assets}/{$tplName}/js/account/register.js" type="text/javascript" charset="utf-8"></script>
-<script src="https://cdn.staticfile.org/es6-promise/4.1.0/es6-promise.auto.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{$domain}/{$assets}/{$tplName}/js/account/register.js" type="text/javascript" charset="utf-8"></script>
 {/block}
