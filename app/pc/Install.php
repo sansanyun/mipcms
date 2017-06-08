@@ -4,7 +4,9 @@
 namespace app\pc;
 use think\Controller;
 use think\Request;
-class Install extends Controller
+
+use mip\Mip;
+class Install extends Mip
 {
     public function index()
     {
@@ -16,74 +18,95 @@ class Install extends Controller
             $_root = rtrim(dirname(rtrim($_SERVER['SCRIPT_NAME'], '/')), '/');
             define('__ROOT__', (('/' == $_root || '\\' == $_root) ? '' : $_root));
         }
-        return '<!DOCTYPE html>
-                <html>
-                <head>
-                  <meta charset="UTF-8">
-                  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-default/index.css">
-                  <style type="text/css">
-                    body {
-                        padding: 0;
-                        margin: 0;
-                    }
-                  </style>
-                </head>
-                <body>
-                  <div id="app">
-                    <el-row :gutter="24" style="margin: 0;">
-                      <el-col :span="6">&nbsp;</el-col>
-                      <el-col :span="12">
-                          <h2 style="text-align: center;">欢迎使用MIPCMS内容管理系统</h2>
-                          <p style="text-align: center;">交流QQ群576199348</p>
-                          <p style="text-align: center;">PHP版本支持：PHP5.4.x、PHP5.5.x、PHP7.0.x 暂不支持：PHP5.6.x、php7.1.x</p>
-                          <p style="text-align: center;">推荐使用PHP7.0，支持Apache、Nginx、lamp、lnmp、wamp、xampp </p>
-                          <p style="text-align: center;">注意：请先配置环境伪静态（必须）</p>
-                          <p style="text-align: center;"><a href="http://demo.mipcms.com/article/c0de4338a4625a748932f2e8.html">安装不成功？点击查看原因</a></p>
-                          <el-form ref="form" :rules="rules" :model="form" label-width="120px">
-                              <el-form-item label="数据库地址" prop="dbhost">
-                                <el-input v-model="form.dbhost"></el-input>
-                              </el-form-item>
-                              <el-form-item label="数据库端口" prop="dbport">
-                                <el-input v-model="form.dbport"></el-input>
-                              </el-form-item>
-                              <el-form-item label="数据库用户名" prop="dbuser">
-                                <el-input v-model="form.dbuser"></el-input>
-                              </el-form-item>
-                              <el-form-item label="数据库密码" prop="dbpw">
-                                <el-input type="password" v-model="form.dbpw"></el-input>
-                              </el-form-item>
-                              <el-form-item label="数据库名称" prop="dbname">
-                                <el-input v-model="form.dbname"></el-input>
-                              </el-form-item>
-                              <el-form-item label="数据表前缀" prop="dbprefix">
-                                <el-input v-model="form.dbprefix"></el-input>
-                              </el-form-item>
-                              <el-form-item>
-                                <el-button type="primary" @click="submitForm(\'form\')">立即创建</el-button>
-                              </el-form-item>
-                            </el-form>
-                      </el-col>
-                    </el-row>
-                    
-                  </div>
-                </body>
-                </html>
-                    <script src="https://cdn.staticfile.org/vue/2.2.6/vue.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="https://cdn.staticfile.org/axios/0.15.3/axios.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="https://cdn.staticfile.org/element-ui/1.2.5/index.js" type="text/javascript" charset="utf-8"></script>
-<script src="{$domain}/{$assets}/common/js/utils.js" type="text/javascript" charset="utf-8"></script>
-<script src="{$domain}/{$assets}/common/js/mipcms.js" type="text/javascript" charset="utf-8"></script>
-<script src="https://cdn.staticfile.org/blueimp-md5/2.7.0/js/md5.min.js" type="text/javascript" charset="utf-8"></script>
-                    <script>
-                    var _hmt = _hmt || [];
-                    (function() {
-                      var hm = document.createElement("script");
-                      hm.src = "https://hm.baidu.com/hm.js?176a0355c10aafbb44f1f5838bb6275d";
-                      var s = document.getElementsByTagName("script")[0]; 
-                      s.parentNode.insertBefore(hm, s);
-                    })();
-                    </script>';
-                }
+        $data=array();
+        $icon_correct='<i class="el-icon-circle-check"></i> ';
+        $icon_error='<i class="el-icon-circle-close"></i> ';
+        //php版本、操作系统版本
+        $data['phpversion'] = @phpversion();
+        $data['os']=PHP_OS;
+        //环境检测
+        $err = 0;
+        if (class_exists('pdo')) {
+            $data['pdo'] = $icon_correct.'已开启';
+        } else {
+            $data['pdo'] = $icon_error.'未开启';
+            $err++;
+        }
+        //扩展检测
+        if (extension_loaded('pdo_mysql')) {
+            $data['pdo_mysql'] = $icon_correct.'已开启';
+        } else {
+            $data['pdo_mysql'] =$icon_error.'未开启';
+            $err++;
+        }
+        if (extension_loaded('curl')) {
+            $data['curl'] = $icon_correct.'已开启';
+        } else {
+            $data['curl'] = $icon_error.'未开启';
+            $err++;
+        }
+        if (extension_loaded('mbstring')) {
+            $data['mbstring'] = $icon_correct.'已开启';
+        } else {
+            $data['mbstring'] = $icon_error.'未开启';
+            $err++;
+        }
+        if (extension_loaded('exif')) {
+            $data['exif'] = $icon_correct.'已开启';
+        } else {
+            $data['exif'] = $icon_error.'未开启';
+            $err++;
+        }
+        //设置获取
+        if (ini_get('file_uploads')) {
+            $data['upload_size'] = $icon_correct . ini_get('upload_max_filesize');
+        } else {
+            $data['upload_size'] = $icon_error.'禁止上传';
+        }
+        if (ini_get('allow_url_fopen')) {
+            $data['allow_url_fopen'] = $icon_correct.'已开启';
+        } else {
+            $data['allow_url_fopen'] = $icon_error.'未开启';
+            $err++;
+        }
+        //函数检测
+        if (function_exists('file_get_contents')) {
+            $data['file_get_contents'] = $icon_correct.'已开启';
+        } else {
+            $data['file_get_contents'] = $icon_error.'未开启';
+            $err++;
+        }
+        if (function_exists('session_start')) {
+            $data['session'] = $icon_correct.'已开启';
+        } else {
+            $data['session'] = $icon_error.'未开启';
+            $err++;
+        }
+        //检测文件夹属性
+        $checklist = array(
+            'cache',
+            'public/install',
+            'system/config',
+        );
+        $new_checklist = array();
+        foreach($checklist as $dir){
+            if(is_writable($dir)){
+                $new_checklist[$dir]['w']=true;
+            }else{
+                $new_checklist[$dir]['w']=false;
+                $err++;
+            }
+            if(is_readable($dir)){
+                $new_checklist[$dir]['r']=true;
+            }else{
+                $new_checklist[$dir]['r']=false;
+                $err++;
+            }
+        }
+        $data['checklist'] = $new_checklist;
+        $this->assign('data',$data);
+        return $this->fetch('pc@admin/install');
+    }
     
     public function installPost(Request $request) {
             if (Request::instance()->isPost()) {
