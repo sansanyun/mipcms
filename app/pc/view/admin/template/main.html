@@ -2014,20 +2014,13 @@
           <a href="/" class="btn btn-default btn-sm"> <span class="mip-iconfont mip-pczhan"></span> 切换到前台</a>
         </div>
       <div class="mip-user-info">
-            <div class="mip-publish-group">
-                        <a href="/{$articleModelUrl}/publish.html" class="mip-btn mip-btn-primary"> <i class="mip-iconfont mip-tougao"></i> {$articleSetting['articlePublishName']}</a>
-                    </div>
+             
                     <el-dropdown trigger="click" class="members-header-dropdown">
                       <span class="el-dropdown-link">
                           <div class="header-avatar-block"><img :src="avatarImg" class="avatar-img"/></div>{$userInfo['username']}<i class="el-icon-caret-bottom el-icon--right"></i>
                       </span>
                       <el-dropdown-menu slot="dropdown" class="members-dropdown">
-                        <el-dropdown-item><a href="{$domain}/{$userModelUrl}/{$userInfo['uid'] | isHtml}">我的主页</a></el-dropdown-item>
-                        <el-dropdown-item><a href="{$domain}/{$userModelUrl}/userArticle">我的{$articleSetting['articlePublishName']}</a></el-dropdown-item>
-                        <el-dropdown-item><a href="{$domain}/{$userModelUrl}/setting">{$mipInfo['userModelName']}设置</a></el-dropdown-item>
-                        {if condition='$isAdmin'}
-                        <el-dropdown-item><a href="{$domain}/{$Think.config.admin}/">系统管理</a></el-dropdown-item>
-                        {/if}
+                        <el-dropdown-item><a href="{$domain}">网站首页</a></el-dropdown-item>
                         <el-dropdown-item><a @click="loginOut">安全退出</a></el-dropdown-item>
                       </el-dropdown-menu>
                     </el-dropdown>
