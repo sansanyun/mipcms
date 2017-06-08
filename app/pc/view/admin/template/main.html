@@ -2066,6 +2066,15 @@
 </div>
 </body>
 {block name="javascript"}
+<script type="text/javascript">
+    var mipGlobal = {
+        domain: '{$domain}',
+        assets: '{$assets}',
+        tplName: '{$tplName}',
+        returnUrl: '{$return_url}',
+        itemDetailId: '{$itemDetailId}',
+    }
+</script>
 <script src="https://cdn.staticfile.org/vue/2.2.6/vue.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="https://cdn.staticfile.org/axios/0.15.3/axios.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="https://cdn.staticfile.org/element-ui/1.2.5/index.js" type="text/javascript" charset="utf-8"></script>
