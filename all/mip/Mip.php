@@ -156,6 +156,7 @@ class Mip extends Controller
         $this->assign('userModelName',$this->mipInfo['userModelName']);
         $this->assign('userModelUrl',$this->mipInfo['userModelUrl']);
         $this->userModelUrl = $this->mipInfo['userModelUrl'];
+        $categoryUrlName = null;
         $itemCategoryList = null;
         $articleCategoryList = null;
         $askCategoryList = null;
@@ -176,6 +177,7 @@ class Mip extends Controller
         $this->assign('itemCategoryUrlName',$itemCategoryUrlName); 
         $this->assign('itemCategoryList',$itemCategoryList); 
        
+        $this->assign('categoryUrlName',$categoryUrlName);
         
     }
     public function spider() {
