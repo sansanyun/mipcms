@@ -6,7 +6,7 @@ use think\Controller;
 use think\Request;
 
 use mip\Mip;
-class Install extends Mip
+class Install extends Controller
 {
     public function index()
     {
@@ -17,6 +17,18 @@ class Install extends Mip
         if (!defined('__ROOT__')) {
             $_root = rtrim(dirname(rtrim($_SERVER['SCRIPT_NAME'], '/')), '/');
             define('__ROOT__', (('/' == $_root || '\\' == $_root) ? '' : $_root));
+        }
+        
+        if (MIP_HOST) {
+            $this->assign('assets','public/assets');
+            $this->assets = 'public/assets';
+            $this->assign('public','public');
+            $this->public = 'public';
+        } else {
+            $this->assign('assets','assets');
+            $this->assets = 'assets';
+            $this->assign('public','');
+            $this->public = '';
         }
         $data=array();
         $icon_correct='<i class="el-icon-circle-check"></i> ';

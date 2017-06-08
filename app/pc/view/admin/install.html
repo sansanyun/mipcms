@@ -24,46 +24,52 @@
       <el-col :span="12">
           <h2 style="text-align: center;">欢迎使用MIPCMS内容管理系统</h2>
           <p style="text-align: center;">交流QQ群576199348</p>
-          <h3 style="text-align: center;">环境检测</h3>
           
           <el-form ref="form" :rules="rules" :model="form" label-width="120px">
+          
+              <div style="background-color: #EFEFEF;padding-top: 10px;padding-bottom: 10px;border-radius: 5px;">
+                  <h3 style="text-align: center;">环境检测</h3>
+                    <el-col :span="12"><el-form-item label="当前PHP版本"><span>{$data['phpversion']}</span>（要求>= 5.4）</el-form-item></el-col>
+                    <el-col :span="12"><el-form-item label="当前环境系统"><span>{$data['os']}</span></el-form-item></el-col>
+                    <el-col :span="12"><el-form-item label="pdo"><span>{$data['pdo']}</span></el-form-item></el-col>
+                    <el-col :span="12"><el-form-item label="pdo_mysql"><span>{$data['pdo_mysql']}</span></el-form-item></el-col>
+                    <el-col :span="12"><el-form-item label="curl"><span>{$data['curl']}</span></el-form-item></el-col>
+                    <el-col :span="12"><el-form-item label="mbstring"><span>{$data['mbstring']}</span></el-form-item></el-col>
+                    <el-col :span="12"><el-form-item label="exif"><span>{$data['exif']}</span></el-form-item></el-col>
+                    <el-col :span="12"><el-form-item label="upload_size"><span>{$data['upload_size']}</span></el-form-item></el-col>
+                    <el-col :span="12"><el-form-item label="allow_url_fopen"><span>{$data['allow_url_fopen']}</span></el-form-item></el-col>
+                    <el-col :span="12"><el-form-item label="file_get_contents"><span>{$data['file_get_contents']}</span></el-form-item></el-col>
+                  
+                    <el-col :span="12"><el-form-item label="public/install"><span>{$data['checklist']['public/install']['w'] ? '<i class="el-icon-circle-check"></i> 可写 ' : '<i class="el-icon-circle-close"></i> 不可写'}</span></el-form-item></el-col>
+                    <el-col :span="12"><el-form-item label="system/config"><span>{$data['checklist']['system/config']['w'] ? '<i class="el-icon-circle-check"></i> 可写' : '<i class="el-icon-circle-close"></i> 不可写'}</span></el-form-item></el-col>
+                  <p style="text-align: center;">MIPCMS必须开启伪静态，并且要配置好伪静态 <a href="http://www.mipcms.cn/article/c0de4338a4625a748932f2e8.html" target="_blank">点击查看配置方法</a></p>
+                  <p style="text-align: center;">系统后台地址：www.xxx.com/admin  管理员账号密码：admin admin</p>
+              </div>
               
-                <el-col :span="12"><el-form-item label="当前PHP版本"><span>{$data['phpversion']}</span>（要求>= 5.4）</el-form-item></el-col>
-                <el-col :span="12"><el-form-item label="当前环境系统"><span>{$data['os']}</span></el-form-item></el-col>
-                <el-col :span="12"><el-form-item label="pdo"><span>{$data['pdo']}</span></el-form-item></el-col>
-                <el-col :span="12"><el-form-item label="pdo_mysql"><span>{$data['pdo_mysql']}</span></el-form-item></el-col>
-                <el-col :span="12"><el-form-item label="curl"><span>{$data['curl']}</span></el-form-item></el-col>
-                <el-col :span="12"><el-form-item label="mbstring"><span>{$data['mbstring']}</span></el-form-item></el-col>
-                <el-col :span="12"><el-form-item label="exif"><span>{$data['exif']}</span></el-form-item></el-col>
-                <el-col :span="12"><el-form-item label="upload_size"><span>{$data['upload_size']}</span></el-form-item></el-col>
-                <el-col :span="12"><el-form-item label="allow_url_fopen"><span>{$data['allow_url_fopen']}</span></el-form-item></el-col>
-                <el-col :span="12"><el-form-item label="file_get_contents"><span>{$data['file_get_contents']}</span></el-form-item></el-col>
-              
-                <el-col :span="12"><el-form-item label="public/install"><span>{$data['checklist']['public/install']['w'] ? '<i class="el-icon-circle-check"></i> 可写 ' : '<i class="el-icon-circle-close"></i> 不可写'}</span></el-form-item></el-col>
-                <el-col :span="12"><el-form-item label="system/config"><span>{$data['checklist']['system/config']['w'] ? '<i class="el-icon-circle-check"></i> 可写' : '<i class="el-icon-circle-close"></i> 不可写'}</span></el-form-item></el-col>
-              <p style="text-align: center;">MIPCMS必须开启伪静态，并且要配置好伪静态 <a href="http://www.mipcms.cn/article/c0de4338a4625a748932f2e8.html" target="_blank">点击查看配置方法</a></p>
-              <p style="text-align: center;">系统后台地址：{$domain}/admin  管理员账号密码：admin/admin</p>
-              <el-form-item label="数据库地址" prop="dbhost">
-                <el-input v-model="form.dbhost"></el-input>
-              </el-form-item>
-              <el-form-item label="数据库端口" prop="dbport">
-                <el-input v-model="form.dbport"></el-input>
-              </el-form-item>
-              <el-form-item label="数据库用户名" prop="dbuser">
-                <el-input v-model="form.dbuser"></el-input>
-              </el-form-item>
-              <el-form-item label="数据库密码" prop="dbpw">
-                <el-input type="password" v-model="form.dbpw"></el-input>
-              </el-form-item>
-              <el-form-item label="数据库名称" prop="dbname">
-                <el-input v-model="form.dbname"></el-input>
-              </el-form-item>
-              <el-form-item label="数据表前缀" prop="dbprefix">
-                <el-input v-model="form.dbprefix"></el-input>
-              </el-form-item>
-              <el-form-item>
-                <el-button type="primary" @click="submitForm('form')">立即创建</el-button>
-              </el-form-item>
+             <div style="background: #EFEFEF;margin-top: 10px;padding: 10px;border-radius: 5px;">
+                <h3 style="text-align: center;">系统安装</h3>
+                 <el-form-item label="数据库地址" prop="dbhost">
+                    <el-input v-model="form.dbhost"></el-input>
+                  </el-form-item>
+                  <el-form-item label="数据库端口" prop="dbport">
+                    <el-input v-model="form.dbport"></el-input>
+                  </el-form-item>
+                  <el-form-item label="数据库用户名" prop="dbuser">
+                    <el-input v-model="form.dbuser"></el-input>
+                  </el-form-item>
+                  <el-form-item label="数据库密码" prop="dbpw">
+                    <el-input type="password" v-model="form.dbpw"></el-input>
+                  </el-form-item>
+                  <el-form-item label="数据库名称" prop="dbname">
+                    <el-input v-model="form.dbname"></el-input>
+                  </el-form-item>
+                  <el-form-item label="数据表前缀" prop="dbprefix">
+                    <el-input v-model="form.dbprefix"></el-input>
+                  </el-form-item>
+             </div>
+                      <div style="text-align: center;padding: 10px;">
+                        <el-button type="primary" @click="submitForm('form')">立即安装</el-button>
+                      </div>
             </el-form>
       </el-col>
     </el-row>
@@ -73,7 +79,7 @@
 <script src="https://cdn.staticfile.org/vue/2.2.6/vue.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="https://cdn.staticfile.org/axios/0.15.3/axios.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="https://cdn.staticfile.org/element-ui/1.2.5/index.js" type="text/javascript" charset="utf-8"></script>
-<script src="{$domain}/{$assets}/common/js/utils.js" type="text/javascript" charset="utf-8"></script>
+<script src="/{$assets}/common/js/utils.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript">
 	    new Vue({
       el: "#install",
