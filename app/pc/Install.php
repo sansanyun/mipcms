@@ -10,7 +10,7 @@ class Install extends Mip
 {
     public function index()
     {
-        if (is_file(CONF_PATH.'install'.DS.'install.lock')) {
+        if (is_file(PUBLIC_PATH . 'install' . DS .'install.lock')) {
             header('Location: ' . url('@/'));
             exit();
         }
