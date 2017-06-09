@@ -53,40 +53,10 @@ class Article extends Mip
             $this->assign('hot_list_by_cid',$hot_list_by_cid);
         }
         if ($list) { 
-            $patern = '/^http[s]?:\/\/'.
-            '(([0-9]{1,3}\.){3}[0-9]{1,3}'. 
-            '|'. 
-            '([0-9a-z_!~*\'()-]+\.)*'. 
-            '([0-9a-z][0-9a-z-]{0,61})?[0-9a-z]\.'. 
-            '[a-z]{2,6})'.   
-            '(:[0-9]{1,4})?'.  
-            '((\/\?)|'.  
-            '(\/[0-9a-zA-Z_!~\*\'\(\)\.;\?:@&=\+\$,%#-\/]*)?)$/'; 
-            foreach ($list as $k => $v){
-                $list[$k]->users;
-                $v['content'] = htmlspecialchars_decode($v['content']);
-                if (preg_match_all("/<[img|IMG].*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>/", bbc2html($v['content']), $imgs)) {
-                    $list[$k]['imgCount'] = count($imgs[1]);
-                    foreach ($imgs[1] as $key => $value) {
-                       if (@preg_match($patern,$value)) {
-                           $imgs[1][$key] = $value;
-                        } else {
-                           $imgs[1][$key] = $this->domain. $value;
-                        }
-                    }
-                    $list[$k]['imgList'] = $imgs[1];
-                    if (@preg_match($patern,$imgs[1][0])) {
-                        $list[$k]['firstImg'] = $imgs[1][0];
-                    } else {
-                        $list[$k]['firstImg'] = $this->domain.$imgs[1][0];
-                    }
-                } else {
-                    $list[$k]['firstImg'] = null;
-                    $list[$k]['imgCount'] = 0;
-                    $list[$k]['imgList'] = null;
-                }
-                $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid']:$v['id'];
-                $v['content'] = strip_tags(htmlspecialchars_decode($v['content']));
+            
+            $list = model('api/Articles')->filterM($list, $this->mipInfo['idStatus'], $this->domain, $this->public);
+            foreach($list as $k => $v) {
+                $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
             }
         } else {
             $list=null;
@@ -128,7 +98,7 @@ class Article extends Mip
             return $this->error($this->articleModelName.'不存在','/');
         }
         $itemInfo->updateViews($itemInfo['id'], $itemInfo['uid']);
-        $itemInfo['content'] = htmlspecialchars_decode(bbc2html($itemInfo['content']));
+        $itemInfo['content'] =  htmlspecialchars_decode($itemInfo->getContentByArticleId($itemInfo['id'],$itemInfo['content_id'])['content']);
         
             preg_match_all('/<[img|IMG].*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>/', $itemInfo['content'], $imagesArray);
             $patern = '/^http[s]?:\/\/'.
@@ -150,10 +120,13 @@ class Article extends Mip
                 if (count($alt) == 2) {
                     $alt = $alt[1] ;
                 }
+                if (count($alt) == 3) {
+                    $alt = $alt[1] ;
+                }
                 if (@preg_match($patern,$imagesArray[1][$key])) {
                     $src = $imagesArray[1][$key];
                 } else {
-                    $src = $this->domain.$imagesArray[1][$key];
+                    $src = $this->domain.'/'.$this->public.$imagesArray[1][$key];
                 }
                 $layout = 'layout="container"';
                 $tempImg = '<mip-img '.$layout.' alt="'.$alt.'" src="'.$src.'" popup></mip-img>';
@@ -214,59 +187,56 @@ class Article extends Mip
         }
         $this->assign('comments',$comments);
 
-        //随机数据
-        $articleMaxNum = Articles::count('id');
-            $articleMinNum = 1;
-            for ($i = 0; $i <8; $i++) {
-                $tempNum[] = rand($articleMinNum,$articleMaxNum);
-            }
-        $rand_list = Articles::where('id','in', implode(',', $tempNum))->select();
-        $patern = '/^http[s]?:\/\/'.
-        '(([0-9]{1,3}\.){3}[0-9]{1,3}'. 
-        '|'. 
-        '([0-9a-z_!~*\'()-]+\.)*'. 
-        '([0-9a-z][0-9a-z-]{0,61})?[0-9a-z]\.'. 
-        '[a-z]{2,6})'.   
-        '(:[0-9]{1,4})?'.  
-        '((\/\?)|'.  
-        '(\/[0-9a-zA-Z_!~\*\'\(\)\.;\?:@&=\+\$,%#-\/]*)?)$/'; 
-        foreach ($rand_list as $k => $v) {
-            $v['content'] = htmlspecialchars_decode($v['content']);
-            if (preg_match_all('/<[img|IMG].*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>/', bbc2html($v['content']), $imgs)) {
-                $rand_list[$k]['imgCount'] = count($imgs[1]);
-                 foreach ($imgs[1] as $key => $value) {
-                   if (@preg_match($patern,$value)) {
-                       $imgs[1][$key] = $value;
-                    } else {
-                       $imgs[1][$key] = $this->domain. $value;
-                    }
-                }
-                $rand_list[$k]['imgList'] = $imgs[1];
-                if (@preg_match($patern,$imgs[1][0])) {
-                    $rand_list[$k]['firstImg'] = $imgs[1][0];
-                } else {
-                    $rand_list[$k]['firstImg'] = $this->domain.$imgs[1][0];
-                }
-                
-            } else {
-                $rand_list[$k]['firstImg'] = null;
-                $rand_list[$k]['imgCount'] = 0;
-                $rand_list[$k]['imgList'] = null;
-            }
-        }  
-        foreach ($rand_list as $k => $v) {
-            $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+        if ($tags) {
+            $tagName = $tags[0]['tags']['name'];
+        } else {
+            $tagName = null;
         }
-        $this->assign('rand_list',$rand_list);
-
+        
+        if ($tagName) {
+            $sq = "%".$tagName."%";
+            $tagWhere['title']  = ['like',$sq];
+            $aboutLoveList = Articles::where($tagWhere)->limit(8)->select();
+            $aboutLoveList = model('api/Articles')->filterM($aboutLoveList, $this->mipInfo['idStatus'], $this->domain, $this->public);
+        } else {
+            $aboutLoveList = null;
+        }
+        if ($aboutLoveList) {
+            foreach ($aboutLoveList as $k => $v) {
+                $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+            }
+        }
+        $this->assign('aboutLoveList',$aboutLoveList);
 
         //获取发布者发布的最新数据
-        $news_list_by_uid = Articles::where('uid',$itemInfo['uid'])->order('publish_time desc')->limit(5)->select();
-        foreach($news_list_by_uid as $k => $v) {
-            $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
-        }
-        $this->assign('news_list_by_uid',$news_list_by_uid);
 
+         if ($this->mipInfo["systemType"] == 'CMS') {
+            //随机推荐
+            $articleMaxNum = Articles::count('id');
+                $articleMinNum = 1;
+                for ($i = 0; $i < 5; $i++) {
+                    $tempNum[] = rand($articleMinNum,$articleMaxNum);
+                }
+            $rand_list = Articles::where('publish_time','<',time())->where('id','in', implode(',', $tempNum))->select();
+            foreach ($rand_list as $k => $v) {
+                $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+            }
+            $this->assign('rand_list',$rand_list);
+            
+            $hot_list_by_cid = Articles::order('views desc')->limit(5)->select();
+            foreach($hot_list_by_cid as $k => $v) {
+                    $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+            }
+            $this->assign('hot_list_by_cid',$hot_list_by_cid);
+        } else {
+            //获取发布者发布的最新数据
+            $newsListByUid = Articles::where('uid',$itemInfo['uid'])->order('publish_time desc')->limit(5)->select();
+            foreach($newsListByUid as $k => $v) {
+                $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+            }
+            $this->assign('news_list_by_uid',$newsListByUid);
+        }
+        
         $categoryList = ArticlesCategory::order('sort desc')->select();
         if ($categoryList) {
             foreach ($categoryList as $key => $val) {

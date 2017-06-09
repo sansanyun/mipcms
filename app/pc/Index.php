@@ -28,6 +28,9 @@ class Index extends Mip
             
             $recommendList = Articles::limit(4)->where('is_recommend',1)->order('publish_time desc')->select();
             $recommendList = model('api/Articles')->filter($recommendList, $this->mipInfo['idStatus'], $this->domain, $this->public);
+           	foreach($recommendList as $k => $v) {
+                $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+            }
             $this->assign('recommendList',$recommendList);
             
             $articleMaxNum = Articles::count('id');

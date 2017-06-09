@@ -61,6 +61,9 @@ class Article extends Mip {
         } else {
             $articleList = null;
         }
+            foreach($articleList as $k => $v) {
+                $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+            }
         $this->assign('categoryUrlName',$categoryUrlName); //当前URL名称
         $this->assign('categoryInfo',$categoryInfo); //用于SEO
         $this->assign('articleList',$articleList);
@@ -114,6 +117,7 @@ class Article extends Mip {
         $itemInfo['content'] = htmlspecialchars_decode($itemInfo->getContentByArticleId($itemInfo['id'],$itemInfo['content_id'])['content']);
         $itemInfo->users;
         $itemInfo['message_description']= trim(preg_replace("/ /","",str_replace("\r\n", ' ', strip_tags($itemInfo['content']))),"\r\n\t");
+
         $itemInfo['categoryInfo'] = ArticlesCategory::get($itemInfo['cid']);
         if ($itemInfo['categoryInfo']) {
             if (!Validate::regex($itemInfo['categoryInfo']['url_name'],'\d+') AND $itemInfo['categoryInfo']['url_name']) {
@@ -123,6 +127,38 @@ class Article extends Mip {
             }
         }
         $this->assign('itemDetailId',$itemInfo['id']);
+
+            preg_match_all('/<[img|IMG].*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>/', $itemInfo['content'], $imagesArray);
+            $patern = '/^http[s]?:\/\/'.
+            '(([0-9]{1,3}\.){3}[0-9]{1,3}'. 
+            '|'. 
+            '([0-9a-z_!~*\'()-]+\.)*'. 
+            '([0-9a-z][0-9a-z-]{0,61})?[0-9a-z]\.'. 
+            '[a-z]{2,6})'.   
+            '(:[0-9]{1,4})?'.  
+            '((\/\?)|'.  
+            '(\/[0-9a-zA-Z_!~\*\'\(\)\.;\?:@&=\+\$,%#-\/]*)?)$/'; 
+            foreach($imagesArray[0] as $key => $val) {
+                @preg_match('/alt=".+?"/',$val,$tempAlt);
+                @$alt = explode('=',$tempAlt[0]);
+                @$alt = explode('"',$alt[1]);
+                if (count($alt) == 1) {
+                    $alt = $alt[0];
+                } 
+                if (count($alt) == 2) {
+                    $alt = $alt[1] ;
+                }
+                if (count($alt) == 3) {
+                    $alt = $alt[1] ;
+                }
+                if (@preg_match($patern,$imagesArray[1][$key])) {
+                    $src = $imagesArray[1][$key];
+                } else {
+                    $src = $this->domain.'/'.$this->public.$imagesArray[1][$key];
+                }
+                $tempImg = '<img alt="'.$alt.'" src="'.$src.'" popup></img>';
+                $itemInfo['content'] =  str_replace($val,$tempImg,$itemInfo['content']);
+            }
         $this->assign('itemInfo',$itemInfo);
         if ($this->mipInfo['articlePages']) {
             $content = $itemInfo['content'];
@@ -174,6 +210,11 @@ class Article extends Mip {
             $aboutLoveList = model('api/Articles')->filter($aboutLoveList, $this->mipInfo['idStatus'], $this->domain, $this->public);
         } else {
             $aboutLoveList = null;
+        }
+        if ($aboutLoveList) {
+            foreach ($aboutLoveList as $k => $v) {
+                $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+            }
         }
         $this->assign('aboutLoveList',$aboutLoveList);
         if ($this->mipInfo["systemType"] == 'CMS') {

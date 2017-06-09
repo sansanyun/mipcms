@@ -32,7 +32,6 @@
             padding-left:15px;
         }
         .content img{
-            width:auto;
             max-width: 100%;
         }
         .item-up-down-page {
@@ -75,7 +74,7 @@
     <h4 class="mip-title">推荐{$articleModelName}</h4>
  
     <ul class="mui-table-view">
-     {foreach name='$rand_list' id='v'}
+     {foreach name='$aboutLoveList' id='v'}
             <li class="news-list xbx"> 
                 {if condition="$v['firstImg']"}
                 <div class="news-list-img">
