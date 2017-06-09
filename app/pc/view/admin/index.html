@@ -34,7 +34,9 @@
     color: #bababa;
     font-size: 14px;
 }
-
+.line {
+	line-height: 30px;
+}
 </style>
 {/block}
 {block name="main"}
@@ -88,7 +90,7 @@
             
             
         <div class="row">
-        <section class="col-lg-12">
+        <section class="col-lg-8">
            <div class="mip-box">
             <div class="mip-box-heading"><h3 class="left">最新注册</h3> <a href="/admin/user" class="right">更多</a></div>
                 <div class="mip-box-body">
@@ -105,26 +107,12 @@
                             prop="username">
                         </el-table-column>
                         <el-table-column
-                            inline-template
-                            label="性别">
-                            <template>{{row.sex == 1 ? '男' : '女'}}</template>
-                        </el-table-column>
-                        <el-table-column
                             label="邮箱"
                             inline-template
                             prop="email">
                             <template>{{row.email || '-' }}</template>
                         </el-table-column>
-                        <el-table-column
-                            inline-template
-                            label="手机">
-                            <template>{{row.mobile || '-' }}</template>
-                        </el-table-column>
-                        <el-table-column
-                            inline-template
-                            label="Q Q">
-                            <template>{{row.qq || '-' }}</template>
-                        </el-table-column>
+                       
                         <el-table-column
                             label="最后登录"
                             inline-template
@@ -137,6 +125,24 @@
                 </div>
             </div>
         </section>
+     	<section class="col-lg-4">
+     		<div class="mip-box">
+     			<div class="mip-box-heading"><h3 class="left">官网公告</h3></div>
+     			<div class="mip-box-body">
+     				<ul class="list-unstyled">
+	     				<li class="list-time line" v-for="item in gonggaoList" ><a :href="item.url" target="_blank" v-html='item.title'></a></li>
+	     			</ul>
+     			</div>
+     		</div>
+     		<div class="mip-box">
+     			<div class="mip-box-heading"><h3 class="left">功能介绍</h3></div>
+     			<div class="mip-box-body">
+     				<ul class="list-unstyled">
+	     				<li class="list-time line" v-for="item in functionList" ><a :href="item.url" target="_blank" v-html='item.title'></a></li>
+	     			</ul>
+     			</div>
+     		</div>
+     	</section>
       </div>
   
 {/block}
@@ -147,9 +153,13 @@
         el: '#app',
         data:{
             usersList: [],
+            gonggaoList:[],
+            functionList: [],
         },
         mounted: function() {
             this.getPageList();
+            this.getGonggaoList();
+            this.getFunctionList();
             _this = this;
         },
         methods:{
@@ -170,6 +180,23 @@
                         });
                     }
                     _this.loading = false;
+                });
+            },
+            getGonggaoList:function() {
+                this.$mip.ajax('http://www.mipcms.cn/api/open/gonggaoList',{
+                }).then(function (res) {
+                    if (res.code == 1) {
+                        _this.gonggaoList = res.data.gonggaoList;
+                    }
+                });
+            },
+
+            getFunctionList:function() {
+                this.$mip.ajax('http://www.mipcms.cn/api/open/functionList',{
+                }).then(function (res) {
+                    if (res.code == 1) {
+                        _this.functionList = res.data.functionList;
+                    }
                 });
             },
         },
