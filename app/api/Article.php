@@ -233,7 +233,7 @@ class Article extends AuthBase
 	          	return jsonError('文章不存在');
 	        }
 	        
-	        $articleInfo->where('id',$id)->update([
+	        $updateArticleInfo = $articleInfo->where('id',$id)->update([
                 'title' => htmlspecialchars($title),
                 'cid' => $cid,
                 'edit_time'=>time(),
@@ -241,8 +241,8 @@ class Article extends AuthBase
                 'is_recommend' => $is_recommend,
                ]);
                
-            if ($createInfo) {
-                ArticlesContent::where('id',$createInfo['content_id'])->update(array(
+            if ($articleInfo) {
+                ArticlesContent::where('id',$articleInfo['content_id'])->update(array(
                    'content' => htmlspecialchars($content),
                 ));
             }
