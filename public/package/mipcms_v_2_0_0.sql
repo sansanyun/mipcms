@@ -78,7 +78,7 @@ CREATE TABLE `mip_articles` (
 DROP TABLE IF EXISTS `mip_articles_approval`;
 CREATE TABLE `mip_articles_approval` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `uuid` char(24) NOT NULL,
+  `uuid` char(24) DEFAULT NULL,
   `cid` int(11) unsigned DEFAULT '0',
   `uid` int(11) unsigned DEFAULT '0',
   `title` varchar(255) DEFAULT NULL,
@@ -172,7 +172,7 @@ CREATE TABLE `mip_articles_content` (
 DROP TABLE IF EXISTS `mip_articles_draft`;
 CREATE TABLE `mip_articles_draft` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `uuid` char(24) NOT NULL,
+  `uuid` char(24) DEFAULT NULL,
   `cid` int(11) unsigned DEFAULT '0',
   `uid` int(11) unsigned DEFAULT '0',
   `title` varchar(255) DEFAULT NULL,
@@ -449,7 +449,7 @@ INSERT INTO `mip_settings` VALUES ('32', 'articlePages', '');
 -- ----------------------------
 DROP TABLE IF EXISTS `mip_spiders`;
 CREATE TABLE `mip_spiders` (
-  `uuid` char(24) NOT NULL,
+  `uuid` char(24) DEFAULT NULL,
   `type` varchar(255) DEFAULT NULL,
   `add_time` int(11) unsigned zerofill NOT NULL,
   `pageUrl` varchar(255) NOT NULL,
@@ -487,7 +487,7 @@ CREATE TABLE `mip_tags` (
 DROP TABLE IF EXISTS `mip_users`;
 CREATE TABLE `mip_users` (
   `uid` int(11) NOT NULL AUTO_INCREMENT,
-  `uuid` char(24) NOT NULL,
+  `uuid` char(24) DEFAULT NULL,
   `username` varchar(16) DEFAULT NULL COMMENT '用户名',
   `nickname` varchar(16) DEFAULT NULL COMMENT '昵称',
   `password` varchar(32) DEFAULT NULL COMMENT '密码',

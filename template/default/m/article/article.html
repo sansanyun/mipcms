@@ -45,7 +45,7 @@
             {/if}
                 <div class="news-list-content  {if condition='$v["firstImg"]'}hasImg{/if}">
                     <h4 class="title"><mip-link href="{$domain}/{$articleModelUrl}/{$v.id | isHtml}" title="{$v.title}">{$v.title}</mip-link></h4>
-                    <p>{$v['users']['username']} {$v['publish_time']|date='Y-m-d',###} {$v['views']}
+                    <p>{$v['publish_time']|date='Y-m-d',###}
                     </p>
                 </div>
             </li>

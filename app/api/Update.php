@@ -4,12 +4,14 @@
 namespace app\api;
 use think\Request;
 use app\api\model\Settings;
+use app\api\model\Articles;
+use think\Db;
 
 use mip\AdminBase;
 class Update extends AdminBase
 {
     public function index(){
-		 
+         
     }
    
     public function update(Request $request) {
@@ -53,6 +55,44 @@ class Update extends AdminBase
                 }
             }
             return jsonSuccess('升级成功');
+            
+        }
+    }
+    
+    public function oneToTwoUpData() {
+        if (Request::instance()->isPost()) {
+            $page = input('post.page');
+            $limit = input('post.limit');
+            $orderBy = input('post.orderBy');
+            $order = input('post.order');
+            if(!$page){
+              $page = 1;
+            }
+            if(!$limit){
+              $limit = 10;
+            }
+            if(!$orderBy){
+             $orderBy = 'id';
+            }
+            if(!$order){
+                $order = 'desc';
+            }
+            $itemCount = Db('Articles')->count();
+            $articleList = db::name('Articles')->limit($limit)->page($page)->order($orderBy, $order)->select();
+            
+            foreach ($articleList as $key => $val) {
+                $tempUUID = uuid();
+               $upDataInfo =  db::name('Articles')->where('id',$val['id'])->update([
+                'content_id' => $tempUUID,
+               ]);
+               if ($upDataInfo) {
+                    db::name('ArticlesContent')->insert(array(
+                       'id' => $tempUUID,
+                       'content' => $val['content'],
+                    ));
+               }
+            }
+            return jsonSuccess('',['articleList' => $articleList,'total' => $itemCount,'page' => $page]); 
             
         }
     }
