@@ -449,7 +449,7 @@ INSERT INTO `mip_settings` VALUES ('32', 'articlePages', '');
 -- ----------------------------
 DROP TABLE IF EXISTS `mip_spiders`;
 CREATE TABLE `mip_spiders` (
-  `uuid` char(24) DEFAULT NULL,
+  `uuid` char(24) NOT NULL,
   `type` varchar(255) DEFAULT NULL,
   `add_time` int(11) unsigned zerofill NOT NULL,
   `pageUrl` varchar(255) NOT NULL,
