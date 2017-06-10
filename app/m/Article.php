@@ -134,7 +134,7 @@ class Article extends Mip
                 if (@preg_match($patern,$imagesArray[1][$key])) {
                     $src = $imagesArray[1][$key];
                 } else {
-                    $src = $this->domain.'/'.$this->public.$imagesArray[1][$key];
+                    $src = $this->domain.'/'.$imagesArray[1][$key];
                 }
                 $layout = 'layout="container"';
                 $tempImg = '<mip-img '.$layout.' alt="'.$alt.'" src="'.$src.'" popup></mip-img>';
