@@ -226,8 +226,9 @@ class Article extends Mip
                 $tempNum[] = rand($articleMinNum,$articleMaxNum);
             }
             $rand_list = Articles::where('publish_time','<',time())->where('id','in', implode(',', $tempNum))->select();
+            $rand_list = model('api/Articles')->filterM($rand_list, $this->mipInfo['idStatus'], $this->domain, $this->public);
             if ($rand_list) {
-                foreach ($rand_list as $k => $v) {
+                foreach($rand_list as $k => $v) {
                     $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
                 }
             }

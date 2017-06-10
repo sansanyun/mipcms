@@ -17,8 +17,10 @@ class Index extends Mip
         foreach ($categoryList as $key => $val) {
             $val['articles'] = Articles::where('cid',$val['id'])->order('publish_time desc')->limit(10)->select();
             $val['articles'] = model('api/Articles')->filterM( $val['articles'], $this->mipInfo['idStatus'], $this->domain, $this->public);
-            foreach( $val['articles'] as $k => $v) {
-                $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+            if ($val['articles']) {
+                foreach( $val['articles'] as $k => $v) {
+                    $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+                }
             }
             if(!Validate::regex($categoryList[$key]['url_name'],'\d+') AND $categoryList[$key]['url_name']){
                 $categoryList[$key]['url_name'] = $categoryList[$key]['url_name'];
