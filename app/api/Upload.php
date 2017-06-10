@@ -23,10 +23,18 @@ class Upload extends AuthBase
             if (empty($file)) {
                 return jsonError('图片不存在');
             }
-            if ($ymd) {
-                $info = $file->rule('uniqid')->move(PUBLIC_PATH . DS . $this->mipInfo['uploadUrl'] . DS . $type . DS . date('Y',time()) . DS . date('m',time()) . DS . date('d',time()));
+            if (MIP_HOST) {
+                if ($ymd) {
+                    $info = $file->rule('uniqid')->move(ROOT_PATH . DS . $this->mipInfo['uploadUrl'] . DS . $type . DS . date('Y',time()) . DS . date('m',time()) . DS . date('d',time()));
+                } else {
+                    $info = $file->rule('uniqid')->move(ROOT_PATH . DS . $this->mipInfo['uploadUrl'] . DS . $type);
+                }
             } else {
-                $info = $file->rule('uniqid')->move(PUBLIC_PATH . DS . $this->mipInfo['uploadUrl'] . DS . $type);
+                if ($ymd) {
+                    $info = $file->rule('uniqid')->move(PUBLIC_PATH . DS . $this->mipInfo['uploadUrl'] . DS . $type . DS . date('Y',time()) . DS . date('m',time()) . DS . date('d',time()));
+                } else {
+                    $info = $file->rule('uniqid')->move(PUBLIC_PATH . DS . $this->mipInfo['uploadUrl'] . DS . $type);
+                }
             }
             if ($info) {
                 if ($ymd) {

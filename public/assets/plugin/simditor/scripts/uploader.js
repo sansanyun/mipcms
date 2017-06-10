@@ -177,11 +177,7 @@ Uploader = (function(superClass) {
       })(this),
       success: (function(_this) {
         return function(result) {
-            if (mipGlobal.public) {
-              var newresult = JSON.parse("{\"file_path\":\""+ '/public'+ result.data +"\"}"); 
-            } else {
-              var newresult = JSON.parse("{\"file_path\":\""+ result.data +"\"}"); 
-            }
+            var newresult = JSON.parse("{\"file_path\":\""+ result.data +"\"}"); 
             _this.trigger('uploadprogress', [file, file.size, file.size]);  
             _this.trigger('uploadsuccess', [file, newresult]); 
           return $(document).trigger('uploadsuccess', [file, result, _this]);

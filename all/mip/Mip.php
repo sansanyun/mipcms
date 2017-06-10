@@ -127,8 +127,8 @@ class Mip extends Controller
         $this->assign('itemDetailId','');
         
         if (MIP_HOST) {
-            $this->assign('assets','public/assets');
-            $this->assets = 'public/assets';
+            $this->assign('assets','assets');
+            $this->assets = 'assets';
             $this->assign('public','public');
             $this->public = 'public';
         } else {
