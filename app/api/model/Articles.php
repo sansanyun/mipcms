@@ -55,7 +55,7 @@ class Articles extends Model
                 if (@preg_match($patern,$imgs[1][0])) {
                     $list[$k]['firstImg'] = $imgs[1][0];
                 } else {
-                    $list[$k]['firstImg'] = $domain. '/' . $public. $imgs[1][0];
+                    $list[$k]['firstImg'] = $domain. $imgs[1][0];
                 }
             } else {
                 $list[$k]['firstImg'] = null;
@@ -88,14 +88,14 @@ class Articles extends Model
                    if (@preg_match($patern,$value)) {
                        $imgs[1][$key] = $value;
                     } else {
-                       $imgs[1][$key] = $domain. '/' . $public . $value;
+                       $imgs[1][$key] = $domain.$value;
                     }
                 }
                 $v['imgList'] = $imgs[1];
                 if (@preg_match($patern,$imgs[1][0])) {
                     $list[$k]['firstImg'] = $imgs[1][0];
                 } else {
-                    $list[$k]['firstImg'] = $domain. '/' . $public. $imgs[1][0];
+                    $list[$k]['firstImg'] = $domain. $imgs[1][0];
                 }
             } else {
                 $list[$k]['firstImg'] = null;
