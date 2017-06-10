@@ -30,18 +30,21 @@ class Index extends Mip
         
         $recommendList = Articles::limit(4)->where('is_recommend',1)->order('publish_time desc')->select();
         $recommendList = model('api/Articles')->filterM($recommendList, $this->mipInfo['idStatus'], $this->domain, $this->public);
+        if ($recommendList) {
             foreach($recommendList as $k => $v) {
                 $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
             }
+        }
         $this->assign('recommendList',$recommendList);
         
         
         $newsArticleList = Articles::order('publish_time desc')->limit(10)->select();
         $newsArticleList = model('api/Articles')->filterM($newsArticleList, $this->mipInfo['idStatus'], $this->domain, $this->public);
+        if ($newsArticleList) {
             foreach($newsArticleList as $k => $v) {
                 $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
             }
-        
+        }
         $this->assign('newsArticleList',$newsArticleList);
         return $this->mipView('m/index/index');
         }

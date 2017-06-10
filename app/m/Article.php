@@ -35,8 +35,10 @@ class Article extends Mip
             
             $count = Articles::where($whereCategory)->count('id');
             $hot_list_by_cid = Articles::where('cid',$categoryInfo->id)->order('views desc')->limit(5)->select();
-            foreach($hot_list_by_cid as $k => $v) {
-                    $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+            if ($hot_list_by_cid) {
+                foreach($hot_list_by_cid as $k => $v) {
+                        $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+                }
             }
             $this->assign('hot_list_by_cid',$hot_list_by_cid);
         } else {
@@ -47,16 +49,20 @@ class Article extends Mip
             
             $count = Articles::count('id');
             $hot_list_by_cid = Articles::order('views desc')->limit(5)->select();
-            foreach($hot_list_by_cid as $k => $v) {
-                    $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+            if ($hot_list_by_cid) {
+                foreach($hot_list_by_cid as $k => $v) {
+                        $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+                }
             }
             $this->assign('hot_list_by_cid',$hot_list_by_cid);
         }
         if ($list) { 
             
             $list = model('api/Articles')->filterM($list, $this->mipInfo['idStatus'], $this->domain, $this->public);
-            foreach($list as $k => $v) {
-                $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+            if ($list) {
+                foreach($list as $k => $v) {
+                    $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+                }
             }
         } else {
             $list=null;
@@ -65,8 +71,10 @@ class Article extends Mip
         $this->assign('categoryInfo',$categoryInfo); //用于SEO
         $this->assign('list',$list);
         $news_list_by_uid = Articles::where('is_recommend',1)->order('publish_time desc')->limit(5)->select();
-        foreach($news_list_by_uid as $k => $v) {
-            $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+        if ($news_list_by_uid) {
+            foreach($news_list_by_uid as $k => $v) {
+                $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+            }
         }
         $this->assign('recommendListByCid',$news_list_by_uid);
         
@@ -213,26 +221,32 @@ class Article extends Mip
          if ($this->mipInfo["systemType"] == 'CMS') {
             //随机推荐
             $articleMaxNum = Articles::count('id');
-                $articleMinNum = 1;
-                for ($i = 0; $i < 5; $i++) {
-                    $tempNum[] = rand($articleMinNum,$articleMaxNum);
-                }
+            $articleMinNum = 1;
+            for ($i = 0; $i < 5; $i++) {
+                $tempNum[] = rand($articleMinNum,$articleMaxNum);
+            }
             $rand_list = Articles::where('publish_time','<',time())->where('id','in', implode(',', $tempNum))->select();
-            foreach ($rand_list as $k => $v) {
-                $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+            if ($rand_list) {
+                foreach ($rand_list as $k => $v) {
+                    $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+                }
             }
             $this->assign('rand_list',$rand_list);
             
             $hot_list_by_cid = Articles::order('views desc')->limit(5)->select();
-            foreach($hot_list_by_cid as $k => $v) {
-                    $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+            if ($hot_list_by_cid) {
+                foreach($hot_list_by_cid as $k => $v) {
+                        $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+                }
             }
             $this->assign('hot_list_by_cid',$hot_list_by_cid);
         } else {
             //获取发布者发布的最新数据
             $newsListByUid = Articles::where('uid',$itemInfo['uid'])->order('publish_time desc')->limit(5)->select();
-            foreach($newsListByUid as $k => $v) {
-                $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+            if ($newsListByUid) {
+                foreach($newsListByUid as $k => $v) {
+                    $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+                }
             }
             $this->assign('news_list_by_uid',$newsListByUid);
         }

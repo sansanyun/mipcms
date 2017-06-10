@@ -51,8 +51,10 @@ class Article extends Mip {
             
             $count = Articles::count('id');
             $hot_list_by_cid = Articles::order('views desc')->limit(5)->select();
-            foreach($hot_list_by_cid as $k => $v) {
-                    $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+            if ($hot_list_by_cid) {
+                foreach($hot_list_by_cid as $k => $v) {
+                        $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+                }
             }
             $this->assign('hot_list_by_cid',$hot_list_by_cid);
         }
@@ -61,28 +63,34 @@ class Article extends Mip {
         } else {
             $articleList = null;
         }
+        if ($articleList) {
             foreach($articleList as $k => $v) {
                 $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
             }
+        }
         $this->assign('categoryUrlName',$categoryUrlName); //当前URL名称
         $this->assign('categoryInfo',$categoryInfo); //用于SEO
         $this->assign('articleList',$articleList);
         $recommendListByCid = Articles::where('is_recommend',1)->order('publish_time desc')->limit(5)->select();
-        foreach($recommendListByCid as $k => $v) {
-            $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+        if ($recommendListByCid) {
+            foreach($recommendListByCid as $k => $v) {
+                $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+            }
         }
         $this->assign('recommendListByCid',$recommendListByCid);
         
         if ($this->mipInfo["systemType"] == 'CMS') {
             //随机推荐
             $articleMaxNum = Articles::count('id');
-                $articleMinNum = 1;
-                for ($i = 0; $i < 5; $i++) {
-                    $tempNum[] = rand($articleMinNum,$articleMaxNum);
-                }
+            $articleMinNum = 1;
+            for ($i = 0; $i < 5; $i++) {
+                $tempNum[] = rand($articleMinNum,$articleMaxNum);
+            }
             $rand_list = Articles::where('publish_time','<',time())->where('id','in', implode(',', $tempNum))->select();
-            foreach ($rand_list as $k => $v) {
-                $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+            if ($rand_list) {
+                foreach ($rand_list as $k => $v) {
+                    $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+                }
             }
             $this->assign('rand_list',$rand_list);
         }
@@ -179,11 +187,15 @@ class Article extends Mip {
 
        	$item_up_page = Articles::where('publish_time','<',$itemInfo['publish_time'])->order('publish_time desc')->limit(1)->select();
         $item_down_page = Articles::where('publish_time','>',$itemInfo['publish_time'])->limit(1)->order('publish_time asc')->select();
-        foreach($item_up_page as $k => $v) {
-            $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
-        }     
-        foreach($item_down_page as $k => $v) {
-            $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+        if ($item_up_page) {
+            foreach($item_up_page as $k => $v) {
+                $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+            }
+        }
+        if ($item_down_page) {
+            foreach($item_down_page as $k => $v) {
+                $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+            }
         }
         $this->assign('item_up_page',$item_up_page);
         $this->assign('item_down_page',$item_down_page);
@@ -220,26 +232,32 @@ class Article extends Mip {
         if ($this->mipInfo["systemType"] == 'CMS') {
             //随机推荐
             $articleMaxNum = Articles::count('id');
-                $articleMinNum = 1;
-                for ($i = 0; $i < 5; $i++) {
-                    $tempNum[] = rand($articleMinNum,$articleMaxNum);
-                }
+            $articleMinNum = 1;
+            for ($i = 0; $i < 5; $i++) {
+                $tempNum[] = rand($articleMinNum,$articleMaxNum);
+            }
             $rand_list = Articles::where('publish_time','<',time())->where('id','in', implode(',', $tempNum))->select();
-            foreach ($rand_list as $k => $v) {
-                $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+            if ($rand_list) {
+                foreach ($rand_list as $k => $v) {
+                    $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+                }
             }
             $this->assign('rand_list',$rand_list);
             
             $hot_list_by_cid = Articles::order('views desc')->limit(5)->select();
-            foreach($hot_list_by_cid as $k => $v) {
-                    $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+            if ($hot_list_by_cid) {
+                foreach($hot_list_by_cid as $k => $v) {
+                        $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+                }
             }
             $this->assign('hot_list_by_cid',$hot_list_by_cid);
         } else {
             //获取发布者发布的最新数据
             $newsListByUid = Articles::where('uid',$itemInfo['uid'])->order('publish_time desc')->limit(5)->select();
-            foreach($newsListByUid as $k => $v) {
-                $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+            if ($newsListByUid) {
+                foreach($newsListByUid as $k => $v) {
+                    $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+                }
             }
             $this->assign('news_list_by_uid',$newsListByUid);
         }

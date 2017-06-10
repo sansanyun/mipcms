@@ -16,20 +16,26 @@ class Index extends Mip
         if ($this->mipInfo['systemType'] == 'CMS') {
           
             $categoryList = ArticlesCategory::order('sort desc')->select();
-            foreach ($categoryList as $key => $val) {
-                $val->articles();
+            if ($categoryList) {
+                foreach ($categoryList as $key => $val) {
+                    $val->articles();
+                }
             }
             $this->assign('categoryList',$categoryList);
             $hot_list_by_cid = Articles::field('id,uuid,publish_time,title,views')->order('views desc')->limit(5)->select();
-            foreach($hot_list_by_cid as $k => $v) {
-                    $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+            if ($hot_list_by_cid) {
+                foreach($hot_list_by_cid as $k => $v) {
+                        $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+                }
             }
             $this->assign('hot_list_by_cid',$hot_list_by_cid);
             
             $recommendList = Articles::limit(4)->where('is_recommend',1)->order('publish_time desc')->select();
-            $recommendList = model('api/Articles')->filter($recommendList, $this->mipInfo['idStatus'], $this->domain, $this->public);
-           	foreach($recommendList as $k => $v) {
-                $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+            if ($recommendList) {
+                $recommendList = model('api/Articles')->filter($recommendList, $this->mipInfo['idStatus'], $this->domain, $this->public);
+                foreach($recommendList as $k => $v) {
+                    $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+                }
             }
             $this->assign('recommendList',$recommendList);
             
@@ -39,9 +45,10 @@ class Index extends Mip
                 $tempNum[] = rand($articleMinNum,$articleMaxNum);
             }
             $rand_list = Articles::where('id','in', implode(',', $tempNum))->select();
-                
-            foreach($rand_list as $k => $v) {
-                    $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+            if ($rand_list) {
+                foreach($rand_list as $k => $v) {
+                        $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+                }
             }
             $this->assign('rand_list',$rand_list);
             
@@ -58,14 +65,18 @@ class Index extends Mip
             $this->assign('articleList',$articleList);
             
             $hot_list_by_cid = Articles::order('views desc')->limit(5)->select();
-            foreach($hot_list_by_cid as $k => $v) {
-                $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+            if ($hot_list_by_cid) {
+                foreach($hot_list_by_cid as $k => $v) {
+                    $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+                }
             }
             $this->assign('hot_list_by_cid',$hot_list_by_cid);
             
             $recommendListByCid = Articles::where('is_recommend',1)->order('publish_time desc')->limit(5)->select();
-            foreach($recommendListByCid as $k => $v) {
-                $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+            if ($recommendListByCid) {
+                foreach($recommendListByCid as $k => $v) {
+                    $v['id'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
+                }
             }
             $this->assign('recommendListByCid',$recommendListByCid);
             
