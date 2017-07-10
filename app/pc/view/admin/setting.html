@@ -1,0 +1,298 @@
+{extend name="pc/view/admin@main"/}
+
+{block name="title"}系统设置 - {__block__}{/block}
+
+{block name="style"}
+{__block__}
+<style>
+   
+</style>
+{/block}
+{block name="main"}
+<div class="row">
+    <div class="col-md-6">
+        
+        <section class="mip-box mip-default">
+            <div class="mip-box-heading">
+                <h3>网站设置</h3>
+            </div>
+            <div class="mip-box-body">
+                <el-form label-width="100px">
+                    <el-form-item label="PC域名">
+                        <el-input v-model="setting.domain" placeholder="例:www.baidu.com"></el-input>
+                    </el-form-item>
+                    <el-popover
+                      ref="mipdomain"
+                      placement="top-start"
+                      width="500"
+                      trigger="hover"
+                      content="请输入M站点(手机站)绑定的域名，请勿输入带http://、https://以及末尾勿带/,不输入则表示不启用M站">
+                    </el-popover>
+                   <div class="el-form-item">
+                       <label for="name" class="el-form-item__label" style="width: 100px;"> <span class="mip-iconfont mip-wenhao" v-popover:mipdomain></span> M域名</label>
+                        <div class="el-form-item__content" style="margin-left: 100px;">
+                            <div class="el-input">
+                                <el-input v-model="setting.mipDomain" placeholder="例:mip.baidu.com"></el-input>
+                            </div>
+                        </div>
+                    </div>
+                 
+                 <el-form-item label="网站名称">
+                    <el-input v-model="setting.siteName"></el-input>
+                  </el-form-item>
+                 <el-form-item label="网站副标题">
+                    <el-input v-model="setting.indexTitle" placeholder="例: - 国内最大的互联网创业交流社区"></el-input>
+                  </el-form-item>
+                 <el-form-item label="层级分隔符">
+                    <el-input v-model="setting.titleSeparator"></el-input>
+                  </el-form-item>
+                  <el-form-item label="关键词">
+                    <el-input type="textarea" v-model="setting.keywords"></el-input>
+                  </el-form-item>
+                  
+                  <el-form-item label="网站描述">
+                    <el-input type="textarea" v-model="setting.description"></el-input>
+                  </el-form-item>
+                  
+                  <el-form-item label="上传目录">
+                    <el-input v-model="setting.uploadPath"></el-input>
+                  </el-form-item>
+                  
+                  <el-form-item label="引用路径">
+                    <el-input v-model="setting.uploadUrl"></el-input>
+                  </el-form-item>
+                    <el-form-item label="PC统计代码">
+                        <el-input type="textarea" v-model="setting.pcStatistical"></el-input>
+                    </el-form-item>
+                    <el-popover
+                      ref="statistical"
+                      placement="top-start"
+                      width="600"
+                      trigger="hover"
+                      content='你输入的统计代码必须符合mip标准，否则将对整站页面造成收录问题，默认支持百度统计，其余统计请查看官方标准。输入示例：<mip-stats-baidu token="02890d4a309827eb62bc3335b2b28f7f"></mip-stats-baidu>'>
+                    </el-popover>
+                    <div class="el-form-item">
+                       <label for="name" class="el-form-item__label" style="width: 100px;"> <span class="mip-iconfont mip-wenhao" v-popover:statistical></span>M统计代码</label>
+                        <div class="el-form-item__content" style="margin-left: 100px;">
+                            <div class="el-input">
+                                <el-input type="textarea" v-model="setting.statistical"></el-input>
+                            </div>
+                        </div>
+                    </div>
+                    <el-form-item label="MIP提交地址">
+                        <el-input type="textarea" v-model="setting.mipApiAddress" placeholder="请到百度站长平台获取"></el-input>
+                    </el-form-item>
+                  <el-form-item label="备案号">
+                    <el-input v-model="setting.icp"></el-input>
+                  </el-form-item>
+                    
+                </el-form>
+          </div>
+        </section>
+            </div>
+            <div class="col-md-6">
+                <section class="mip-box mip-default">
+                  <div class="mip-box-heading">
+                    <h3>系统配置</h3>
+                  </div>
+                  <div class="mip-box-body">
+                       <el-form label-width="100px">
+                            <div class="row">
+                                <div class="col-md-6">   
+                                    <el-form-item label="站点状态">
+                                        <el-switch on-text="开启" off-text="关闭" v-model="setting.systemStatus"></el-switch>
+                                    </el-form-item>
+                                </div>
+                                <div class="col-md-6">
+                                    <el-form-item label="代码压缩">
+                                        <el-switch on-text="开启" off-text="关闭" v-model="setting.codeCompression"></el-switch>
+                                    </el-form-item>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <el-form-item label="登录功能">
+                                        <el-switch on-text="开启" off-text="关闭" v-model="setting.loginStatus"></el-switch>
+                                    </el-form-item>
+                                </div>
+                                <div class="col-md-6">
+                                    <el-form-item label="注册功能">
+                                        <el-switch on-text="开启" off-text="关闭" v-model="setting.registerStatus"></el-switch>
+                                    </el-form-item>
+                                </div>
+                            </div>
+                          
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <el-form-item label="蜘蛛统计">
+                                        <el-switch on-text="开启" off-text="关闭" v-model="setting.baiduSpider"></el-switch>
+                                    </el-form-item>
+                                </div>
+                                <div class="col-md-6">
+                                    <el-form-item label="文章分页">
+                                        <el-switch on-text="开启" off-text="关闭" v-model="setting.articlePages"></el-switch>
+                                    </el-form-item>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <el-form-item label="HTTPS">
+                                        <el-switch on-text="开启" off-text="关闭" v-model="setting.https"></el-switch>
+                                    </el-form-item>
+                                </div>
+                            </div>
+                              <el-form-item label="系统类型">
+                                <el-radio-group v-model="setting.systemType">
+                                  <el-radio label="CMS"></el-radio>
+                                </el-radio-group>
+                              </el-form-item>
+                              
+                            <el-form-item label="文章名称">
+                                <el-input v-model="setting.articleModelName"></el-input>
+                            </el-form-item>
+                            <el-form-item label="文章别名">
+                                <el-input v-model="setting.articleModelUrl"></el-input>
+                            </el-form-item>
+                            <el-form-item label="用户名称">
+                                <el-input v-model="setting.userModelName"></el-input>
+                            </el-form-item>
+                            <el-form-item label="用户别名">
+                                <el-input v-model="setting.userModelUrl"></el-input>
+                            </el-form-item>
+                            <el-popover
+                              ref="idstatus"
+                              placement="top-start"
+                              width="600"
+                              trigger="hover"
+                              content='UUID模式表示，网站内容的url将以24位资源唯一码出现，新版本默认关闭。此功能根据需要进行开启或者关闭。采集、数据迁移不支持该模式'>
+                            </el-popover>
+                            <div class="el-form-item">
+                               <label for="name" class="el-form-item__label" style="width: 100px;"> <span class="mip-iconfont mip-wenhao" v-popover:idstatus></span> UUID模式</label>
+                                <div class="el-form-item__content" style="margin-left: 100px;">
+                                    <div class="el-input">
+                                        <el-switch on-text="开启" off-text="关闭" v-model="setting.idStatus"></el-switch>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                               <el-form-item label="模板切换">
+                                <el-select v-model="setting.template" placeholder="请选择模板主题">
+                                  <el-option v-for='item in templateList' :label="item" :value="item"></el-option>
+                                </el-select>
+                              </el-form-item>
+                        </el-form>
+                  </div>
+                </section>
+            </div>
+            <div class="col-md-12 text-center m-b">
+                    <el-button type="primary" @click="onSubmitSetting">立即保存</el-button>
+            </div>
+        </div>
+
+  
+{/block}
+{block name="javascript"}
+{__block__}
+<script>
+    new Vue({
+        el: '#app',
+        data:{
+            setting: '',
+            templateList: {$templateArray},
+        },
+        mounted: function() {
+            this.getSettingData();
+            _this = this;
+        },
+        methods:{
+            onSubmitSetting: function() {
+                if (this.setting.domain) {
+                    if (this.setting.domain == this.setting.mipDomain) {
+                        Vue.prototype.$message({
+                            type: 'warning',
+                            message: '主域名和M站域名不能一样'
+                        });
+                        return false;
+                    }
+                }
+                if (this.setting.https) {
+                    this.setting.https = 'https'
+                } else {
+                    this.setting.https = 'http'
+                }
+                this.$mip.ajax('/api/Setting/settingEdit', {
+                    setting: JSON.stringify(this.setting),
+                }).then(function (res) {
+                    if (res.code == 1) {
+                        Vue.prototype.$message({
+                            type: 'success',
+                            message: res.msg
+                        });
+                        _this.getSettingData();
+                    } else {
+                        Vue.prototype.$message({
+                            type: 'error',
+                            message: res.msg
+                        });
+                    }
+                }); 
+            },
+            getSettingData: function() {
+                this.$mip.ajax('/api/Setting/settingSelect', {
+                }).then(function (res) {
+                    if (res.code == 1) {
+                        var temp = res.data;
+                        if (temp.systemStatus) {
+                            temp.systemStatus = true;
+                        } else {
+                            temp.systemStatus = false;
+                        }
+                        if (temp.loginStatus) {
+                            temp.loginStatus = true;
+                        } else {
+                            temp.loginStatus = false;
+                        }
+                        if (temp.registerStatus) {
+                            temp.registerStatus = true;
+                        } else {
+                            temp.registerStatus = false;
+                        }
+                        if (temp.idStatus) {
+                            temp.idStatus = true;
+                        } else {
+                            temp.idStatus = false;
+                        }
+                        if (temp.codeCompression) {
+                            temp.codeCompression = true;
+                        } else {
+                            temp.codeCompression = false;
+                        }
+                        if (temp.baiduSpider) {
+                            temp.baiduSpider = true;
+                        } else {
+                            temp.baiduSpider = false;
+                        }
+                        if (temp.articlePages) {
+                            temp.articlePages = true;
+                        } else {
+                            temp.articlePages = false;
+                        }
+                        if (temp.https == 'https') {
+                            temp.https = true;
+                        } else {
+                            temp.https = false;
+                        }
+                        _this.setting = temp;
+                    } else {
+                        Vue.prototype.$message({
+                            type: 'error',
+                            message: res.msg
+                        });
+                    }
+                }); 
+            },
+        },
+
+    })
+</script>
+{/block}

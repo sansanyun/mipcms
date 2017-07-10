@@ -1,0 +1,112 @@
+{extend name="pc/main/main"/}
+
+{block name="main"}
+{if condition="$recommendList && count($recommendList) > 3"}
+<div class="container m-b">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="relative">
+                <a href="{$domain}/{$articleModelUrl}/{$recommendList[0]['id'] | isHtml}" title="{$recommendList[0]['title']}" class="mip-top-img image-link-left">
+                    <img src="{$recommendList[0]['firstImg']}" alt="{$recommendList[0]['title']}" class="img left-img" />
+                </a>
+                <div class="caption w-100">
+                    <time class="time" datetime="{$recommendList[0]['publish_time'] | date='Y-m-d',###}">{$recommendList[0]['publish_time'] | date='Y-m-d',###}</time>
+                    <h3><a href="{$domain}/{$articleModelUrl}/{$recommendList[0]['id'] | isHtml}" title="{$recommendList[0]['title']}">{$recommendList[0]['title']}</a></h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="mip-top-block mip-top-right m-b">
+                <a href="{$domain}/{$articleModelUrl}/{$recommendList[1]['id'] | isHtml}" title="{$recommendList[1]['title']}" class="mip-top-img image-link-right-top">
+                    <img class="img right-img-top" alt="{$recommendList[1]['title']}" src="{$recommendList[1]['firstImg']}" />
+                </a>
+                <div class="caption">
+                    <a href="{$domain}/{$articleModelUrl}/{$recommendList[1]['id'] | isHtml}" title="{$recommendList[1]['title']}">{$recommendList[1]['title']}</a>
+                </div>
+            </div>
+            <div class="mip-top-block mip-top-right pull-left">
+                <a href="{$domain}/{$articleModelUrl}/{$recommendList[2]['id'] | isHtml}" title="{$recommendList[2]['title']}" class="mip-top-img image-link-right-bottom">
+                    <img class="img right-img-bottom" alt="{$recommendList[2]['title']}" src="{$recommendList[2]['firstImg']}" />
+                </a>
+                <div class="caption">
+                    <a href="{$domain}/{$articleModelUrl}/{$recommendList[2]['id'] | isHtml}" title="{$recommendList[2]['title']}">{$recommendList[2]['title']}</a>
+                </div>
+            </div>
+            <div class="mip-top-block mip-top-right pull-left m-l-md">
+                <a href="{$domain}/{$articleModelUrl}/{$recommendList[3]['id'] | isHtml}" title="{$recommendList[3]['title']}" class="mip-top-img image-link-right-bottom">
+                    <img class="img right-img-bottom" alt="{$recommendList[3]['title']}" src="{$recommendList[3]['firstImg']}" />
+                </a>
+                <div class="caption">
+                   <a href="{$domain}/{$articleModelUrl}/{$recommendList[3]['id'] | isHtml}" title="{$recommendList[3]['title']}">{$recommendList[3]['title']}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/if}
+<div class="container">
+  <div class="row">
+        <section class="col-lg-8">
+            <div class="row">
+                {volist  name='$categoryList' id="v"}
+                <section class="col-lg-6">
+                    <section class="mip-box">
+                        <div class="mip-box-heading"><h3>{$v['name']}</h3></div>
+                        <div class="mip-box-body">
+                            <ul class="list-unstyled clearfix">
+                            {foreach name='$v["articles"]' id="val"}
+                                <li class="list-time">
+                                    <a href="{$domain}/{$articleModelUrl}/{:isHtml($mipInfo['idStatus'] ? $val['uuid'] : $val['id'] )}" title="{$val['title']}">{$val['title']}</a><time class="pull-right">{$val['publish_time']|date='Y-m-d',###}</time>
+                                </li>
+                            {/foreach}
+                            </ul>
+                        </div>
+                    </section>
+                </section>
+                {/volist}
+            </div>
+        </section>
+       
+        <aside class="col-lg-4">
+            {if condition="$hot_list_by_cid"}
+            <div class="mip-box">
+                <div class="mip-box-heading">
+                    <h3 class="title">热门{$articleModelName}</h3>
+                </div>
+                <div class="mip-box-body">
+                    <ul class="list-unstyled">
+                        {foreach  name='$hot_list_by_cid' id="v"}
+                        <li class="li-box-list">
+                            <a href="{$domain}/{$articleModelUrl}/{$v.id | isHtml}" title="{$v.title}">{$v.title}</a>
+                            <p>浏览 : <span>{$v.views}</span>  时间 : <span>{$v['publish_time']|date='Y-m-d',###}</span> </p>
+                        </li>
+                        {/foreach}
+                    </ul>
+                </div>
+            </div>
+            {/if}
+            {if condition="$rand_list"}
+            <div class="mip-box">
+                <div class="mip-box-heading">
+                    <h3 class="title">随机{$articleModelName}</h3>
+                </div>
+                <div class="mip-box-body">
+                    <ul class="list-unstyled">
+                        {foreach  name='$rand_list' id="v"}
+                        <li class="li-box-list">
+                            <a href="{$domain}/{$articleModelUrl}/{$v.id | isHtml}" title="{$v.title}">{$v.title}</a>
+                            <p>浏览 : <span>{$v.views}</span>  时间 : <span>{$v['publish_time']|date='Y-m-d',###}</span> </p>
+                        </li>
+                        {/foreach}
+                    </ul>
+                </div>
+            </div>
+            {/if}
+        </aside>
+  </div>
+</div>
+ 
+{/block}
+
+{block name="script"}{__block__}
+{/block}

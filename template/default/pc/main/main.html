@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="applicable-device" content="pc">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
+    <meta name="description" content="{block name="description"}{$mipInfo['description']}{/block}">
+    <meta name="keywords" content="{block name="keywords"}{$mipInfo['keywords']}{/block}">
+    <title>{block name="title"}{/block}{$mipInfo['siteName']}{if condition="$ctr=='Index'"}{$mipInfo['indexTitle']}{/if}</title>
+    <link rel="shortcut icon" href="{$domain}/favicon.ico" type="image/x-icon" />
+    
+    <link rel="stylesheet" type="text/css" href="{$domain}/{$assets}/{$tplName}/css/mipcms.css"/>
+    {block name="link"}{/block}
+    <style>
+ 
+      body {
+        background-color: #ECF0F1;
+        color: #333;
+        word-break: break-all;
+        -webkit-font-smoothing: antialiased
+      }
+      .mip-main {
+        margin-top: 15px;
+        margin-bottom: 15px;
+      }
+      .no-data-block {
+          height: 300px;
+          padding-top: 80px;
+      }
+      .no-data-block .no-data-img {
+          margin: 0 auto;
+          width: 60px;
+          height: 60px;
+          position: relative;
+      }
+      .no-data-block p{
+          margin-top: 15px;
+          color: #dbdbdb;
+      }
+      @media (min-width: 1200px) {
+        .container {
+            width: 1113px!important;
+        }
+      }
+      @media (min-width: 768px){
+        .mip-main .col-lg-8 ,.mip-header .col-lg-8{
+            width: 798px;
+        }
+        .mip-main .col-lg-4 ,.mip-header .col-lg-4{
+            width: 315px;
+            padding-left: 0px;
+        }
+      }
+      a:hover{color: #00AAEE;}
+      
+    {block name="style"}{/block}
+    </style>
+    <link rel="canonical" href="{$siteUrl}">
+</head>
+<body>
+<div class="mip-header mip-header-default" id="mip_header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="logo">
+                    <a class="logo-link" href="{$domain}">
+                        <img class="mip-fill-content mip-replaced-content" src="{$domain}/{$assets}/{$tplName}/images/logo.png" alt="{$mipInfo['siteName']}">
+                    </a>
+                </div>
+                <ul class="mip-menu">
+                    <li class='{if condition="$ctr=='index'"}active{/if}'>
+                        <a href="{$domain}">首页</a>
+                    </li>
+                    {if condition='$mipInfo["systemType"] == "SNS"'}
+                        <li class='{if condition="$ctr == 'Article'"}active{/if}'><a href="{$domain}/{$articleModelUrl}/">{$articleModelName}</a></li>
+                        <li class='{if condition="$ctr == 'Ask'"}active{/if}'><a href="{$domain}/{$askModelUrl}/">{$askModelName}</a></li>
+                    {/if}
+                    {if condition='$itemCategoryList'}
+                        {foreach name='$itemCategoryList' id='v'}
+                        <li class='{if condition="$categoryUrlName==$v['url_name']"}active{/if}'>
+                            <a href="{$domain}/{$itemCategoryUrlName | isModel}{:isSlash()}{$v['url_name']}/" title="{$v['name']}">{$v['name']}</a>
+                        </li>
+                        {/foreach}
+                    {/if}
+                </ul>
+                
+            </div>
+            <div class="col-lg-4">
+                {if condition="$userId"}
+                    <el-dropdown trigger="click" class="members-header-dropdown">
+                          <span class="el-dropdown-link">
+                              <div class="header-avatar-block"></div>{$userInfo['username']}
+                          </span>
+                          <el-dropdown-menu slot="dropdown" class="members-dropdown">
+                        {if condition='$isAdmin'}
+                        <el-dropdown-item><a href="{$domain}/{$Think.config.admin}/">系统管理</a></el-dropdown-item>
+                        {/if}
+                        <el-dropdown-item><a @click="loginOut">安全退出</a></el-dropdown-item>
+                      </el-dropdown-menu>
+                    </el-dropdown>
+                {/if}
+            </div>
+            
+        </div>
+    </div>
+</div>
+<main class="mip-main" id="mip_main">
+  {block name="main"}{/block}
+</main>
+
+<footer class="mip-footer">
+    <div class="container">
+        {include file='pc/main/friendLink'}
+        <p class="text-center">Copyright &copy;<?php echo date('Y'); ?> 
+            <a href="{$domain}" title="{$mipInfo['siteName']}">{$mipInfo['siteName']}</a> {if condition='$mipInfo["icp"]'} 
+            <a href="http://www.miibeian.gov.cn/"> {$mipInfo['icp']}</a>{/if} <a href="{$domain}/sitemap.xml"> sitemap</a> Powered By 
+            <a href="http://www.mipcms.com" title="MIPCMS内容管理系统" target="_blank">MIPCMS {$mipInfo['localCurrentVersion']} </a>{$mipInfo['pcStatistical']} 
+        </p>
+    </div>
+</footer>
+    <script type="text/javascript">
+        var mipGlobal = {
+            domain: '{$domain}',
+            assets: '{$assets}',
+            tplName: '{$tplName}',
+            returnUrl: '{$return_url}',
+            itemDetailId: '{$itemDetailId}',
+        }
+    </script>
+    <script src="https://cdn.staticfile.org/vue/2.2.6/vue.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://cdn.staticfile.org/axios/0.15.3/axios.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://cdn.staticfile.org/element-ui/1.2.5/index.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{$domain}/{$assets}/common/js/utils.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{$domain}/{$assets}/common/js/mipcms.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://cdn.staticfile.org/es6-promise/4.1.0/es6-promise.auto.min.js" type="text/javascript" charset="utf-8"></script>
+{block name="script"}
+{/block}
+</body>
+</html>

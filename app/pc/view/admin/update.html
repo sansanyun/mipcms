@@ -1,0 +1,213 @@
+{extend name="pc/view/admin@main"/}
+
+{block name="title"}系统升级 - {__block__}{/block}
+
+{block name="style"}
+{__block__}
+<style>
+   .safe-tip {
+       color: #FF6600;
+       font-size: 12px;
+       text-align: right;
+       float: right;
+   }
+   .isDown {
+       font-size: 12px;
+       margin-top: 10px;
+       margin-bottom: 0;
+   }
+   .hidden {
+       display: none;
+   }
+   .show {
+       display: block!important;
+   }
+</style>
+{/block}
+{block name="main"}
+<div class="row">
+    <div class="col-md-6">
+        
+        <section class="mip-box mip-default">
+            <div class="mip-box-heading">
+                <h3>系统升级<span class="safe-tip">注：为了系统安全 暂不支持远程升级</span></h3>
+            </div>
+            <div class="mip-box-body">
+                <el-form label-width="100px">
+                    <el-form-item label="当前版本">
+                        <el-input v-model="localCurrentVersion" :disabled="true"></el-input>
+                    </el-form-item>
+                    <el-form-item label="最新版本">
+                        <el-input v-model="onlineCurrentVersion" :disabled="true"></el-input>
+                    </el-form-item>
+                    
+                    <el-form-item label="版本列表">
+                        <el-select v-model="value" placeholder="请选择">
+                            <el-option
+                              v-for="item in versionList"
+                              :label="item.versionName"
+                              :value="item.versionId"
+                              :disabled="item.disabled">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                 
+                </el-form>
+                 
+                <div class="text-center">
+                    <el-button type="primary" @click='startUpgrade(value)' :disabled="parseInt(this.localCurrentVersionNum) == parseInt(this.onlineCurrentVersionNum)">开始升级</el-button>
+                </div>
+                <el-progress :text-inside="true" :stroke-width="18" :percentage="dataProgress" style="margin-top: 20px;"></el-progress>
+                <div class="text-center" v-if="onlineCurrentVersionNum == '200'" style="margin-top: 20px;">
+                    <el-button type="primary" @click='upDataTwo()'>v1.1.1 - v2.0.0版本 点击数据迁移</el-button>
+                </div>
+          </div>
+        </section>
+        </div>
+              
+        </div>
+
+            
+{/block}
+
+{block name="dialog"}
+<el-dialog title="升级提示" v-model="dialogUpdate" class="hidden" :class="show">
+   <p>有新版本，请去官网下载升级文件，进行升级。</p>
+   <p>升级期间如遇系统错误，或升级停止等突发情况，请联系我们的技术人员进行相应的处理</p>
+   <div class="text-center m-t">
+       <a :href="updateLink" target="_blank" class="el-button el-button--info is-plain">立即前去下载</a>
+       <p class="isDown"><a @click='myDowned'>我已下载</a></p>
+   </div>
+</el-dialog>
+{/block}
+{block name="javascript"}
+{__block__}
+<script src="http://www.mipcms.com/assets/update/current.js" type="text/javascript" charset="utf-8"></script>
+<script src="http://www.mipcms.com/assets/update/versionList.js" type="text/javascript" charset="utf-8"></script>
+
+<script type="text/javascript">
+    Vue.prototype.$onlineCurrentVersionNum = currtentVersion;
+    Vue.prototype.$versionList = versionList;
+    Vue.prototype.$updateLink = updateLink;
+</script>
+<script>
+    new Vue({
+        el: '#app',
+        data:{
+            localCurrentVersionNum: '{$mipInfo["localCurrentVersionNum"] | @}',
+            localCurrentVersion: '{$mipInfo["localCurrentVersion"] | @}',
+            onlineCurrentVersionNum: '200',
+            onlineCurrentVersion: 'v1.0.0',
+            versionList: [],
+            value:'',
+            updateLink: 'http://www.mipcms.com',
+            dialogUpdate: false,
+            show: 'hidden',
+            articlesCount: 0,
+            currentPageNum:0,
+            dataProgress:0,
+        },
+        mounted: function() {
+            this.contrast();
+            _this = this;
+        },
+        methods:{
+            myDowned: function() {
+                this.dialogUpdate = false;
+                this.show = '';
+            },
+            contrast: function() {
+                if (!this.localCurrentVersionNum) {
+                    this.localCurrentVersionNum = 100;
+                    this.localCurrentVersion = 'v1.0.0';
+                }
+                this.onlineCurrentVersionNum = this.$onlineCurrentVersionNum;
+                var versionList = Vue.prototype.$versionList;
+                for (var i = 0; i < versionList.length; i++) {
+                    if (versionList[i].versionId <= this.localCurrentVersionNum) {
+                        versionList[i].disabled = true;
+                    } else {
+                        if (versionList[i].versionId > this.onlineCurrentVersionNum) {
+                                versionList[i].disabled = true;
+                        }
+                    }
+                }
+                this.versionList = versionList;
+                if (parseInt(this.localCurrentVersionNum) == parseInt(this.onlineCurrentVersionNum)) {
+                    Vue.prototype.$message({
+                        message:'当前版本已经是最新版本了'
+                    });
+                }
+                if (parseInt(this.localCurrentVersionNum) < parseInt(this.onlineCurrentVersionNum)) {
+                    this.show = 'show';
+                    this.dialogUpdate = true;
+                }
+                this.onlineCurrentVersion = 'v'+(this.onlineCurrentVersionNum + "").split('').join('.');
+                
+            },
+            
+            startUpgrade: function(value) {
+                if (parseInt(this.localCurrentVersionNum) == parseInt(this.onlineCurrentVersionNum)) {
+                    Vue.prototype.$message({
+                        message:'当前版本已经是最新版本了'
+                    });
+                    return false;
+                }
+                if (!this.value) {
+                    _this.$message({
+                        type: 'error',
+                        message: '请选择你要升级的版本'
+                    });
+                    return false;
+                }
+                this.$mip.ajax('/api/Update/update',{
+                    versionMum:this.value,
+                }).then(function (res) {
+                    if(res.code == 1) {
+                        _this.$message({
+                            type: 'success',
+                            message: res.msg
+                        });
+                        location.href = location.href;
+                    } else {
+                      _this.$message({
+                        type: 'error',
+                        message: res.msg
+                      });
+                      return false;
+                    } 
+                });
+            },
+            upDataTwo:function() {
+                this.$mip.ajax('/api/Update/oneToTwoUpData',{
+                    page:parseInt(this.currentPageNum)+1,
+                }).then(function (res) {
+                    if(res.code == 1) {
+                        _this.currentPageNum = res.data.page;
+                        _this.articlesCount = res.data.total; 
+                        _this.dataProgress = parseInt(_this.currentPageNum/(res.data.total/10)*100);
+                        if(_this.currentPageNum <= res.data.total/10){
+                            _this.upDataTwo();
+                        } else {
+                          _this.$message({
+                            type: 'success',
+                            message: '全部处理完成'
+                          });
+                          _this.dataProgress = 100;
+                          _this.startText = '处理完毕';
+                        }
+                    } else {
+                      _this.$message({
+                        type: 'error',
+                        message: res.msg
+                      });
+                      return false;
+                    } 
+                });
+            },
+            
+        },
+
+    })
+</script>
+{/block}

@@ -1,0 +1,787 @@
+{extend name="pc/view/admin@main"/}
+
+{block name="title"}{$articleModelName}管理 - {__block__}{/block}
+
+{block name="style"}
+{__block__}
+<style>
+    .simditor-item .el-form-item__content{line-height: inherit;}
+    .simditor-body {
+        height: 400px;
+        overflow-y: auto;
+    }
+    .mip-box-body {
+        position: relative;
+    }
+    .tap-setting {
+        color: #99a9bf;
+        font-size: 16px;
+        position: absolute;
+        z-index: 10;
+        right: 20px;
+        top: 10px;
+        padding: 10px;
+        cursor: pointer;
+        transition: .3s;
+    }
+    .tap-setting i {
+        transition: .3s;
+        color: #d9def1;
+        vertical-align: baseline;
+    }
+    .tap-setting:hover i {
+        color: #00AAEE;
+    }
+</style>
+{/block}
+{block name="main"}
+<section class="mip-box" style="display: block;" :style="hiddenAction">
+    <div class="mip-box-body">
+        <div class="no-data-block text-center">
+            <i class="mip-shuaxin mip-iconfont"></i>
+            <p>加载中</p>
+        </div>
+    </div>
+</section>
+<section class="mip-box mip-default" style="display: none;" :style="showAction">
+    <section class="mip-box-body">
+        <span class="tap-setting" style="display: none;"><a href="/{$Think.config.admin}/article_setting"><i class="el-icon-setting"></i></a></span>
+        <el-tabs type="card" v-model="tabsValue" @tab-remove="removeTab">
+            <el-tab-pane label="全部{$articleModelName}" name="list">
+                <template>
+                    <el-row :gutter="24" style="margin-bottom: 15px;">
+                        <el-col :span="4">
+                            <el-select v-model="itemCategorySearchId" @change='itemCategorySearchChange' placeholder="选择分类">
+                                <el-option v-for='item in itemCategorySearchList' :label="item.name" :value="item.id"></el-option>
+                            </el-select>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-input placeholder="标题/内容/发布者" icon="search" v-model="searchData" :on-icon-click="handleSearchClick"></el-input>
+                        </el-col>
+                        <el-col :span="14">
+                            <el-button-group style="float: right;">
+                                <el-button type="primary" @click="itemAddTap" icon="plus">发布{$articleModelName}</el-button>
+                                <el-button type="primary" @click="itemsDel" icon="delete" :disabled="isDelDisabled">批量删除</el-button>
+                            </el-button-group>
+                        </el-col>
+                    </el-row>
+                    <el-table v-loading="loading" :data="articleList" @selection-change="handleListSelectionChange" style="width: 100%">
+                        <el-table-column type="selection" width="30"></el-table-column>
+                        <el-table-column label="ID" prop="tempId" width="70" show-overflow-tooltip></el-table-column>
+                        <el-table-column label="分类" width="90" inline-template>
+                            <template><span style="white-space: nowrap;">{{row.articlesCategory ? row.articlesCategory.name : '-'}}</span></template>
+                        </el-table-column>
+                        <el-table-column label="标题" inline-template >
+                            <template><a :href="'{$domain}/{$articleModelUrl}/'+row.tempId+'.html'" style="white-space: nowrap;" target="_blank" :title="row.title">{{row.title}}</a></template>
+                        </el-table-column>
+                        <el-table-column label="推荐" inline-template width="70">
+                            <template v-if="row.is_recommend == 1"><i class="mip-iconfont mip-tuijian2"></i></template><template v-else> - </template>
+                        </el-table-column>
+                        <el-table-column label="发布时间" inline-template width="170">
+                            <template>{{row.publish_time | time}}</template>
+                        </el-table-column>
+                        <el-table-column label="浏览" prop="" width="80" inline-template>
+                            <template>{{row.views}}</template>
+                        </el-table-column>
+                        <el-table-column label="回复" prop="" width="80" inline-template>
+                            <template>{{row.comments}}</template>
+                        </el-table-column>
+                            <el-table-column label="发布者" inline-template width="180">
+                                <div class="avatar-username"><img src="/{$assets}/common/images/avatar.jpg" class="avatar-img"/><span class="username"> {{row.users ? row.users.username : '-'}}</span></div>
+                            </el-table-column>
+                        <el-table-column label="操作" width="110">
+                            <template scope="scope">
+                                <el-dropdown  size="small"  type="primary" trigger="click" split-button @click="articleEditTap(scope.$index, scope.row)">
+                                    <span>编辑</span>
+                                    <el-dropdown-menu slot="dropdown" class="dropdown-menu">
+                                        <el-dropdown-item><div @click="articleEditTap(scope.$index, scope.row)"><i class="el-icon-edit"></i> 编辑{$articleModelName}</div></el-dropdown-item>
+                                        <el-dropdown-item v-if='scope.row.is_recommend == 1'><div @click="articleRecomment(scope.$index, scope.row)"><i class="mip-iconfont mip-tuijian2"></i> 取消推荐</div></el-dropdown-item>
+                                        <el-dropdown-item v-else><div @click="articleRecomment(scope.$index, scope.row)"><i class="mip-iconfont mip-tuijian1"></i> 推荐{$articleModelName}</div></el-dropdown-item>
+                                        <el-dropdown-item divided><div @click="articleDel(scope.$index, scope.row)" class="red"><i class="el-icon-delete"></i> 删除{$articleModelName}</div></el-dropdown-item>
+                                    </el-dropdown-menu>
+                                </el-dropdown>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                    <template>
+                        <div>
+                            <!--<el-checkbox class="m-l-xs m-r-md" v-model="checkedAll" >全选</el-checkbox>-->
+                            <el-button type="primary" @click='transferAll' :disabled="isDelDisabled">批量转移</el-button>
+                            <el-button type="primary" @click='mipPostAll' :disabled="isDelDisabled">MIP提交</el-button>
+                            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[10, 20, 50]" :page-size="limit" layout="total, sizes, prev, pager, next, jumper" style="margin-top: 0px;" :total="total"></el-pagination>
+                        </div>
+                    </template>
+                   </template>
+            </el-tab-pane>
+            
+            <el-tab-pane label="分类管理" name="category">
+                <template>
+                    <el-row :gutter="24" style="margin-bottom: 15px;">
+                        <el-col :span="24">
+                              <el-button type="primary" class="pull-right"  @click="addCategoryDialog" icon="plus">添加分类</el-button>
+                        </el-col>
+                    </el-row>
+                    <el-table :data="category.categoryList" style="width: 100%">
+                        <el-table-column prop="name" label="分类名称"></el-table-column>
+                        <el-table-column prop="id" label="分类ID"></el-table-column>
+                        <el-table-column prop="url_name" label="别名"></el-table-column>
+                        <el-table-column prop="keywords" label="关键词"></el-table-column>
+                        <el-table-column prop="description" label="描述"></el-table-column>
+                        <el-table-column label="操作">
+                            <template scope="scope">
+                                <el-button size="small" type="danger" @click="categoryDel(scope.$index, scope.row)">删除
+                                </el-button>
+                                <el-button size="small" type="info" @click="categoryEditDialog(scope.$index, scope.row)">编辑
+                                </el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </template>
+            </el-tab-pane>
+            
+            <el-tab-pane label="发布{$articleModelName}" v-if="isShowTab"  name="newAdd" closable>
+                <el-form ref="publish" :model="publish" label-width="80px">
+                    <el-row>
+                        <el-col :span="12">
+                            <el-form-item label="标题">
+                                <el-input v-model="publish.title" placeholder="请输入标题..."></el-input>
+                            </el-form-item>
+                            <el-form-item label="分类">
+                                <el-select v-model="publish.cid" clearable placeholder="请选择分类">
+                                    <el-option v-for='item in publish.categoryList' :label="item.name" :value="item.id"></el-option>
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item label="标签">
+                                <el-select v-model="publish.tags" multiple filterable style="width: 355px;" allow-create placeholder="请选择标签,支持直接输入">
+                                    <el-option v-for="item in publish.tagsList" :label="item.name" :value="item.name">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item label="推荐">
+                                <el-switch on-text="" off-text="" v-model="publish.is_recommend"></el-switch>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="12">
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="23">
+                            <el-form-item label="内容" class="simditor-item">
+                                <textarea id="article_editor" class="simditor" placeholder="请输入内容..."></textarea>
+                            </el-form-item>
+                            <el-form-item class="pull-right">
+                                <el-button type="primary" @click="publishPost">立即发布</el-button>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="1">
+                        </el-col>
+                    </el-row>
+                </el-form>
+            </el-tab-pane>
+        </el-tabs>
+    </section>
+</section>
+{/block}
+{block name="dialog"}
+<el-dialog :title="category.dialogCategoryTitle" v-model="category.dialogCategory" size="small">
+  <el-form :model="category" :rules="category.categoryRules" ref="category" label-width="90px">
+    <el-form-item label="名称" prop="name">
+      <el-input v-model="category.name" placeholder="例：搜索引擎优化"></el-input>
+    </el-form-item>
+    <el-form-item label="别名">
+      <el-input placeholder="例：seo" v-model="category.url_name"></el-input>
+    </el-form-item>
+    <el-form-item label="关键词">
+      <el-input type="textarea" v-model="category.keywords" placeholder="例：SEO,SEO优化,搜索引擎优化,网站排名"></el-input>
+    </el-form-item>
+    <el-form-item label="描述">
+      <el-input type="textarea" v-model="category.description" placeholder="请输入description描述信息" ></el-input>
+    </el-form-item>
+  </el-form>
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="category.dialogCategory = false">取 消</el-button>
+    <el-button type="primary" @click="categoryPost('category',category)">确 定</el-button>
+  </div>
+</el-dialog>
+
+<el-dialog title="批量转移" v-model="dialogTransferAll" size="tiny">
+    <template>
+        <el-form label-width="80px">
+        <el-form-item label="目标分类">
+            <el-select v-model="transferAllCategoryId" placeholder="请选择分类">
+                <el-option v-for='item in transferAllCategoryList' :label="item.name" :value="item.id"></el-option>
+            </el-select>
+        </el-form-item>
+        </el-form>
+    </template>
+  <span slot="footer" class="dialog-footer">
+    <el-button @click="dialogTransferAll = false">取 消</el-button>
+    <el-button type="primary" @click="dialogTransferAllPost">确 定</el-button>
+  </span>
+</el-dialog>
+
+<el-dialog title="MIP提交" v-model="dialogMipPostAll" size="small">
+    <template>
+       <p>以下是本次提交的地址共{{dialogMipPostAllList.length}}篇</p>
+       <ul class="list-unstyled">
+       	<li class="text-999 font-12" style="line-height: 20px;" v-for='item in dialogMipPostAllList'>{{item}}</li>
+       </ul>
+       <p class="m-t">百度站长平台提交的API接口：</p>
+       <pre class="selected m-t-n-xs">{{mipApiAddress}}</pre>
+    </template>
+  <span slot="footer" class="dialog-footer">
+    <el-button @click="dialogMipPostAll = false">取 消</el-button>
+    <el-button type="primary" @click="mipPostAllPost">确 定</el-button>
+  </span>
+</el-dialog>
+
+{/block}
+{block name="javascript"}
+{__block__}
+    <link rel="stylesheet" type="text/css" href="/{$assets}/plugin/simditor/styles/simditor.css" />
+
+    <script type="text/javascript" src="/{$assets}/plugin/simditor/scripts/jquery.min.js"></script>
+    <script type="text/javascript" src="/{$assets}/plugin/simditor/scripts/module.js"></script>
+    <script type="text/javascript" src="/{$assets}/plugin/simditor/scripts/hotkeys.js"></script>
+    <script type="text/javascript" src="/{$assets}/plugin/simditor/scripts/uploader.js"></script>
+    <script type="text/javascript" src="/{$assets}/plugin/simditor/scripts/simditor.min.js"></script>
+  
+   <script type="text/javascript">
+   	  new Vue({
+    el: '#app',
+    data:{
+        showAction: 'display: black;',
+        hiddenAction: 'display: none;',
+        tabsValue:'list',
+        isShowTab:false,
+        searchData:"",
+        isDelDisabled:true,
+        articleList:'',
+        multipleSelection:[],
+        loading: false,
+        checkedAll: false,
+        dialogTransferAll: false,
+        transferAllCategoryId: '',
+        transferAllCategoryList: [],
+        dialogMipPostAll: false,
+        dialogMipPostAllList: [],
+        mipApiAddress: '{$mipInfo["mipApiAddress"]}',
+        itemCategorySearchId: '',
+        itemCategorySearchList: [],
+        currentPage: 1,
+        limit:10,
+        total:this.total,
+        category: {
+            categoryList: [],
+            dialogCategory: false,
+            dialogCategoryTitle: '',
+            id: '',
+            name: '',
+            url_name: '',
+            description: '',
+            keywords: '',
+            categoryRules: {
+                name: [
+                    { required: true, message: '请输入名称', trigger: 'blur' }
+                ],
+            },
+            categoryStatus: false,
+        },
+        publish: {
+            title: '',
+            cid: '',
+            categoryList: [],
+            publish_time: '',
+            is_recommend: false,
+            editor: '',
+            content: '', 
+            tagsList: [],
+            tags: [],
+            currentStatus: 'publish',
+            toolbar : ['title', 'bold', 'italic', 'underline', 'strikethrough', 'fontScale', 'color', '|', 'ol', 'ul', 'blockquote', 'code', '|', 'link', 'image', 'hr', '|', 'indent', 'outdent', 'alignment'],
+            mobileToolbar : ["bold", "underline", "strikethrough", "color", "ul", "ol"],
+        }
+    },
+    mounted: function() {
+        this.getPageList();
+        this.getCategoryList();
+        this.getTags();
+    },
+    methods:{
+        mipPostAll: function() {
+            this.multipleSelection;
+            var mipPostData = [];
+            for (var i = 0; i < this.multipleSelection.length; i++) {
+                mipPostData.push("{$mipInfo['https']}://{$mipInfo['mipDomain']}/{$articleModelUrl}/"+this.multipleSelection[i].tempId+".html");
+            }
+            console.log(mipPostData);
+            this.dialogMipPostAllList = mipPostData;
+            
+            this.dialogMipPostAll = true;
+        },
+        mipPostAllPost: function() {
+            var itemIds = [];
+            for (var i = 0; i < this.dialogMipPostAllList.length; i++) {
+                itemIds.push(this.dialogMipPostAllList[i]);
+            }
+            itemIds = itemIds.join(',');
+            this.$mip.ajax('/api/Mip_post/mippost', {
+                urls:itemIds,
+                mipApiAddress: this.mipApiAddress,
+            }).then(function (res) {
+                if (res.code == 1) {
+                    var resMIp = JSON.parse(res.msg);
+                    Vue.prototype.$message({
+                      type: 'success',
+                      message: '推送成功：'+ resMIp.success + '条，当天剩余条数：' + resMIp.remain
+                    });
+                    _this.dialogMipPostAll = false;
+                } else {
+                    Vue.prototype.$message({
+                        type: 'error',
+                        message: res.msg
+                    });
+                    return false;
+                }
+            });
+        },
+        itemCategorySearchChange: function() {
+            _this.getPageList();
+        },
+        transferAll: function() {
+            this.dialogTransferAll = true;
+            this.transferAllCategoryId = '';
+        },
+        dialogTransferAllPost: function() {
+            var itemIds = [];
+            for (var i = 0; i < this.multipleSelection.length; i++) {
+                itemIds.push(this.multipleSelection[i].id);
+            }
+            itemIds = itemIds.join(',');
+            this.$mip.ajax('/api/article/articleTransferAll', {
+                cid: this.transferAllCategoryId,
+                ids:itemIds,
+            }).then(function (res) {
+                if (res.code == 1) {
+                    Vue.prototype.$message({
+                      type: 'success',
+                      message: res.msg
+                    });
+                    _this.getPageList();
+                    _this.dialogTransferAll = false;
+                } else {
+                    Vue.prototype.$message({
+                        type: 'error',
+                        message: res.msg
+                    });
+                    return false;
+                }
+            });
+        },
+        createEditor: function() {
+            var _this = this ;
+            this.publish.editor = new Simditor({
+                textarea: document.getElementById('article_editor'),
+                toolbar: _this.publish.toolbar,
+                upload: {
+                    url: '/api/Upload/imgUpload',
+                    params: {
+                        type: 'article',
+                    },
+                    fileKey: 'fileDataFileName', 
+                    connectionCount: 3,
+                    leaveConfirm: '正在上传文件'
+                },
+                pasteImage: true,
+            });
+        },
+        getTags: function() {
+            this.$mip.ajax('/api/tag/tagsSelect', {
+            }).then(function (res) {
+                if (res.code == 1) {
+                    var tagsList = res.data.tagsList;
+                        _this.publish.tagsList = tagsList;
+                } else {
+                    Vue.prototype.$message({
+                        type: 'error',
+                        message: res.msg
+                    });
+                }
+            });
+        },
+        getItemTags: function() {
+            this.$mip.ajax('/api/tag/itemTagsSelectByItem', {
+                'itemType':'article',
+                'itemId': this.publish.id,
+            }).then(function (res) {
+                if (res.code == 1) {
+                    var tagsList = res.data.tagsList;
+                    console.log(tagsList);
+                    if (tagsList.length > 0) {
+                        for (var i = 0; i < tagsList.length; i++) {
+                            tagsList[i].name = tagsList[i].tags.name;
+                            _this.publish.tags.push(tagsList[i].name);
+                        }
+                    }
+                } else {
+                    Vue.prototype.$message({
+                        type: 'error',
+                        message: res.msg
+                    });
+                }
+            });
+        },
+        publishPost: function() {
+            this.publish.content = this.publish.editor.getValue();
+            var timestamp = Date.parse(this.publish.publish_time);
+            timestamp = timestamp / 1000;
+            if (this.publish.currentStatus == 'edit') {
+                this.$mip.ajax('/api/article/articleEdit', {
+                   id: this.publish.id,
+                   title: this.publish.title,
+                   content: this.publish.content,
+                   cid: this.publish.cid,
+                   is_recommend: this.publish.is_recommend ? '1' : '0',
+                   tags: this.publish.tags.join(','),
+                   publish_time: timestamp?timestamp:'',
+                }).then(function (res) {
+                    if (res.code == 1) {
+                        Vue.prototype.$message({
+                            type: 'success',
+                            message: res.msg
+                        });
+                        _this.getPageList();
+                        _this.tabsValue = "list";
+                        _this.isShowTab = false;
+                    } else {
+                        Vue.prototype.$message({
+                            type: 'error',
+                            message: res.msg
+                        });
+                    }
+                });
+            } else {
+                this.$mip.ajax('/api/article/articleAdd', {
+                   title: this.publish.title,
+                   content: this.publish.content,
+                   cid: this.publish.cid,
+                   is_recommend: this.publish.is_recommend ? '1' : '0',
+                   tags: this.publish.tags.join(','),
+                   publish_time: timestamp?timestamp:'',
+                }).then(function (res) {
+                    if (res.code == 1) {
+                        Vue.prototype.$message({
+                            type: 'success',
+                            message: res.msg
+                        });
+                        _this.getPageList();
+                        _this.tabsValue = "list";
+                        _this.isShowTab = false;
+                    } else {
+                        Vue.prototype.$message({
+                            type: 'error',
+                            message: res.msg
+                        });
+                    }
+                });
+            }
+           
+        },
+
+        addCategoryDialog: function() {
+            this.category.categoryStatus = false;
+            this.category.name = '';
+            this.category.url_name = '';
+            this.category.description = '';
+            this.category.keywords = '';
+            this.category.id = '';
+            this.category.dialogCategory = true;
+            this.category.dialogCategoryTitle = '添加分类';
+        },
+        categoryPost(val,param) {
+             this.$refs[val].validate((valid) => {
+                if (valid) {
+                    _this = this;
+                    this.category.dialogCategory = false;
+                    if (this.category.categoryStatus == false) {
+                        this.$mip.ajax('/api/article/categoryAdd', {
+                           name: this.category.name,
+                           url_name: this.category.url_name,
+                           description: this.category.description,
+                           keywords: this.category.keywords,
+                        }).then(function (res) {
+                            if (res.code == 1) {
+                                Vue.prototype.$message({
+                                    type: 'success',
+                                    message: res.msg
+                                });
+                                _this.getCategoryList();
+                            } else {
+                                Vue.prototype.$message({
+                                    type: 'error',
+                                    message: res.msg
+                                });
+                            }
+                        });
+                    } else {
+                        this.$mip.ajax('/api/article/categoryEdit', {
+                           id: param.id,
+                           name: this.category.name,
+                           url_name: this.category.url_name,
+                           description: this.category.description,
+                           keywords: this.category.keywords,
+                        }).then(function (res) { 
+                            if (res.code == 1) {
+                                Vue.prototype.$message({
+                                    type: 'success',
+                                    message: res.msg
+                                });
+                                _this.getCategoryList();
+                            } else {
+                                Vue.prototype.$message({
+                                    type: 'error',
+                                    message: res.msg
+                                });
+                            }
+                        });
+                    }
+                }
+            });
+        },
+        categoryDel(index,val) {
+            this.$confirm('此操作将永久删除, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                _this = this;
+                this.$mip.ajax('/api/article/categoryDel', {
+                    id: val.id,
+                }).then(function (res) { 
+                    if (res.code == 1) {
+                        Vue.prototype.$message({
+                            type: 'success',
+                            message: res.msg
+                        });
+                        _this.getCategoryList();
+                    } else {
+                        Vue.prototype.$message({
+                            type: 'error',
+                            message: res.msg
+                        });
+                    }
+                });
+            }).catch(() => {
+                
+            });
+        },
+        getCategoryList: function() {
+            _this = this;
+            this.$mip.ajax('/api/article/categorySelect', {
+                
+            }).then(function (res) {
+                if (res.code == 1) {
+                    _this.category.categoryList = res.data.categoryList;
+                    _this.publish.categoryList =  _this.category.categoryList;
+                    _this.transferAllCategoryList = _this.category.categoryList;
+                    var itemCategorySearchList = [];
+                    for (var i = 0; i < res.data.categoryList.length; i++) {
+                    	itemCategorySearchList[i] = res.data.categoryList[i];
+                    }
+                    itemCategorySearchList.unshift({name:"全部分类",id:0});
+                    console.log(itemCategorySearchList);
+                    _this.itemCategorySearchList = itemCategorySearchList;
+                } else {
+                    Vue.prototype.$message({
+                        type: 'error',
+                        message: res.msg
+                    });
+                }
+            });
+        },
+        categoryEditDialog(index,row) {
+            this.category.dialogCategory = true;
+            this.category.categoryStatus = true;
+            this.category.name = row.name;
+            this.category.url_name = row.url_name;
+            this.category.description = row.description;
+            this.category.keywords =  row.keywords;
+            this.category.id = row.id;
+            this.category.dialogCategoryTitle = '编辑分类';
+        },
+
+        itemAddTap:function() {
+            this.tabsValue = "newAdd";
+            this.isShowTab = true;
+            this.publish.currentStatus = 'publish';
+            this.publish.id = '';
+            this.publish.title = '';
+            this.publish.cid = '';
+            this.publish.tags = [];
+            this.publish.is_recommend = false;
+            this.publish.publish_time =new Date();
+            this.getCategoryList();
+            var _this = this;
+            setTimeout(function() {
+                _this.createEditor();
+            }, 100);
+        },
+        handleListSelectionChange:function(val) {
+          this.multipleSelection = val;
+          if(val.length == 0) {
+            this.isDelDisabled = true;
+          } else {
+            this.isDelDisabled = false;
+          }
+        },
+        itemsDel:function() {
+            this.$confirm('注意：你现在操作的是批量删除，删除的数据将不可恢复, 确定批量删除?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                var itemIds = [];
+                for (var i = 0; i < this.multipleSelection.length; i++) {
+                    itemIds.push(this.multipleSelection[i].id);
+                }
+                itemIds = itemIds.join(',');
+                this.$mip.ajax('/api/article/articlesDel', {
+                    ids:itemIds,
+                }).then(function (res) {
+                    if (res.code == 1) {
+                        Vue.prototype.$message({
+                          type: 'success',
+                          message: res.msg
+                        });
+                    } else {
+                        Vue.prototype.$message({
+                            type: 'error',
+                            message: res.msg
+                        });
+                    }
+                    _this.getPageList();
+                });
+            }).catch(() => {
+                return false;   
+            });
+        },
+        articleRecomment: function(index, row) {
+            this.$mip.ajax('/api/article/articleRecomment', {
+                id:row.id,
+            }).then(function (res) {
+                if (res.code == 1) {
+                    Vue.prototype.$message({
+                      type: 'success',
+                      message: res.msg
+                    });
+                } else {
+                    Vue.prototype.$message({
+                        type: 'error',
+                        message: res.msg
+                    });
+                }
+                _this.getPageList();
+            });
+        },
+        articleDel: function(index, row) {
+            this.$confirm('此操作将永久删除该内容, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                this.$mip.ajax('/api/article/articleDel', {
+                    id:row.id,
+                }).then(function (res) {
+                    if (res.code == 1) {
+                        Vue.prototype.$message({
+                          type: 'success',
+                          message: res.msg
+                        });
+                    } else {
+                        Vue.prototype.$message({
+                            type: 'error',
+                            message: res.msg
+                        });
+                    }
+                    _this.getPageList();
+                });
+            }).catch(() => {
+                return false;   
+            });
+        },
+        getPageList:function() {
+            this.loading = true;
+            _this = this;
+            this.$mip.ajax('/api/article/articlesSelect', {
+                cid: this.itemCategorySearchId,
+                keywords: this.searchData,
+                page:this.currentPage,
+                status:'all',
+                limit:this.limit,
+            }).then(function (res) {
+                if (res.code == 1) {
+                    _this.articleList = res.data.articleList;
+                    _this.total = res.data.total;
+                } else {
+                    Vue.prototype.$message({
+                        type: 'error',
+                        message: res.msg
+                    });
+                }
+                _this.loading = false;
+            });
+          
+        },
+        articleEditTap:function(index, row) {
+            this.tabsValue = "newAdd";
+            this.isShowTab = true;
+            this.publish.currentStatus = 'edit';
+            this.publish.id = row.id;
+            this.publish.title = row.title;
+            this.publish.cid = row.cid;
+            this.publish.is_recommend = row.is_recommend == 0 ? false : true;
+            this.publish.tags = [];
+            this.publish.publish_time = row.publish_time?new Date(parseInt(row.publish_time) * 1000):'';
+            this.getItemTags();
+            this.getCategoryList();
+            var _this = this;
+            setTimeout(function() {
+                _this.createEditor();
+                _this.publish.editor.setValue(row.content);
+            }, 100);
+        },
+        
+        removeTab:function(targetName) {
+            var publishContent = this.publish.editor.getValue();
+            if (publishContent) {
+                this.$confirm('此操作将会清空编辑器中内容，是否确认？', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.tabsValue = 'list';
+                    this.isShowTab = false;
+                }).catch(() => {
+                    return false;   
+                });
+            } else {
+                this.tabsValue = 'list';
+                this.isShowTab = false;
+            }
+        },
+        handleSizeChange(val) {
+          this.limit = val;
+          this.getPageList();
+        },
+        handleCurrentChange(val) {
+          this.currentPage = val;
+          this.getPageList();
+        },
+        handleSearchClick:function() {
+          this.getPageList();
+        },
+    },
+
+})
+   </script>
+{/block}

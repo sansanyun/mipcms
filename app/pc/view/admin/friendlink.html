@@ -1,0 +1,303 @@
+{extend name="pc/view/admin@main"/}
+
+{block name="title"}友情链接 - {__block__}{/block}
+
+{block name="style"}
+{__block__}
+
+<style type="text/css">
+    .el-collapse-item__header .header div {
+        color: #697276;
+        font-weight: 700;
+    }
+    .el-collapse-item__header {
+        position: relative;
+        padding-right: 15px;
+        cursor: move;
+    }
+    .sortable-chosen .el-collapse-item__header {
+        background-color: #EEF2F6;
+    }
+    .el-collapse-item__header .el-button {
+        display: none;
+    }
+    .el-collapse-item__header:hover .el-button {
+        display: inline-block;
+    }
+    .el-collapse-item__header .text-overflow {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        display: block;
+    }
+    .linkEdit {
+        margin-top: 10px;
+        margin-right: 10px;
+        position: absolute;
+        right: 0;    
+        top: 0;
+        z-index: 99;
+    }
+    linkDel {
+        margin-top: 10px;
+        margin-right: 10px;
+        position: absolute;
+        right: 50px;    
+        top: 0;
+        z-index: 99;
+    }
+    .emptLink {
+        min-height: 300px;
+        color: #aaa;
+        line-height: 300px;
+        text-align: center;
+    }
+</style>
+
+{/block}
+{block name="main"}
+<div class="row">
+    <div class="col-md-12">
+        <section class="mip-box mip-default">
+            <div class="mip-box-heading">
+                <h3 class="left">友情链接</h3> <a class="right" @click='dialogLinkAdd'>+添加</a>
+            </div>
+            <div class="mip-box-body">
+                <div v-if='itemList.length == 0'>
+                    <p class="emptLink">您尚未添加友情链接，去添加一个呗</p>
+                </div>
+                <div class="el-collapse" v-if='itemList.length > 0'>
+                        <div class="el-collapse-item">
+                            <div class="el-collapse-item__header">
+                                <div class="row header">
+                                    <div class="col-md-2">顺序</div>
+                                    <div class="col-md-2">链接类型</div>
+                                    <div class="col-md-3">网站名称</div>
+                                    <div class="col-md-3">网址</div>
+                                    <div class="col-md-2"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <draggable :list="itemList">
+                            <div class="el-collapse-item" v-for='(item,index) in itemList'>
+                                <div class="el-collapse-item__header">
+                                    <div class="row">
+                                        <div class="col-md-2 text-999">{{index+1}}</div>
+                                        <div class="col-md-2 text-999"><span v-if='item.type == "all"'>整站</span><span v-if='item.type == "index"'>首页</span><span v-if='item.type == "notIndex"'>非首页</span></div>
+                                        <div class="col-md-3">{{item.name}}</div>
+                                        <div class="col-md-3 text-overflow">{{item.url}} </div>
+                                        <div class="col-md-2 text-right p-r-md">
+                                            <el-button type="danger" size="small" @click='linkDel(item)'>删除</el-button>
+                                            <el-button type="primary" size="small" @click='dialogLinkEdit(item)'>修改</el-button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>  
+                        </draggable>
+                </div>
+          </div>
+          <div class="mip-box-footer text-center p-b">
+              <a class="btn btn-primary" @click='linkSave' v-if="itemList.length > 1">保存排序</a>
+          </div>
+        </section>
+    </div>
+    
+</div>
+{/block}
+{block name="dialog"}
+<el-dialog :title="dialogLinkTitle" v-model="dialogLink" size="tiny">
+  <el-form :model="linkInfo" :rules="linkInfoRules" ref="linkInfo" label-width="90px">
+    <el-form-item label="名称" prop="name">
+      <el-input v-model="linkInfo.name" placeholder="例:MIPCMS"></el-input>
+    </el-form-item>
+    <el-form-item label="网址" prop="url">
+      <el-input v-model="linkInfo.url" placeholder="例:http://www.mipcms.com"></el-input>
+    </el-form-item>
+    <el-form-item label="描述">
+      <el-input v-model="linkInfo.description" placeholder="例:MIPCMS内容管理系统"></el-input>
+    </el-form-item>
+    <el-form-item label="类型">
+        <el-select v-model="linkInfo.type" placeholder="请选择模板主题">
+          <el-option v-for='item in typeList' :label="item.name" :value="item.value"></el-option>
+        </el-select>
+    </el-form-item>
+  </el-form>
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="dialogLink = false">取 消</el-button>
+    <el-button type="primary" @click="linkAdd('linkInfo')">确 定</el-button>
+  </div>
+</el-dialog>
+{/block}
+{block name="javascript"}
+{__block__}
+<script src="https://cdn.jsdelivr.net/sortable/1.4.2/Sortable.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="https://cdn.rawgit.com/David-Desmaisons/Vue.Draggable/master/dist/vuedraggable.min.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data:{
+            
+            itemList: [],
+            linkInfo:{
+                name: '',
+                name: '',
+                url: '',
+                type: 'all',
+                description: '',
+            },
+            typeList: [{name:'整站',value: 'all'},{name:'首页',value: 'index'},{name:'非首页',value: 'notIndex'}],
+            dialogLinkTitle: '添加友情链接',
+            dialogLink: false,
+            linkStatus: 'add',
+            linkInfoRules: {
+                name: [
+                    { required: true, message: '请输入名称', trigger: 'blur' }
+                ],
+                url: [
+                    { required: true, message: '请输入网址', trigger: 'blur' }
+                ],
+            },
+        },
+        mounted: function() {
+            _this = this;
+            this.getItemList();
+        },
+        methods:{
+            dialogLinkAdd: function() {
+                this.dialogLinkTitle = '添加友情链接';
+                this.dialogLink = true;
+                this.linkInfo.name = '';
+                this.linkInfo.url = '';
+                this.linkInfo.description = '';
+                this.linkInfo.type = 'all';
+                this.linkStatus = 'add';
+            },
+            linkAdd: function(val) {
+               this.$refs[val].validate((valid) => {
+                    if (valid) {
+                        if (this.linkStatus == 'add') {
+                            this.$mip.ajax('/api/Link/friendlinkAdd',{
+                                name: this.linkInfo.name,
+                                url: this.linkInfo.url,
+                                description: this.linkInfo.description,
+                                type: this.linkInfo.type,
+                            }).then(function (res) {
+                                if (res.code == 1) {
+                                    Vue.prototype.$message({
+                                        type: 'success',
+                                        message: res.msg
+                                    });
+                                    _this.getItemList();
+                                    _this.dialogLink = false;
+                                } else {
+                                    Vue.prototype.$message({
+                                        type: 'error',
+                                        message: res.msg
+                                    });
+                                }
+                            });
+                        } else {
+                            this.$mip.ajax('/api/Link/friendlinkEdit',{
+                                id: this.linkInfo.id,
+                                name: this.linkInfo.name,
+                                url: this.linkInfo.url,
+                                description: this.linkInfo.description,
+                                type: this.linkInfo.type,
+                            }).then(function (res) {
+                                if (res.code == 1) {
+                                    Vue.prototype.$message({
+                                        type: 'success',
+                                        message: res.msg
+                                    });
+                                    _this.getItemList();
+                                    _this.dialogLink = false;
+                                } else {
+                                    Vue.prototype.$message({
+                                        type: 'error',
+                                        message: res.msg
+                                    });
+                                }
+                            });
+                        }
+                        
+                    }
+                });
+            },
+            linkDel: function(val) {
+                this.$confirm('此操作将永久删除该内容, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$mip.ajax('/api/Link/friendlinkDel',{
+                        id: val.id,
+                    }).then(function (res) {
+                        if (res.code == 1) {
+                            Vue.prototype.$message({
+                                type: 'success',
+                                message: res.msg
+                            });
+                            _this.getItemList();
+                        } else {
+                            Vue.prototype.$message({
+                                type: 'error',
+                                message: res.msg
+                            });
+                        }
+                    });
+                }).catch(() => {
+                    return false;   
+                });
+            },
+            dialogLinkEdit: function(val) {
+                this.dialogLinkTitle = '编辑友情链接';
+                this.dialogLink = true;
+                this.linkInfo.id = val.id;
+                this.linkInfo.name = val.name;
+                this.linkInfo.url = val.url;
+                this.linkInfo.description = val.description;
+                this.linkInfo.type = val.type;
+                this.linkStatus = 'edit';
+            },
+            getItemList: function() {
+                this.$mip.ajax('/api/Link/friendlinkSelect',{
+                    order: 'asc',
+                }).then(function (res) {
+                    if (res.code == 1) {
+                        var itemList = res.data.friendlinkList;
+                        _this.itemList = itemList;
+                    } else {
+                        Vue.prototype.$message({
+                            type: 'error',
+                            message: res.msg
+                        });
+                    }
+                });
+            },
+            linkSave: function() {
+                var itemList = this.itemList;
+                for (var i = 0; i < itemList.length; i++) {
+                    itemList[i].sort = i;
+                }
+                this.$mip.ajax('/api/Link/friendlinkSave',{
+                    linkList: itemList,
+                }).then(function (res) {
+                    if (res.code == 1) {
+                        Vue.prototype.$message({
+                            type: 'success',
+                            message: res.msg
+                        });
+                        _this.getItemList();
+                    } else {
+                        Vue.prototype.$message({
+                            type: 'error',
+                            message: res.msg
+                        });
+                    }
+                });
+            },
+        },
+
+    })
+</script>
+{/block}
