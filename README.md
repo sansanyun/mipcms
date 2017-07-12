@@ -1,8 +1,8 @@
-# MIPCMS内容管理系统 v2.0.0 TC版 介绍
+# MIPCMS内容管理系统 v2.1.0 测试版 介绍
 > #### 官网地址
 > http://www.mipcms.com
 > #### 主要使用技术栈：
-> ThinkPHP5.0.7 、Vue2.x 、Axios、Element Ui、MIP、Mui
+> ThinkPHP5.0.10 、Vue2.x 、Axios、Element Ui、MIP
  #### 系统简介：
 MIPCMS是一套免费开源的基于百度移动加速器MIP引擎基础上而开发的文章、资讯、内容管理系统，同时该系统也为互联网站长、创业者等群体打造的SEO优化后的建站系统。MIPCMS适合个人博客、新闻、门户、垂直领域、社群等类型需求。
 #### 特点：
@@ -10,11 +10,8 @@ MIPCMS是一套免费开源的基于百度移动加速器MIP引擎基础上而�
    *  我们采用传统的模板切换方式，你可以任意切换你喜欢的模板 pc端模板、m端模板。
    *  如果你特别喜欢极致的网站模板，连那么1像素的边线都感觉粗的，那么恭喜你，我们是0.5像素。
    *  我们针对的是小白使用群体，你不需要费太多的精力在建站技术上，你也不需要费太多的精力在网站SEO上，对比程序开发、和网站SEO，请相信我们是非常专业的。你可以认为我们自己也在使用这套系统，请相信那份真挚的梦想，请保持那份一劳永逸的心，我们与中小站点的站长并肩齐步。
-    
+
  #### 功能描述：
-    * 会员注册登录
-    * 文章定时发布
-    * 文章评论回复
     * 友情链接管理
     * 模块修改标识名称
     * 模板一键切换
@@ -29,7 +26,7 @@ MIPCMS是一套免费开源的基于百度移动加速器MIP引擎基础上而�
     * MBstring PHP Extension
     * CURL PHP Extension
 #### 注意事项：
-    - 初始化账号密码 admin admin 请在后台修改 
+    - 初始化账号密码 admin admin 请在后台修改
     - 安装时请允许upload目录有可写权限
     - 安装时请允许cache目录有可写权限
     - 安装时请允许system\config目录有可写权限
@@ -46,15 +43,14 @@ MIPCMS是一套免费开源的基于百度移动加速器MIP引擎基础上而�
         3、Apache伪静态规则是否开启
         4、public\\install目录是否有可写权限
     - 登录后 修改密码
-    - 默认网站布局blog模式 如需要cms模式，请在后台切换
     - M站开启方式，后台配置m域名即可
     - 后台统计代码 M站请输入mip统计代码（M站禁止输入非mip支持统计代码）
-    - 
+    -
 #### 手动安装：
     1、 public\install  新建 install.lock 文件（不是文件夹）
-    2、 在phpMyAdmin 新建数据库，将public\package\下的 mipcms_v_1_1_0.sql 文件导入
+    2、 在phpMyAdmin 新建数据库，将public\package\下的 mipcms_v_2_1_0.sql 文件导入
     3、复制\package\database.php文件到system\config\目录下，修改如下标识
-        '#hostname#'      修改为 'localhost' 或者 '127.0.0.1' 
+        '#hostname#'      修改为 'localhost' 或者 '127.0.0.1'
         '#database#'      修改为 'mipcms' （你的数据库名称）
         '#username#'      修改为 'root' （你的数据库用户）
         '#hostport#'      修改为 '*******' （你的数据库密码）
