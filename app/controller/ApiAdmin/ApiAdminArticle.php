@@ -253,9 +253,12 @@ class ApiAdminArticle extends AdminBase
 			if (!$articleInfo) {
 	          	return jsonError('文章不存在');
 	        }
-            $articleInfoByUrlName = Articles::where('url_name',$url_name)->find();
-            if ($articleInfoByUrlName) {
-                return jsonError('自定义Url已存在');
+
+            if ($this->mipInfo['diyUrlStatus']) {
+                $articleInfoByUrlName = Articles::where('id','<>',$id)->where('url_name',$url_name)->find();
+                if ($articleInfoByUrlName) {
+                    return jsonError('自定义Url已存在');
+                }
             }
 	        $updateArticleInfo = $articleInfo->where('id',$id)->update([
                 'title' => htmlspecialchars($title),

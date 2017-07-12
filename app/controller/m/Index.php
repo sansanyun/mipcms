@@ -33,7 +33,7 @@ class Index extends Mip
             $this->assign('articleList',$itemList);
 
             $recommendListWhere['is_recommend'] = 1;
-            $recommendListByCid = model('app\model\Articles\Articles')->getItemList($currentCid, 1, 5, 'publish_time', 'desc', $recommendListWhere);
+            $recommendListByCid = model('app\model\Articles\Articles')->getItemList($currentCid, 1, 4, 'publish_time', 'desc', $recommendListWhere);
             $this->assign('recommendList',$recommendListByCid);
 
             $hotListByCid = model('app\model\Articles\Articles')->getItemList($currentCid, 1, 5, 'views', 'desc');
@@ -63,7 +63,7 @@ class Index extends Mip
             $recommendListByCid = model('app\model\Articles\Articles')->getItemList($currentCid, 1, 5, 'publish_time', 'desc', $recommendListWhere);
             $this->assign('recommendList',$recommendListByCid);
 
-            $hotListByCid = model('app\model\Articles\Articles')->getItemList($currentCid, 1, 5, 'views', 'desc');
+            $hotListByCid = model('app\model\Articles\Articles')->getItemList($currentCid, 1, 4, 'views', 'desc');
             $this->assign('hotListByCid',$hotListByCid);
             return $this->mipView('index/index','m');
         }

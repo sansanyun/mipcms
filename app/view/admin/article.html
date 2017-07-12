@@ -514,7 +514,7 @@
                 itemIds.push(this.dialogMipPostAllList[i]);
             }
             itemIds = itemIds.join(',');
-            this.$mip.ajax('/ApiAdmin/ApiAdminMipPost/mipPost', {
+            this.$mip.ajax('/ApiAdmin/Api_admin_mip_post/mipPost', {
                 urls:itemIds,
                 mipApiAddress: this.mipApiAddress,
             }).then(function (res) {
@@ -573,7 +573,7 @@
                 textarea: document.getElementById('article_editor'),
                 toolbar: _this.publish.toolbar,
                 upload: {
-                    url: mipGlobal.rewrite + '/ApiAdmin/ApiAdminUpload/imgUpload',
+                    url: mipGlobal.rewrite + '/ApiAdmin/Api_admin_upload/imgUpload',
                     params: {
                         type: 'article',
                     },

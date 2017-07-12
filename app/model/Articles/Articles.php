@@ -101,7 +101,6 @@ class Articles extends ModelBase
             $item['imgCount'] = 0;
             $item['imgList'] = null;
         }
-        $item['content'] = strip_tags(htmlspecialchars_decode($item['content']));
         return $item;
     }
 
