@@ -1,0 +1,24 @@
+
+.category-lists{
+  .category-list{
+    float: left;
+    width: 49%;
+    line-height: 35px;
+    background: #efefef;
+    margin-bottom: 5px;
+    margin-right: 1%;
+    text-align: center;
+   &:hover,&.active{
+      background-color: #00AAEE;
+      color: #FFFFFF;
+      a{
+        color: #FFFFFF;
+      }
+    }
+    a{
+      padding: 5px 10px;
+      color: #999999;
+     
+    }
+  }
+}

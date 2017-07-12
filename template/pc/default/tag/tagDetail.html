@@ -1,0 +1,102 @@
+
+{extend name="main/main"/}
+
+{block name="style"}
+{__block__}
+<style type="text/css">
+
+
+/*暂无数据*/
+ .no-data-block {
+    height: 300px;
+    padding-top: 80px;
+}
+
+.no-data-block img {
+    margin: 0 auto;
+    width: 60px;
+    position: relative;
+}
+
+.no-data-block p {
+    margin-top: 15px;
+    color: #c3d1d6;
+}
+
+/*tab面包屑导航重置*/
+
+  .mip-box .mip-tap-body {
+      position: relative;
+      padding: 5px 20px 15px 20px;
+  }
+.mip-tap-body .el-tabs__item.is-active {
+    color: #00AAEE!important;
+    border-bottom: 3px solid #00AAEE;
+}
+.el-tabs__header {
+    border-bottom: 1px solid #EFEFEF;
+}
+
+/*标签页面头部*/
+ .tag-header .tag-img {
+    border: 1px solid #C3D1D6;
+    padding: 10px;
+    border-radius: 3px;
+    float: left;
+    margin-right: 15px;
+}
+.tag-header .mip-biaoqian{
+     font-size: 35px;
+     margin-bottom: 10px;
+}
+.tag-header .tag-info-content h2{
+    font-size: 20px;
+}
+
+
+</style>
+{/block}
+{block name="main"}
+
+  <div class="container">
+    <div class="row">
+        <section class="col-lg-8" id="tag_detail">
+            <div class="mip-box">
+                <section class="mip-box-body">
+                    <div class="tag-header">
+                        <div class="tag-img">
+                            <em class="mip-iconfont mip-biaoqian"></em>
+                        </div>
+                        <div class="tag-info-content">
+                            <h2>{$tagInfo['name']}</h2>
+                            <p>这里啥都没有...</p>
+                        </div>
+                    </div>
+                </section>
+                <section class="mip-tap-body">
+                    <div class="el-tabs__header">
+                        <div class="el-tabs__nav-wrap">
+                            <div class="el-tabs__nav">
+                                <div class="el-tabs__item is-active">{$articleModelName}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="el-tabs__content">
+                        <div class="el-tab-pane">
+                            {include file="article/articleBlock"/}
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </section>
+        <aside class="col-lg-4">
+
+        </aside>
+    </div>
+</div>
+{/block}
+
+{block name="script"}
+{__block__}
+<script src="/{$assets}/{$tplName}/js/tag/tag-detail.js?v={:time()}" type="text/javascript" charset="utf-8"></script>
+{/block}

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html mip>
+<head>
+    <meta charset="utf-8">
+    <meta name="applicable-device" content="mobile">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
+    <meta name="description" content="{$mipDescription}">
+    <meta name="keywords" content="{$mipKeywords}">
+    <link rel="shortcut icon" href="{$domain}/favicon.ico" type="image/x-icon" />
+    <title>{$mipTitle}</title>
+    <link rel="stylesheet" type="text/css" href="https://mipcache.bdstatic.com/static/v1/mip.css">
+    <style mip-custom>
+
+    {include file="main/css/mip/reset.css"}
+    * {
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        outline: 0;
+        -webkit-tap-highlight-color: transparent;
+        -webkit-tap-highlight-color: transparent
+    }
+
+    body {
+        font-family: 'Helvetica Neue', Helvetica, sans-serif;
+        font-size: 17px;
+        line-height: 21px;
+        color: #333;
+        background-color: #efeff4;
+    }
+    a {
+        text-decoration: none;
+        color: #00aaee
+    }
+    a:active {
+        color: #00aaee
+    }
+
+    {include file="main/css/mui/mui-bar.css"}
+    {include file="main/css/mip/mipcms-back.css"}
+
+    .mui-bar {
+        background-color: #00AAEE!important;
+        z-index: 9999;
+    }
+    .mui-bar .mui-title {
+        color: #FFFFFF;
+    }
+    .mip-nav-wrapper .navbar-toggle .icon-bar {
+        background: #fff!important;
+    }
+    #mipcms-category {
+        top: 44px!important;
+    }
+    #MIP-LLIGTBOX-MASK {
+        background-color: transparent;
+    }
+
+    .mip-content {
+        background-color: #efeff4;
+        -webkit-overflow-scrolling: touch
+    }
+    .m-t-header {
+        margin-top: 44px;
+    }
+    .m-b-footer {
+        margin-bottom: 50px;
+    }
+    .m-t-category {
+        margin-top: 80px;
+    }
+
+    .mip-title {
+        margin-top: 15px;
+        padding: 10px 10px;
+        font-weight: 500;
+        border-left: 5px solid #00AAEE;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='1'><rect fill='#c8c7cc' x='0' y='0.5' width='100%' height='0.5'/></svg>");
+        background-repeat: no-repeat;
+        background-position: 0 100%, 0 0;
+        background-color: #fff;
+    }
+
+    {include file="main/css/mip/mip-app.css"}
+    {include file="main/css/mui/mui-layout.css"}
+    {include file="main/css/mui/mui-bar.css"}
+    {include file="main/css/mui/mui-btn.css"}
+    .xbx {
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='1'><rect fill='#c8c7cc' x='0' y='0.5' width='100%' height='0.5'/></svg>");
+        background-repeat: no-repeat;
+        background-position: 0 100%, 0 0;
+        background-color: #fff;
+      }
+    h1 {
+        font-size: 22px;
+    }
+    h2 {
+        font-size: 18px;
+    }
+    h3 {
+        font-size: 16px;
+    }
+    footer {
+        margin: 15px;
+        font-size: 14px;
+    }
+    footer a{
+        color: #333;
+        font-size: 14px;
+    }
+    {block name="style"}{/block}
+    </style>
+    <link rel="canonical" href="{$siteUrl}">
+</head>
+<body>
+
+<header class="mip-nav-wrapper mui-bar mui-bar-nav">
+    {if condition='$act=="articleDetail"'}
+    <mip-history history="back" class="mip-history-default mipcms-back">
+        <span class="back"></span>
+    </mip-history>
+    {else/}
+     <a data-type="mip" data-title='首页' href="{$domain}" class="mipcms-back">
+        <span class="home"></span>
+    </a>
+     {/if}
+    <h1 class="mui-title">{$mipInfo['siteName']}</h1>
+</header>
+<main class="mip-main" id="mip_main">
+  {block name="main"}{/block}
+</main>
+<footer>
+    <p class="text-center">&copy;<?php echo date('Y'); ?> <a data-type="mip" href="{$domain}" data-title="{$mipInfo['siteName']}">{$mipInfo['siteName']}</a> <a href="{$domain}/sitemap.xml">sitemap.xml</a> Powered By <a href="http://www.mipcms.com" title="MIPCMS内容管理系统" target="_blank">MIPCMS</a>{$mipInfo['statistical']} </p>
+</footer>
+<mip-fixed type="gototop">
+    <mip-gototop></mip-gototop>
+</mip-fixed>
+{block name="script"}
+<script src="https://mipcache.bdstatic.com/static/v1/mip.js"></script>
+<script src="https://mipcache.bdstatic.com/static/v1/mip-link/mip-link.js"></script>
+<script src="https://mipcache.bdstatic.com/static/v1/mip-stats-baidu/mip-stats-baidu.js"></script>
+<script src="https://mipcache.bdstatic.com/static/v1/mip-sidebar/mip-sidebar.js"></script>
+<script src="https://mipcache.bdstatic.com/static/v1/mip-gototop/mip-gototop.js" type="text/javascript" charset="utf-8"></script>
+<script src="https://mipcache.bdstatic.com/static/v1/mip-history/mip-history.js" type="text/javascript" charset="utf-8"></script>
+{/block}
+</body>
+</html>
