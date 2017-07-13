@@ -8,7 +8,7 @@ use app\model\Articles\ArticlesCategory;
 use app\model\Articles\ArticlesContent;
 use think\Db;
 use think\Cache;
-use Mip\ModelBase;
+use mip\ModelBase;
 
 class Articles extends ModelBase
 {

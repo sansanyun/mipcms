@@ -44,7 +44,7 @@ class Mip extends Controller
         if ($this->mipInfo['rewrite']) {
             $this->rewrite = '';
         } else {
-            $this->rewrite = '/index.php';
+            $this->rewrite = '/index.php?s=';
         }
         $this->assign('rewrite',$this->rewrite);
 
