@@ -1,7 +1,7 @@
 <?php
 //MIPCMS.Com [Don't forget the beginner's mind]
 //Copyright (c) 2017~2099 http://MIPCMS.Com All rights reserved.
-namespace app\controller\ApiUser;
+namespace app\controller\apiuser;
 use app\model\Asks\Asks;
 use app\model\Asks\AsksCategory;
 use app\model\Asks\AsksContent;

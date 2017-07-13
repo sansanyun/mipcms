@@ -1,7 +1,7 @@
 <?php
 //MIPCMS.Com [Don't forget the beginner's mind]
 //Copyright (c) 2017~2099 http://MIPCMS.Com All rights reserved.
-namespace app\controller\ApiUser;
+namespace app\controller\apiuser;
 use app\model\Articles\Articles;
 use app\model\Articles\ArticlesComments;
 use app\model\Articles\ArticlesCategory;
@@ -16,7 +16,7 @@ use mip\AuthBase;
 class ApiUserArticle extends AuthBase
 {
     public function index() {
-         
+
     }
     public function articleAdd(Request $request) {
         if (Request::instance()->isPost()) {
@@ -72,7 +72,7 @@ class ApiUserArticle extends AuthBase
                     return  jsonError('提交失败');
                 }
             }
-            
+
         }
     }
     public function articlesSelectByUserInfo(Request $request) {
@@ -106,11 +106,11 @@ class ApiUserArticle extends AuthBase
                 $itemList[$key]->articlesCategory;
                 $val['tempId'] = $this->mipInfo['idStatus'] ? $val['uuid'] : $val['id'];
             }
-            return jsonSuccess('',['itemList' => $itemList,'total' => $total,'page' => $page]); 
+            return jsonSuccess('',['itemList' => $itemList,'total' => $total,'page' => $page]);
         }
     }
-    
-    
+
+
     public function commentsAdd(Request $request) {
         if (Request::instance()->isPost()) {
             $articleId = input('post.articleId');
@@ -135,20 +135,20 @@ class ApiUserArticle extends AuthBase
                     return  jsonError('添加失败');
                 }
             }
-            
+
         }
     }
-    
+
     public function commentDel(Request $request) {
         if (Request::instance()->isPost()) {
             $id = input('post.id');
-           
+
             if (!$id) {
               return jsonError('缺少参数');
             }
-            
+
             $articleCommentsInfo = ArticlesComments::where('id',$id)->find();
-            
+
             if ($articleCommentsInfo) {
                 if ($this->userId == $articleCommentsInfo['uid'] || $this->isAdmin) {
                     $articleCommentsInfo->delete();
@@ -159,7 +159,7 @@ class ApiUserArticle extends AuthBase
             } else {
                 return  jsonError('回复不存在');
             }
-            
+
         }
     }
     public function commentsDel(Request $request) {
@@ -183,7 +183,7 @@ class ApiUserArticle extends AuthBase
             }else{
                 return  jsonError('参数错误');
             }
-            
+
         }
     }
     public function commentsSelect(Request $request) {
@@ -209,15 +209,15 @@ class ApiUserArticle extends AuthBase
                 $order = 'asc';
             }
             $articlesCommentsList = ArticlesComments::where('item_id',$itemId)->limit($limit)->page($page)->order($orderBy, $order)->select();
-            
+
             if ($articlesCommentsList) {
                 foreach ($articlesCommentsList as $k=>$v){
                     $articlesCommentsList[$k]['content']= str_replace("\r\n", ' ', strip_tags($v['content']));
                     $articlesCommentsList[$k]->users;
                 }
             }
-            
-            return jsonSuccess('ok',['itemList' => $articlesCommentsList,'total' => ArticlesComments::where('item_id',$itemId)->count(),'page' => $page]); 
+
+            return jsonSuccess('ok',['itemList' => $articlesCommentsList,'total' => ArticlesComments::where('item_id',$itemId)->count(),'page' => $page]);
         }
     }
     public function commentsEdit(Request $request) {
@@ -242,8 +242,8 @@ class ApiUserArticle extends AuthBase
             }
         }
     }
-    
-    
+
+
     public function categorySelect(Request $request){
         if (Request::instance()->isPost()) {
             $page = input('post.page');
@@ -263,7 +263,7 @@ class ApiUserArticle extends AuthBase
                 $order = 'desc';
             }
             $categoryList = ArticlesCategory::limit($limit)->page($page)->order($orderBy, $order)->select();
-            return jsonSuccess('',['categoryList' => $categoryList,'total' => ArticlesCategory::count(),'page' => $page]); 
+            return jsonSuccess('',['categoryList' => $categoryList,'total' => ArticlesCategory::count(),'page' => $page]);
         }
     }
 }
