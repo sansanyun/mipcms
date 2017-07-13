@@ -1,7 +1,7 @@
 <?php
 //MIPCMS.Com [Don't forget the beginner's mind]
 //Copyright (c) 2017~2099 http://MIPCMS.Com All rights reserved.
-namespace app\controller\ApiAdmin;
+namespace app\controller\apiadmin;
 use app\model\Users\Users;
 use app\model\Users\UsersGroup;
 use app\model\AccessKey;
@@ -14,8 +14,8 @@ use mip\AdminBase;
 class ApiAdminUser extends AdminBase
 {
     public function index(){
-        
-    } 
+
+    }
     public function userCreate(Request $request) {
         if (Request::instance()->isPost()) {
             $username = Htmlp::htmlp(trim(input('post.username')," \t\n\r\0\x0B"));
@@ -64,7 +64,7 @@ class ApiAdminUser extends AdminBase
             }
         }
     }
-    
+
     public function userDel(Request $request){
 		if (Request::instance()->isPost()) {
 			$uid = input('post.uid');
@@ -128,7 +128,7 @@ class ApiAdminUser extends AdminBase
                     $usersList[$key]->usersGroup;
                 }
             }
-		    return jsonSuccess('',['usersList' => $usersList,'total' => Users::count(),'page' => $page]); 
+		    return jsonSuccess('',['usersList' => $usersList,'total' => Users::count(),'page' => $page]);
 		}
     }
     public function userFind(Request $request){
@@ -141,12 +141,12 @@ class ApiAdminUser extends AdminBase
 				return jsonError('用户不存在');
 			}
 		    $usersInfo = Users::where('uid',$uid)->field(['password'], true)->find();
-		    return jsonSuccess('',['usersInfo' => $usersInfo]); 
+		    return jsonSuccess('',['usersInfo' => $usersInfo]);
 		}
     }
     public function userEdit(Request $request){
 		if (Request::instance()->isPost()) {
-		    
+
 			$uid = input('post.uid');
             $username = Htmlp::htmlp(input('post.username'));
             $nickname = Htmlp::htmlp(input('post.nickname'));
@@ -159,14 +159,14 @@ class ApiAdminUser extends AdminBase
 			$password = Htmlp::htmlp(input('post.password'));
             $group_id = input('post.group_id');
 			$data = '';
-            
+
             if (!$uid) {
                 return jsonError('缺少用户UID');
             }
             if(!$userInfo = Users::getByUid($uid)){
                 return jsonError('用户不存在');
             }
-            
+
             if ($username) {
                 if ($username != $userInfo['username'] AND Users::getByUsername($username)) {
                     return jsonError('用户名已存在');
@@ -175,17 +175,17 @@ class ApiAdminUser extends AdminBase
             if (!empty($username)) {
                 $data['username'] = $username;
             }
-            
+
             if (!$sex) {
                 $sex = 1;
             }
-            
+
             $data['qq'] = $qq;
             $data['sex'] = $sex;
             $data['signature'] = $signature;
             $data['nickname'] = $nickname;
             $data['status'] = $status;
-            
+
             $rules = [
                 'email' => 'email',
             ];
@@ -202,7 +202,7 @@ class ApiAdminUser extends AdminBase
                 }
             }
             $data['email'] = $email;
-            
+
             if ($mobile) {
                 if (!preg_match("/^1[34578]\d{9}$/", $mobile)) {
                     return jsonError('手机号码输入有误');
@@ -212,7 +212,7 @@ class ApiAdminUser extends AdminBase
                 }
             }
             $data['mobile'] = $mobile;
-            
+
             if ($userInfo['uid'] == 1 && $group_id != 1) {
                 return jsonError('超级管理员组禁止变更');
             }
@@ -229,5 +229,5 @@ class ApiAdminUser extends AdminBase
 		    return jsonError('修改失败');
 		}
     }
-   
+
 }

@@ -1,7 +1,7 @@
 <?php
 //MIPCMS.Com [Don't forget the beginner's mind]
 //Copyright (c) 2017~2099 http://MIPCMS.Com All rights reserved.
-namespace app\controller\ApiAdmin;
+namespace app\controller\apiadmin;
 use app\model\Articles\Articles;
 use app\model\Articles\ArticlesComments;
 use app\model\Articles\ArticlesCategory;

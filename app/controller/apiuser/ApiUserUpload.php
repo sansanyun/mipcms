@@ -1,18 +1,18 @@
 <?php
 //MIPCMS.Com [Don't forget the beginner's mind]
 //Copyright (c) 2017~2099 http://MIPCMS.Com All rights reserved.
-namespace app\controller\ApiUser;
+namespace app\controller\apiuser;
 use think\Request;
 
 use mip\AuthBase;
 class ApiUserUpload extends AuthBase
 {
     public function index(){
-		 
+
     }
     public function imgUpload(Request $request){
         if (Request::instance()->isPost()) {
-            
+
             $type = input('post.type');
             $ymd = input('post.ymd');
             $file = $request->file('fileDataFileName');
@@ -45,7 +45,7 @@ class ApiUserUpload extends AuthBase
             } else {
                 return jsonError($file->getError());
             }
-            
+
         }
     }
 

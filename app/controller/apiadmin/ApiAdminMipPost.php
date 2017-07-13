@@ -1,7 +1,7 @@
 <?php
 //MIPCMS.Com [Don't forget the beginner's mind]
 //Copyright (c) 2017~2099 http://MIPCMS.Com All rights reserved.
-namespace app\controller\ApiAdmin;
+namespace app\controller\apiadmin;
 use think\Request;
 use app\model\RolesNode;
 use app\model\RolesAccess;

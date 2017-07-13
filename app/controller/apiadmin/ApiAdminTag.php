@@ -1,7 +1,7 @@
 <?php
 //MIPCMS.Com [Don't forget the beginner's mind]
 //Copyright (c) 2017~2099 http://MIPCMS.Com All rights reserved.
-namespace app\controller\ApiAdmin;
+namespace app\controller\apiadmin;
 use think\Request;
 use think\Loader;
 use app\model\Tags\Tags;
@@ -11,7 +11,7 @@ use mip\AdminBase;
 class ApiAdminTag extends AdminBase
 {
     public function index(){
-		 
+
     }
     public function tagAdd(Request $request){
 		if (Request::instance()->isPost()) {
@@ -32,7 +32,7 @@ class ApiAdminTag extends AdminBase
 		        	return  jsonError('添加失败');
 		        }
 	      	}
-	      	
+
         }
     }
     public function TagsAdd(Request $request){
@@ -59,7 +59,7 @@ class ApiAdminTag extends AdminBase
 	        }else{
 	        	return  jsonError('标签格式错误');
 	        }
-	      	
+
         }
     }
     public function TagsDel(Request $request){
@@ -79,7 +79,7 @@ class ApiAdminTag extends AdminBase
 	        }else{
 	        	return  jsonError('参数错误');
 	        }
-	      	
+
         }
     }
     public function tagsSelect(Request $request){
@@ -101,10 +101,10 @@ class ApiAdminTag extends AdminBase
 				$order = 'desc';
 			}
 		    $tagsList = Tags::limit($limit)->page($page)->order($orderBy, $order)->select();
-		    return jsonSuccess('',['tagsList' => $tagsList,'total' => Tags::count(),'page' => $page]); 
+		    return jsonSuccess('',['tagsList' => $tagsList,'total' => Tags::count(),'page' => $page]);
         }
     }
-    
+
     public function tagsEdit(Request $request){
 		if (Request::instance()->isPost()) {
 			$TagId = input('post.id');
@@ -124,29 +124,29 @@ class ApiAdminTag extends AdminBase
 	        }
   		}
     }
-   
-    
+
+
     public function itemTagsSelectByItem(Request $request){
         if (Request::instance()->isPost()) {
-            
+
             $itemType = input('post.itemType');
             $itemId = input('post.itemId');
-            
+
             if(!$itemType){
                 return jsonError('缺少类型');
             }
             if(!$itemId){
                 return jsonError('缺少类型Id');
             }
-            
+
             $tagsList = ItemTags::where('item_type',$itemType)->where('item_id',$itemId)->select();
-            
+
             if ($tagsList) {
                 foreach ($tagsList as $k => $v){
                     $tagsList[$k]->tags;
                 }
             }
-            return jsonSuccess('',['tagsList' => $tagsList]); 
+            return jsonSuccess('',['tagsList' => $tagsList]);
         }
     }
 

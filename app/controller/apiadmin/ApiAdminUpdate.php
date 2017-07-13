@@ -1,7 +1,7 @@
 <?php
 //MIPCMS.Com [Don't forget the beginner's mind]
 //Copyright (c) 2017~2099 http://MIPCMS.Com All rights reserved.
-namespace app\controller\ApiAdmin;
+namespace app\controller\apiadmin;
 use think\Request;
 use app\model\Settings;
 use app\model\Articles\Articles;
@@ -11,15 +11,15 @@ use mip\AdminBase;
 class Update extends AdminBase
 {
     public function index(){
-         
+
     }
-   
+
     public function update(Request $request) {
         if (Request::instance()->isPost()) {
-           
+
             $versionMum = input('post.versionMum');
-            
-            
+
+
             $dbconfig['type'] = "mysql";
             $dbconfig['hostname'] = config('database')['hostname'];
             $dbconfig['username'] = config('database')['username'];
@@ -32,9 +32,9 @@ class Update extends AdminBase
             } catch (\PDOException $e) {
                 return jsonError('数据库连接失败');
             }
-                
+
             $sql = file_get_contents(ROOT_PATH . 'package' . DS . $versionMum . '.sql');
-            
+
             $tablepre = config('database')['prefix'];
             $sql = str_replace("\r", "\n", $sql);
             $sql = explode(";\n", $sql);
@@ -46,7 +46,7 @@ class Update extends AdminBase
                 preg_match('/CREATE TABLE `([^ ]*)`/', $item, $matches);
                 if($matches) {
                     if(false !== $db->exec($item)){
-                        
+
                     } else {
                        return jsonError('安装失败');
                     }
@@ -55,10 +55,10 @@ class Update extends AdminBase
                 }
             }
             return jsonSuccess('升级成功');
-            
+
         }
     }
-    
+
     public function oneToTwoUpData() {
         if (Request::instance()->isPost()) {
             $page = input('post.page');
@@ -79,7 +79,7 @@ class Update extends AdminBase
             }
             $itemCount = Db('Articles')->count();
             $articleList = db::name('Articles')->limit($limit)->page($page)->order($orderBy, $order)->select();
-            
+
             foreach ($articleList as $key => $val) {
                 $tempUUID = uuid();
                $upDataInfo =  db::name('Articles')->where('id',$val['id'])->update([
@@ -92,8 +92,8 @@ class Update extends AdminBase
                     ));
                }
             }
-            return jsonSuccess('',['articleList' => $articleList,'total' => $itemCount,'page' => $page]); 
-            
+            return jsonSuccess('',['articleList' => $articleList,'total' => $itemCount,'page' => $page]);
+
         }
     }
 }
