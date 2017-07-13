@@ -53,7 +53,7 @@ class Admin extends AdminBase
         $this->assign('yesterdayUserCount',db('Spiders')->where('add_time>'.strtotime(date('Y-m-'.(date('d')-1))).' AND add_time < ' . strtotime(date('Y-m-d')))->count());
         $this->assign('allUserCount',db('Spiders')->count());
         $request = Request::instance();
-        if (input('model')) {
+        if (input('model') != 'index.php') {
             return $this->fetch('/@admin/' . input('model'));
         } else {
             return $this->fetch('/@admin/index');
