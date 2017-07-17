@@ -1,0 +1,15 @@
+
+.simditor {
+
+  &.simditor-html {
+    .simditor-wrapper > textarea {
+      display: block !important;
+    }
+
+    .simditor-body,
+    .simditor-placeholder {
+      display: none;
+    }
+  }
+
+}

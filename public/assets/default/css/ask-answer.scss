@@ -1,0 +1,57 @@
+
+$main-color:#00aaee; 
+
+$border-color:#F2F5F8;
+.mip-answer{
+    
+      .answer-list{
+        padding-top: 10px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid $border-color;
+        overflow: visible;
+          position: relative;
+        .answer-user{
+          float: left;
+            padding-right: 10px;
+          display: table-cell;
+            vertical-align: top;
+            .avatar {
+              width: 45px;
+              height: 45px;
+              display: block;
+              position: relative;
+            }
+            img{
+              width: 32px;
+              border-radius: 50px;
+            }
+        }
+        .answer-content{
+          width: 900px;
+          padding-bottom: 10px;
+          display: table-cell;
+            vertical-align: top;
+            zoom: 1;
+          .answer-info{
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: #999;
+            a{
+              color: #999;
+              &:hover{
+                color: $main-color;
+              }
+            }
+          }
+          .content{
+          }
+        }
+        //sub answer 
+        .sub-list{
+          margin-left: 40px;
+          border-top: 1px solid $border-color!important;
+          border-bottom: 0!important;
+        }
+     
+  } 
+}

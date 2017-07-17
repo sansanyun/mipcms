@@ -1,0 +1,28 @@
+.el-dropdown {
+    cursor: pointer;
+}
+
+.members-header-dropdown {
+        height: 60px;
+        line-height: 60px;
+        float: right;
+        overflow: hidden;
+    .el-dropdown-link {
+        display: block;
+        .avatar-img {
+            width: 32px;
+            border-radius: 50%;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+    }
+}
+.members-dropdown {
+    .el-dropdown-menu__item {
+        padding: 0;
+        a {
+            padding: 0 10px;
+            display: block;
+        }
+    }
+}
