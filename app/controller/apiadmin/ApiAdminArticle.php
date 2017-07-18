@@ -34,8 +34,9 @@ class ApiAdminArticle extends AdminBase
             if (!$is_recommend) {
                 $is_recommend = 0;
             }
-
-            $tags = explode(',',$tags);
+            if ($tags) {
+                $tags = explode(',',$tags);
+            }
 	      	if (!$title) {
 	      	  return jsonError('请输入标题');
 	      	}
@@ -235,7 +236,9 @@ class ApiAdminArticle extends AdminBase
             if (!$is_recommend) {
                 $is_recommend = 0;
             }
-            $tags = explode(',',$tags);
+            if ($tags) {
+                $tags = explode(',',$tags);
+            }
             if (!$title) {
               return jsonError('请输入标题');
             }

@@ -49,13 +49,13 @@ class Index extends Mip
                 $currentCid = 0;
                 $page = 1;
 
-                $categoryList = ArticlesCategory::where('pid',0)->order('sort desc')->select();
-                if ($categoryList) {
-                    foreach ($categoryList as $key => $val) {
-                        $val['articles'] = $itemList = model('app\model\Articles\Articles')->getItemList($val['id'], $page, 10, 'publish_time', 'desc');
+//              $categoryList = ArticlesCategory::where('pid',0)->order('sort desc')->select();
+                if ($this->itemCategoryList) {
+                    foreach ($this->itemCategoryList as $key => $val) {
+                        $this->itemCategoryList[$key]['articles'] = $itemList = model('app\model\Articles\Articles')->getItemList($val['id'], $page, 10, 'publish_time', 'desc');
                     }
                 }
-                $this->assign('categoryList',$categoryList);
+                $this->assign('categoryList',$this->itemCategoryList);
 
                 $itemList = model('app\model\Articles\Articles')->getItemList($currentCid, $page, 10, 'publish_time', 'desc');
                 $this->assign('articleList',$itemList);

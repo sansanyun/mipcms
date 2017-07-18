@@ -21,7 +21,7 @@ class Article extends Mip
     public function start()
     {
         if (!$this->mipInfo['articleStatus']) {
-            $this->error('文章模块未开通','/');
+            $this->error('文章模块未开通','');
         }
     }
 
@@ -33,7 +33,7 @@ class Article extends Mip
         if ($category) {
             $categoryInfo = ArticlesCategory::where('pid',0)->where('url_name',$category)->find();
             if (!$categoryInfo) {
-                $this->error('分类不存在','/');
+                $this->error('分类不存在','');
             }
             $categoryUrlName = $categoryInfo['url_name'];
             $currentCid = $categoryInfo['id'];
@@ -64,11 +64,11 @@ class Article extends Mip
             if ($sub) {
                 $subInfo = ArticlesCategory::where('url_name',$sub)->find();
                 if (!$subInfo) {
-                    $this->error('分类不存在','/');
+                    $this->error('分类不存在','');
                 }
                 $tempCategory = ArticlesCategory::where('id',$subInfo['pid'])->find();
                 if ($tempCategory['url_name'] != $categoryInfo['url_name']) {
-                    $this->error('分类不存在','/');
+                    $this->error('分类不存在','');
                 }
                 $currentCid = $subInfo['id'];
                 $count = Articles::where('cid',$currentCid)->count('id');
@@ -154,7 +154,7 @@ class Article extends Mip
             }
         }
         if (!$itemInfo) {
-            return $this->error($this->articleModelName.'不存在','/');
+            return $this->error($this->articleModelName.'不存在','');
         }
         $itemInfo['categoryInfo'] = ArticlesCategory::get($itemInfo['cid']);
         //当前所属分类别名
