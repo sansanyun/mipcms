@@ -670,6 +670,7 @@
                             type: 'success',
                             message: res.msg
                         });
+                        _this.publish.editor.setValue('');
                         _this.getPageList();
                         _this.tabsValue = "list";
                         _this.isShowTab = false;
@@ -703,6 +704,7 @@
                                 message: res.msg
                             });
                         }
+                        _this.publish.editor.setValue('');
                         _this.getPageList();
                         _this.tabsValue = "list";
                         _this.isShowTab = false;

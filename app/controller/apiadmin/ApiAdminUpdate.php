@@ -82,10 +82,12 @@ class ApiAdminUpdate extends AdminBase
 
             foreach ($TagsList as $key => $val) {
                $articleInfo = db::name('Articles')->where('id',intval($val['item_id']))->find();
-               $upDataInfo =  db::name('ItemTags')->where('id',$val['id'])->update([
-                'item_id' => $articleInfo['uuid'],
-                'tags_id' => intval($val['tags_id'])
-               ]);
+                if ($articleInfo) {
+                   $upDataInfo =  db::name('ItemTags')->where('id',$val['id'])->update([
+                    'item_id' => $articleInfo['uuid'],
+                    'tags_id' => intval($val['tags_id'])
+                   ]);
+                }
             }
             return jsonSuccess('',['articleList' => $TagsList,'total' => $itemCount,'page' => $page]);
 

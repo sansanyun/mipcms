@@ -203,18 +203,42 @@ class ApiAdminArticle extends AdminBase
 				$order = 'desc';
 			}
             if ($keywords) {
-
-                $sq = "%".$keywords."%";
-                $where['title']  = ['like',$sq];
-                $articleList = model('app\model\Articles\Articles')->getItemList($cid, $page, $limit, $orderBy, $order, $where);
-                $itemCount = Articles::where($where)->count();
+                if(empty($cid)) {
+                    $sq = "%".$keywords."%";
+                    $where['title']  = ['like',$sq];
+                    $articleList = model('app\model\Articles\Articles')->getItemList(0, $page, $limit, $orderBy, $order, $where);
+                    $itemCount = Articles::where($where)->count();
+                } else {
+                    $sq = "%".$keywords."%";
+                    $where['title']  = ['like',$sq];
+                    $articleList = model('app\model\Articles\Articles')->getItemList($cid, $page, $limit, $orderBy, $order, $where);
+                    $tempCategory = ArticlesCategory::where('pid',$cid)->select();
+                    $tempCategoryIds = array();
+                    if ($tempCategory) {
+                        foreach ($tempCategory as $key => $value) {
+                            $tempCategoryIds[] = $value['id'];
+                        }
+                        $itemCount = Articles::where('cid','in',$tempCategoryIds)->where($where)->count('id');
+                    } else {
+                        $itemCount = Articles::where('cid',$cid)->where($where)->count('id');
+                    }
+                }
             } else {
                 if(empty($cid)) {
                      $articleList = model('app\model\Articles\Articles')->getItemList(0, $page, $limit, $orderBy, $order);
                     $itemCount = Articles::count();
                 } else {
                     $articleList = model('app\model\Articles\Articles')->getItemList($cid, $page, $limit, $orderBy, $order);
-                    $itemCount = Articles::where($where)->count();
+                    $tempCategory = ArticlesCategory::where('pid',$cid)->select();
+                    $tempCategoryIds = array();
+                    if ($tempCategory) {
+                        foreach ($tempCategory as $key => $value) {
+                            $tempCategoryIds[] = $value['id'];
+                        }
+                        $itemCount = Articles::where('cid','in',$tempCategoryIds)->count('id');
+                    } else {
+                        $itemCount = Articles::where('cid',$cid)->count('id');
+                    }
                 }
             }
 
