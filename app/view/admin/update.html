@@ -55,7 +55,11 @@
                 </el-form>
 
                 <div class="text-center">
-                    <el-button type="primary" @click='startUpgrade(value)' :disabled="parseInt(this.localCurrentVersionNum) == parseInt(this.onlineCurrentVersionNum)">开始升级</el-button>
+                    <el-button type="primary" @click='startUpgrade(value)' :disabled="parseInt(this.localCurrentVersionNum) == parseInt(this.onlineCurrentVersionNum)">步骤1：点击升级数据库</el-button>
+                </div>
+                <el-progress :text-inside="true" :stroke-width="18" :percentage="dataProgress" style="margin-top: 20px;"></el-progress>
+                <div class="text-center" v-if="onlineCurrentVersionNum == '210'" style="margin-top: 20px;">
+                    <el-button type="primary" @click='upDataTwo()'>步骤2：v2.0.0 - v2.1.0版本 标签升级</el-button>
                 </div>
           </div>
         </section>
@@ -174,7 +178,33 @@
                     }
                 });
             },
-
+            upDataTwo:function() {
+                this.$mip.ajax('/ApiAdmin/Api_admin_update/oneToTwoUpData',{
+                    page:parseInt(this.currentPageNum)+1,
+                }).then(function (res) {
+                    if(res.code == 1) {
+                        _this.currentPageNum = res.data.page;
+                        _this.articlesCount = res.data.total;
+                        _this.dataProgress = parseInt(_this.currentPageNum/(res.data.total/10)*100);
+                        if(_this.currentPageNum <= res.data.total/10){
+                            _this.upDataTwo();
+                        } else {
+                          _this.$message({
+                            type: 'success',
+                            message: '全部处理完成'
+                          });
+                          _this.dataProgress = 100;
+                          _this.startText = '处理完毕';
+                        }
+                    } else {
+                      _this.$message({
+                        type: 'error',
+                        message: res.msg
+                      });
+                      return false;
+                    }
+                });
+            },
         },
 
     })

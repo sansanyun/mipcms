@@ -691,10 +691,18 @@
                    publish_time: timestamp?timestamp:'',
                 }).then(function (res) {
                     if (res.code == 1) {
-                        Vue.prototype.$message({
-                            type: 'success',
-                            message: res.msg
-                        });
+                        if (res.data) {
+                            var resMIp = JSON.parse(res.data);
+                            Vue.prototype.$message({
+                              type: 'success',
+                              message: '推送成功：'+ resMIp.success + '条，当天剩余条数：' + resMIp.remain
+                            });
+                        } else {
+                            Vue.prototype.$message({
+                                type: 'success',
+                                message: res.msg
+                            });
+                        }
                         _this.getPageList();
                         _this.tabsValue = "list";
                         _this.isShowTab = false;

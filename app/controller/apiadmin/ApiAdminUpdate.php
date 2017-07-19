@@ -8,7 +8,7 @@ use app\model\Articles\Articles;
 use think\Db;
 
 use mip\AdminBase;
-class Update extends AdminBase
+class ApiAdminUpdate extends AdminBase
 {
     public function index(){
 
@@ -77,22 +77,17 @@ class Update extends AdminBase
             if(!$order){
                 $order = 'desc';
             }
-            $itemCount = Db('Articles')->count();
-            $articleList = db::name('Articles')->limit($limit)->page($page)->order($orderBy, $order)->select();
+            $itemCount = Db('ItemTags')->count();
+            $TagsList = db::name('ItemTags')->limit($limit)->page($page)->order($orderBy, $order)->select();
 
-            foreach ($articleList as $key => $val) {
-                $tempUUID = uuid();
-               $upDataInfo =  db::name('Articles')->where('id',$val['id'])->update([
-                'content_id' => $tempUUID,
+            foreach ($TagsList as $key => $val) {
+               $articleInfo = db::name('Articles')->where('id',intval($val['item_id']))->find();
+               $upDataInfo =  db::name('ItemTags')->where('id',$val['id'])->update([
+                'item_id' => $articleInfo['uuid'],
+                'tags_id' => intval($val['tags_id'])
                ]);
-               if ($upDataInfo) {
-                    db::name('ArticlesContent')->insert(array(
-                       'id' => $tempUUID,
-                       'content' => $val['content'],
-                    ));
-               }
             }
-            return jsonSuccess('',['articleList' => $articleList,'total' => $itemCount,'page' => $page]);
+            return jsonSuccess('',['articleList' => $TagsList,'total' => $itemCount,'page' => $page]);
 
         }
     }

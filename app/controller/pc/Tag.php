@@ -50,7 +50,7 @@ class Tag extends Mip {
         $this->assign('mipDescription',$tagInfo['description']);
 
         $itemTagsList = ItemTags::where('tags_id',$tagInfo['id'])->order('item_add_time desc')->where('item_type','article')->page($page,10)->select();
-
+        $count = 0;
         if ($itemTagsList) {
             foreach ($itemTagsList as $k => $v) {
                 $itemTagsListIds[] = $v['item_id'];

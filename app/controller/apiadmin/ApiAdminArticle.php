@@ -90,10 +90,10 @@ class ApiAdminArticle extends AdminBase
                     ]);
 
                     if ($this->mipInfo['mipPostStatus']) {
-                        $urls = $itemInfo->domainMipUrl($createInfo);
+                        $urls = $createInfo->domainMipUrl($createInfo);
                         $urls = explode(',',$urls);
                         if (is_array($urls)) {
-                            $api = $mipApiAddress;
+                            $api = $this->mipInfo['mipApiAddress'];
                             $ch = curl_init();
                             $options =  array(
                                 CURLOPT_URL => $api,
@@ -104,7 +104,7 @@ class ApiAdminArticle extends AdminBase
                             );
                             curl_setopt_array($ch, $options);
                             $result = curl_exec($ch);
-                            return jsonSuccess($result);
+                            return jsonSuccess('发布成功',$result);
                         } else {
                             return jsonError('数据格式错误');
                         }

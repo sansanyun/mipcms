@@ -79,7 +79,7 @@ class Mip extends Controller
                 }
             }
         }
-        $this->siteUrl = $this->mipInfo['httpType'].$this->domain.$request->url();
+        $this->siteUrl = $this->domain.$request->url();
         $this->assign('siteUrl',$this->siteUrl);
         $this->pcSiteUrl = $this->mipInfo['httpType'].$this->mipInfo['domain'].$request->url();
         $this->assign('pcSiteUrl',$this->pcSiteUrl);
@@ -320,15 +320,15 @@ class Mip extends Controller
             if (strpos($userAgent,"Baiduspider")) {
                 if (strpos($userAgent,"Mobile")) {
                     if (strpos($userAgent,"render")) {
-                        db('spiders')->insert(array('uuid' => uuid(),'add_time' => time(),'type' => 'mobileRender','pageUrl' => $this->siteUrl, 'ua' => $userAgent, 'vendor' => 'baidu'));
+                        db('spiders')->insert(array('uuid' => uuid(),'add_time' => time(),'type' => 'mobileRender','pageUrl' => $this->siteUrl, 'ua' => request()->ip(), 'vendor' => 'baidu'));
                     } else {
-                        db('spiders')->insert(array('uuid' => uuid(),'add_time' => time(),'type' => 'mobile','pageUrl' => $this->siteUrl, 'ua' => $userAgent, 'vendor' => 'baidu'));
+                        db('spiders')->insert(array('uuid' => uuid(),'add_time' => time(),'type' => 'mobile','pageUrl' => $this->siteUrl, 'ua' => request()->ip(), 'vendor' => 'baidu'));
                     }
                 } else {
                     if (strpos($userAgent,"render")) {
-                        db('spiders')->insert(array('uuid' => uuid(),'add_time' => time(),'type' => 'pcRender','pageUrl' => $this->siteUrl, 'ua' => $userAgent, 'vendor' => 'baidu'));
+                        db('spiders')->insert(array('uuid' => uuid(),'add_time' => time(),'type' => 'pcRender','pageUrl' => $this->siteUrl, 'ua' => request()->ip(), 'vendor' => 'baidu'));
                     } else {
-                        db('spiders')->insert(array('uuid' => uuid(),'add_time' => time(),'type' => 'pc','pageUrl' => $this->siteUrl, 'ua' => $userAgent, 'vendor' => 'baidu'));
+                        db('spiders')->insert(array('uuid' => uuid(),'add_time' => time(),'type' => 'pc','pageUrl' => $this->siteUrl, 'ua' => request()->ip(), 'vendor' => 'baidu'));
                     }
                 }
             }
