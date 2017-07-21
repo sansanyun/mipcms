@@ -129,8 +129,8 @@ class ApiAdminArticle extends AdminBase
 	      	}
             $articleInfo = Articles::where('id',$id)->find();
 	   		if($articleInfo) {
-	   		    $articlesContentInfo = ArticlesContent::where('id',$articleInfo['content_id'])->find();
-                $articlesContentInfo->delete();
+	   		    ArticlesContent::where('id',$articleInfo['content_id'])->delete();;
+                ItemTags::where('item_id',$articleInfo['uuid'])->delete();
                 $articleInfo->delete();
                 return jsonSuccess('删除成功');
             	} else {

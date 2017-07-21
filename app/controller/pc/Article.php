@@ -49,10 +49,12 @@ class Article extends Mip
                 if ($this->mipInfo['aritcleLevelRemove']) {
                     $tempCategory = ArticlesCategory::where('pid',$categoryInfo['id'])->select();
                     $tempCategoryIds = array();
-                    foreach ($tempCategory as $key => $value) {
-                        $tempCategoryIds[] = $value['id'];
+                    if ($tempCategory) {
+                        foreach ($tempCategory as $key => $value) {
+                            $tempCategoryIds[] = $value['id'];
+                        }
+                        $count = Articles::where('cid','in',$tempCategoryIds)->count('id');
                     }
-                    $count = Articles::where('cid','in',$tempCategoryIds)->count('id');
                     $this->assign('crumbCategoryName',$categoryInfo['name']);
                     $this->assign('crumbCategoryUrl',$this->articleDomain . '/' . $categoryInfo['url_name'] . '/');
                 } else {

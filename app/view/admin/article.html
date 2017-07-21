@@ -614,14 +614,13 @@
                 }
             });
         },
-        getItemTags: function() {
+        getItemTags: function(itemId) {
             this.$mip.ajax('/ApiAdmin/Api_admin_tag/itemTagsSelectByItem', {
                 'itemType':'article',
-                'itemId': this.publish.id,
+                'itemId': itemId,
             }).then(function (res) {
                 if (res.code == 1) {
                     var tagsList = res.data.tagsList;
-                    console.log(tagsList);
                     if (tagsList.length > 0) {
                         for (var i = 0; i < tagsList.length; i++) {
                             tagsList[i].name = tagsList[i].tags.name;
@@ -1044,12 +1043,8 @@
             }
             this.publish.is_recommend = row.is_recommend == 0 ? false : true;
             this.publish.tags = [];
-            var tempTagsIds = row.tagsIds;
-            for (var i = 0; i < tempTagsIds.length; i++) {
-            	this.publish.tags.push(tempTagsIds[i].name);
-            }
             this.publish.publish_time = row.publish_time?new Date(parseInt(row.publish_time) * 1000):'';
-            this.getItemTags();
+            this.getItemTags(row.uuid);
             this.getCategoryList();
             var _this = this;
             setTimeout(function() {

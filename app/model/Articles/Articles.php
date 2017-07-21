@@ -39,17 +39,17 @@ class Articles extends ModelBase
                 $itemList[$k] = $this->filter($v);
                 $itemList[$k]['users'] = Users::where('uid',$v['uid'])->find();
                 $itemList[$k]['articlesCategory'] = articlesCategory::where('id',$v['cid'])->find();
-                $tempItemTags = ItemTags::where('item_id',$v['uuid'])->select();
-                $itemList[$k]['tagsIds'] = array();
-                $tempTagsIds = array();
-                if ($tempItemTags) {
-                    foreach ($tempItemTags as $key => $value) {
-                        $tempTagsIds[] = $value['tags_id'];
-                    }
-                    if ($tempTagsIds) {
-                        $itemList[$k]['tagsIds'] = Tags::where('id','in',$tempTagsIds)->select();
-                    }
-                }
+//              $tempItemTags = ItemTags::where('item_id',$v['uuid'])->select();
+//              $itemList[$k]['tagsIds'] = array();
+//              $tempTagsIds = array();
+//              if ($tempItemTags) {
+//                  foreach ($tempItemTags as $key => $value) {
+//                      $tempTagsIds[] = $value['tags_id'];
+//                  }
+//                  if ($tempTagsIds) {
+//                      $itemList[$k]['tagsIds'] = Tags::where('id','in',$tempTagsIds)->select();
+//                  }
+//              }
             }
         } else {
             $itemList = null;
@@ -101,7 +101,7 @@ class Articles extends ModelBase
             '((\/\?)|'.
             '(\/[0-9a-zA-Z_!~\*\'\(\)\.;\?:@&=\+\$,%#-\/]*)?)$/';
         $item['content'] = htmlspecialchars_decode($this->getContentByArticleId($item['id'],$item['content_id'])['content']);
-        if (preg_match_all('/<[img|IMG].*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>/', $item['content'], $imgs)) {
+        if (preg_match_all('/<img.*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>/', $item['content'], $imgs)) {
             $item['imgCount'] = count($imgs[1]);
             foreach ($imgs[1] as $key => $value) {
                if (@preg_match($patern,$value)) {
@@ -274,32 +274,40 @@ class Articles extends ModelBase
                     if (!$aboutLoveListTwo) {
                         $aboutLoveListTwo = array();
                     }
-                    $aboutLoveList = array_merge($aboutLoveList,$aboutLoveListTwo);
-                    $aboutLoveListTwoCount = count($aboutLoveListTwo);
-                    if ($aboutLoveListTwoCount < $aboutLoveListNum) {
-                        if ($tagNameThree) {
-                            $aboutLoveListNum = $aboutLoveListNum - $aboutLoveListTwoCount;
-                            $sqThree = "%".$tagNameThree."%";
-                            $tagWhere['title']  = ['like',$sqThree];
-                            $tagWhere['uuid']  = ['<>',$currentUuid];
-                            $aboutLoveListThree = $this->getItemList(0, 1, $aboutLoveListNum, 'publish_time', 'desc', $tagWhere);
-                            if (!$aboutLoveListThree) {
-                                $aboutLoveListThree = array();
-                            }
-                            $aboutLoveList = array_merge($aboutLoveList,$aboutLoveListThree);
-                            $aboutLoveListThreeCount = count($aboutLoveListThree);
-                            if ($aboutLoveListThreeCount < $aboutLoveListNum) {
-                                if ($tagNameFour) {
-                                    $aboutLoveListNum = $aboutLoveListNum - $aboutLoveListThreeCount;
-                                    $sqFour = "%".$tagNameFour."%";
-                                    $tagWhere['title']  = ['like',$sqFour];
-                                    $tagWhere['uuid']  = ['<>',$currentUuid];
-                                    $aboutLoveListFour = $this->getItemList(0, 1, $aboutLoveListNum, 'publish_time', 'desc', $tagWhere);
-                                    $aboutLoveList = array_merge($aboutLoveList,$aboutLoveListFour);
+                    if (is_array($aboutLoveList) && is_array($aboutLoveListTwo)) {
+                        $aboutLoveList = array_merge($aboutLoveList,$aboutLoveListTwo);
+                        $aboutLoveListTwoCount = count($aboutLoveListTwo);
+                        if ($aboutLoveListTwoCount < $aboutLoveListNum) {
+                            if ($tagNameThree) {
+                                $aboutLoveListNum = $aboutLoveListNum - $aboutLoveListTwoCount;
+                                $sqThree = "%".$tagNameThree."%";
+                                $tagWhere['title']  = ['like',$sqThree];
+                                $tagWhere['uuid']  = ['<>',$currentUuid];
+                                $aboutLoveListThree = $this->getItemList(0, 1, $aboutLoveListNum, 'publish_time', 'desc', $tagWhere);
+                                if (!$aboutLoveListThree) {
+                                    $aboutLoveListThree = array();
                                 }
+                                if (is_array($aboutLoveList) && is_array($aboutLoveListThree)) {
+                                    $aboutLoveList = array_merge($aboutLoveList,$aboutLoveListThree);
+                                    $aboutLoveListThreeCount = count($aboutLoveListThree);
+                                    if ($aboutLoveListThreeCount < $aboutLoveListNum) {
+                                        if ($tagNameFour) {
+                                            $aboutLoveListNum = $aboutLoveListNum - $aboutLoveListThreeCount;
+                                            $sqFour = "%".$tagNameFour."%";
+                                            $tagWhere['title']  = ['like',$sqFour];
+                                            $tagWhere['uuid']  = ['<>',$currentUuid];
+                                            $aboutLoveListFour = $this->getItemList(0, 1, $aboutLoveListNum, 'publish_time', 'desc', $tagWhere);
+                                            if (is_array($aboutLoveList) && is_array($aboutLoveListFour)) {
+                                                $aboutLoveList = array_merge($aboutLoveList,$aboutLoveListFour);
+                                            }
+                                        }
+                                    }
+                                }
+
                             }
                         }
                     }
+
                 }
             }
         } else {
