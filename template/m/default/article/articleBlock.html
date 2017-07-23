@@ -1,0 +1,18 @@
+<li class="news-list xbx">
+    {if condition="$v['firstImg']"}
+    <div class="news-list-img">
+        <a data-type="mip" href="{$v.mipUrl}" data-title="{$v.title}">
+            <mip-img
+                layout="full"
+                class="img"
+                alt="{$v.title}"
+                src="{$v.firstImg}">
+            </mip-img>
+        </a>
+    </div>
+{/if}
+    <div class="news-list-content  {if condition='$v["firstImg"]'}hasImg{/if}">
+        <h4 class="title"><a data-type="mip" href="{$v.mipUrl}" data-title="{$v.title}">{$v.title}</a></h4>
+        <p>{$v['publish_time']|date='m-d',###}</p>
+    </div>
+</li>
