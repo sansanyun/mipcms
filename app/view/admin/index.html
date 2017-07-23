@@ -1,0 +1,277 @@
+{extend name="view/admin@main"/}
+{block name="title"}控制台 - {__block__}{/block}
+
+{block name="style"}
+{__block__}
+<style>
+.user-statistical .mip-box-body {
+    padding-top: 0;
+    padding-bottom: 0
+}
+
+.user-statistical .mip-iconfont {
+    font-size: 35px;
+    position: absolute;
+    right: 0;
+    bottom: 0px;
+    color: #0AE;
+    opacity: 0.2;
+}
+
+.user-statistical h3 {
+    margin-top: 10px;
+    color: #0AE;
+    margin-bottom: 10px;
+}
+
+.user-statistical h3 .unit {
+    display: none;
+    color: #999;
+    font-size: 12px;
+}
+
+.user-statistical p {
+    color: #bababa;
+    font-size: 14px;
+}
+.line {
+	line-height: 30px;
+}
+</style>
+{/block}
+{block name="main"}
+
+        <div class="row user-statistical">
+            <section class="col-md-3">
+              <div class="mip-box">
+                <div class="mip-box-body">
+                  <div class="relative">
+                    <i class="mip-iconfont mip-tianjiayonghu"></i>
+                    <h3>{$todayUserCount} <span class="unit">人</span></h3>
+                    <p>今日新增</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section class="col-md-3">
+              <div class="mip-box">
+                <div class="mip-box-body">
+                  <div class="relative">
+                    <i class="mip-iconfont mip-yonghu"></i>
+                    <h3>{$yesterdayUserCount}  <span class="unit">人</span></h3>
+                    <p>昨日蜘蛛</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section class="col-md-3">
+              <div class="mip-box">
+                <div class="mip-box-body">
+                  <div class="relative">
+                    <i class="mip-iconfont mip-zaixianyonghu"></i>
+                    <h3>- <span class="unit">人</span></h3>
+                    <p>在线蜘蛛</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section class="col-md-3">
+              <div class="mip-box">
+                <div class="mip-box-body">
+                  <div class="relative">
+                    <i class="mip-iconfont mip-duoyonghu"></i>
+                    <h3>{$allUserCount}  <span class="unit">人</span></h3>
+                    <p>蜘蛛总数</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+
+
+        <div class="row">
+        <section class="col-lg-8">
+           <div class="mip-box">
+            <div class="mip-box-heading"><h3 class="left">蜘蛛抓取分析（百度）</h3></div>
+                <div class="mip-box-body">
+                     <div id="main" v-loading="loading" style="height:400px;"></div>
+
+                </div>
+            </div>
+        </section>
+     	<section class="col-lg-4">
+     		<div class="mip-box">
+     			<div class="mip-box-heading"><h3 class="left">官网公告</h3></div>
+     			<div class="mip-box-body">
+     				<ul class="list-unstyled">
+	     				<li class="list-time line" v-for="item in gonggaoList" ><a :href="item.url" target="_blank" v-html='item.title'></a></li>
+	     			</ul>
+     			</div>
+     		</div>
+     		<div class="mip-box">
+     			<div class="mip-box-heading"><h3 class="left">功能介绍</h3></div>
+     			<div class="mip-box-body">
+     				<ul class="list-unstyled">
+	     				<li class="list-time line" v-for="item in functionList" ><a :href="item.url" target="_blank" v-html='item.title'></a></li>
+	     			</ul>
+     			</div>
+     		</div>
+     	</section>
+      </div>
+
+{/block}
+{block name="javascript"}
+{__block__}
+<script src="/{$assets}/plugin/echarts/echarts.min.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data:{
+            usersList: [],
+            gonggaoList:[],
+            functionList: [],
+
+            spidersList: [],
+            currentPage: 1,
+            limit:10,
+            loading: false,
+            total: '',
+            spiderEchart: '',
+            spidersTodayList: {'pc':[],'pcRender':[],'mobile':[],'mobileRender':[]},
+        },
+        mounted: function() {
+            this.getPageList();
+            this.getGonggaoList();
+            this.getFunctionList();
+            this.getSpidersTodayList('pc');
+            this.getSpidersTodayList('pcRender');
+            this.getSpidersTodayList('mobile');
+            this.getSpidersTodayList('mobileRender');
+            _this = this;
+        },
+        methods:{
+            getPageList:function() {
+                this.$mip.ajax('/ApiAdmin/Api_Admin_spider/spidersSelect',{
+                    page:this.currentPage,
+                    limit:this.limit,
+                }).then(function (res) {
+                    if (res.code == 1) {
+                        _this.spidersList = res.data.spidersList;
+                        _this.total = res.data.total;
+                    } else {
+                        Vue.prototype.$message({
+                            type: 'error',
+                            message: res.msg
+                        });
+                    }
+                });
+            },
+
+            getSpidersTodayList:function(type) {
+                this.loading = true;
+                this.$mip.ajax('/ApiAdmin/Api_Admin_spider/spidersToday',{
+                    type:type,
+                }).then(function (res) {
+                    if (res.code == 1) {
+                        var tempData = res.data.spidersTodayList;
+                        _this.spidersTodayList[type] = tempData;
+                        _this.spidersTodayList[type].unshift(0);
+                        _this.getSpiderEchart();
+                    } else {
+                        Vue.prototype.$message({
+                            type: 'error',
+                            message: res.msg
+                        });
+                    }
+                    _this.loading = false;
+                });
+            },
+
+
+            getSpiderEchart: function(){
+                 this.spiderEchart = echarts.init(document.getElementById('main'));
+                 option = {
+                    title: {
+                        text: '今日蜘蛛抓取分析'
+                    },
+                    tooltip: {
+                        trigger: 'axis'
+                    },
+                    legend: {
+                        data:['PC端蜘蛛','PC端渲染蜘蛛','移动端蜘蛛','移动端渲染蜘蛛']
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    toolbox: {
+                        feature: {
+                            saveAsImage: {}
+                        }
+                    },
+                    xAxis: {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: ['00','01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24']
+                    },
+                    yAxis: {
+                        type: 'value'
+                    },
+                    series: [
+                        {
+                            name:'PC端蜘蛛',
+                            type:'line',
+                            stack: '页面数',
+                            data:this.spidersTodayList.pc,
+                            smooth: true,
+                        },
+                        {
+                            name:'PC端渲染蜘蛛',
+                            type:'line',
+                            stack: '页面数',
+                            data:this.spidersTodayList.pcRender,
+                            smooth: true,
+                        },
+                        {
+                            name:'移动端蜘蛛',
+                            type:'line',
+                            stack: '页面数',
+                            data:this.spidersTodayList.mobile,
+                            smooth: true,
+                        },
+                        {
+                            name:'移动端渲染蜘蛛',
+                            type:'line',
+                            stack: '页面数',
+                            data:this.spidersTodayList.mobileRender,
+                            smooth: true,
+                        }
+                    ]
+                };
+
+                this.spiderEchart.setOption(option);
+            },
+            getGonggaoList:function() {
+                this.$mip.ajax('http://www.mipcms.cn/api/open/gonggaoList',{
+                },'global').then(function (res) {
+                    if (res.code == 1) {
+                        _this.gonggaoList = res.data.gonggaoList;
+                    }
+                });
+            },
+
+            getFunctionList:function() {
+                this.$mip.ajax('http://www.mipcms.cn/api/open/functionList',{
+                },'global').then(function (res) {
+                    if (res.code == 1) {
+                        _this.functionList = res.data.functionList;
+                    }
+                });
+            },
+
+        },
+    })
+</script>
+{/block}

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+      <title>欢迎使用MIPCMS内容管理系统</title>
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-default/index.css">
+  <style type="text/css">
+    body {
+        padding: 0;
+        margin: 0;
+    }
+    .el-icon-circle-check {
+        color: #13CE66;
+    }
+    .el-icon-circle-error {
+        color: #FF4949;
+    }
+  </style>
+</head>
+<body>
+  <div id="install">
+    <el-row :gutter="24" style="margin: 0;">
+      <el-col :span="6">&nbsp;</el-col>
+      <el-col :span="12">
+          <h2 style="text-align: center;">欢迎使用MIPCMS内容管理系统</h2>
+          <p style="text-align: center;">交流QQ群576199348</p>
+
+          <el-form ref="form" :rules="rules" :model="form" label-width="120px">
+
+              <div style="background-color: #EFEFEF;padding-top: 10px;padding-bottom: 10px;border-radius: 5px;">
+                  <h3 style="text-align: center;">环境检测</h3>
+                    <el-col :span="12"><el-form-item label="当前PHP版本"><span>{$data['phpversion']}</span>（要求>= 5.4）</el-form-item></el-col>
+                    <el-col :span="12"><el-form-item label="当前环境系统"><span>{$data['os']}</span></el-form-item></el-col>
+                    <el-col :span="12"><el-form-item label="pdo"><span>{$data['pdo']}</span></el-form-item></el-col>
+                    <el-col :span="12"><el-form-item label="pdo_mysql"><span>{$data['pdo_mysql']}</span></el-form-item></el-col>
+                    <el-col :span="12"><el-form-item label="curl"><span>{$data['curl']}</span></el-form-item></el-col>
+                    <el-col :span="12"><el-form-item label="allow_url_fopen"><span>{$data['allow_url_fopen']}</span></el-form-item></el-col>
+                    <el-col :span="12"><el-form-item label="file_get_contents"><span>{$data['file_get_contents']}</span></el-form-item></el-col>
+
+                    <el-col :span="12"><el-form-item label="cache"><span>{$data['checklist']['cache']['w'] ? '<i class="el-icon-circle-check"></i> 可写 ' : '<i class="el-icon-circle-close"></i> 不可写'}</span></el-form-item></el-col>
+                    <el-col :span="12"><el-form-item label="public/install"><span>{$data['checklist']['install']['w'] ? '<i class="el-icon-circle-check"></i> 可写 ' : '<i class="el-icon-circle-close"></i> 不可写'}</span></el-form-item></el-col>
+                    <el-col :span="12"><el-form-item label="system/config"><span>{$data['checklist']['config']['w'] ? '<i class="el-icon-circle-check"></i> 可写' : '<i class="el-icon-circle-close"></i> 不可写'}</span></el-form-item></el-col>
+                  <p style="text-align: center;">系统后台地址：http://www.xxx.com/index.php/admin <br>  管理员账号密码：admin admin</p>
+              </div>
+
+             <div style="background: #EFEFEF;margin-top: 10px;padding: 10px;border-radius: 5px;">
+                <h3 style="text-align: center;">系统安装</h3>
+                 <el-form-item label="数据库地址" prop="dbhost">
+                    <el-input v-model="form.dbhost"></el-input>
+                  </el-form-item>
+                  <el-form-item label="数据库端口" prop="dbport">
+                    <el-input v-model="form.dbport"></el-input>
+                  </el-form-item>
+                  <el-form-item label="数据库用户名" prop="dbuser">
+                    <el-input v-model="form.dbuser"></el-input>
+                  </el-form-item>
+                  <el-form-item label="数据库密码">
+                    <el-input type="password" v-model="form.dbpw"></el-input>
+                  </el-form-item>
+                  <el-form-item label="数据库名称" prop="dbname">
+                    <el-input v-model="form.dbname"></el-input>
+                  </el-form-item>
+                  <el-form-item label="数据表前缀" prop="dbprefix">
+                    <el-input v-model="form.dbprefix"></el-input>
+                  </el-form-item>
+             </div>
+                      <div style="text-align: center;padding: 10px;">
+                        <el-button type="primary" @click="submitForm('form')">立即安装</el-button>
+                      </div>
+            </el-form>
+      </el-col>
+    </el-row>
+
+  </div>
+</body>
+<script type="text/javascript">
+    var mipGlobal = {
+        domain: '',
+        rewrite: '/index.php?s=',
+    }
+</script>
+<script src="/assets/common/js/common.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+	    new Vue({
+      el: "#install",
+      data: function(){
+        return {
+             form: {
+                  dbhost: "127.0.0.1",
+                  dbport: "3306",
+                  dbuser: "root",
+                  dbpw: "",
+                  dbname: "",
+                  dbprefix: "mip_",
+                },
+            rules: {
+                dbhost: [
+                    { required: true, message: "必填项", trigger: "blur" },
+                ],
+                dbport: [
+                    { required: true, message: "必填项", trigger: "blur" },
+                ],
+                dbuser: [
+                    { required: true, message: "必填项", trigger: "blur" },
+                ],
+                dbpw: [
+                    { required: true, message: "必填项", trigger: "blur" },
+                ],
+                dbname: [
+                    { required: true, message: "必填项", trigger: "blur" },
+                ],
+                username: [
+                    { required: true, message: "必填项", trigger: "blur" },
+                ],
+                password: [
+                    { required: true, message: "必填项", trigger: "blur" },
+                ],
+                rpasswrod: [
+                    { required: true, message: "必填项", trigger: "blur" },
+                ],
+            }
+        }
+      },
+      methods: {
+        submitForm:function(formName) {
+            this.$refs[formName].validate((valid) => {
+              if (valid) {
+                        var _this = this
+                        this.$mip.ajax('/install/installPost', {
+                             "dbhost": this.form.dbhost,
+                            "dbport": this.form.dbport,
+                            "dbuser": this.form.dbuser,
+                            "dbpw": this.form.dbpw,
+                            "dbname": this.form.dbname,
+                            "dbprefix": _this.form.dbprefix,
+                        }).then(function (res) {
+                            if (res.code == 1) {
+                               location.href="/"
+                            } else {
+                                Vue.prototype.$message({
+                                    type: "error",
+                                    message: res.msg
+                                });
+                            }
+                        });
+              } else {
+                return false;
+              }
+            });
+          },
+        }
+    });
+</script>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?176a0355c10aafbb44f1f5838bb6275d";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+</html>
