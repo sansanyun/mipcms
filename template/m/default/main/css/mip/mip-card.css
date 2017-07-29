@@ -1,0 +1,8 @@
+.mip-card { background-color: #FFFFFF; margin-bottom: 15px; }
+.mip-card .mip-card-header { width: 100%; height: 178px; position: relative; display: inline-block; overflow: hidden; box-sizing: border-box; }
+.mip-card .mip-card-header .img { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); transition: all 0.2s linear; }
+.mip-card .mip-card-content { padding: 10px; }
+.mip-card .mip-card-content a { color: #333; }
+.mip-card .mip-card-content p { font-size: 14px; color: #999999; }
+
+/*# sourceMappingURL=mip-card.css.map */
