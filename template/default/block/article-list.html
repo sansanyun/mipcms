@@ -1,0 +1,18 @@
+<div class="mipui-category-list-item">
+    <div class="item-media">
+        <a href="{$v.url}" class="item-link" data-type="mip" data-title="{$v.title}" title='{$v.title}'>
+            {if condition="$v['firstImg']"}
+            <mip-img layout="container" alt='{$v.title}' src="{$v['firstImg']}"></mip-img>
+            {else/}
+            <mip-img layout="container" src="{$domainStatus}/{$assets}/{$tplName}/images/no-images.jpg" alt='{$v.title}'></mip-img>
+            {/if}
+        </a>
+    </div>
+    <div class="item-content">
+        <h4><a href="{$v.url}" data-type="mip" data-title="{$v.title}" title='{$v.title}'>{$v.title}</a></h4>
+        <p class="description"><?php echo mb_substr(preg_replace("/　/","",trim(preg_replace("/ /","",str_replace("\n", '', strip_tags($v['content']))),"\r\n\t")),0,88,'utf-8')?></p>
+        <p>
+            <span>{$v['publish_time']|date='Y-m-d',###}</span>
+        </p>
+    </div>
+</div>

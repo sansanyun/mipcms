@@ -1,0 +1,59 @@
+{extend name="main/main"/}
+
+{block name="style"}{__block__}
+    {include file="main/css/mip/mip-media-list.css"}
+    {include file="main/css/mip/bootstrap-pagination.css"}
+    .mui-bar .mui-segmented-control { top:4px; } ul{ list-style:none; } .page-control { overflow: hidden; text-align: center; } .pagination { float: initial; } .mip-vd-tabs-nav { background-color:#f5f5f5; }
+{/block}
+
+{block name="main"}
+
+<div class="mip-container m-t-header">
+    
+    {mipcms:articleinfo value="recommendList" where='is_recommend = 1' limit='4' /}
+    {if condition="$recommendList && count($recommendList) > 3"}
+    <mip-carousel
+        autoplay
+        defer="4000"
+        layout="responsive"
+        width="600"
+        height="400"
+        indicator
+        buttonController>
+        {foreach name='$recommendList' id='v'}
+        <a data-type="mip" data-title="{$v.title}" href="{$v.url}">
+            <mip-img
+                src="{$v.firstImg}" layout="responsive"
+            width="600"
+            height="400">
+            </mip-img>
+            <div class="mip-carousle-subtitle">{$v.title}</div>
+        </a>
+        {/foreach}
+    </mip-carousel>
+{/if}
+<mip-vd-tabs allow-scroll>
+    <section>
+    {mipcms:articlecategory value="val"}<li>{$val['name']}</li>{/mipcms:articlecategory}
+    </section>
+    {mipcms:articlecategory value="val"}
+    <div>
+        <ul class="mui-table-view">
+            {mipcms:article value="v" cid='$val["id"]' limit='5'}
+                {include file="article/articleBlock"/}
+            {/mipcms:article}
+        </ul>
+        <div class="p-xs text-center">
+            <a data-type="mip" data-title="{$val['name']}" class="mui-btn mui-btn-primary"
+            href="{$val['url']}">查看更多</a>
+        </div>
+    </div>
+    {/mipcms:articlecategory}
+</mip-vd-tabs>
+
+</div>
+
+{/block}
+{block name="script"}{__block__}
+<script src="https://mipcache.bdstatic.com/static/v1/mip-vd-tabs/mip-vd-tabs.js" type="text/javascript" charset="utf-8"></script>
+{/block}

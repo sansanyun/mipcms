@@ -1,0 +1,132 @@
+{extend name="admin@main" /}
+{block name="title"}网站模板 - {__block__}{/block}
+{block name="style"}
+<style>
+     .template-item {
+        position: relative;
+        margin-bottom: 10px;
+    }
+    .template-item img {
+        max-width: 100%;
+        height: auto;
+        cursor: pointer;
+    }
+   .template-item .ivu-icon-checkmark-circled {
+        position: absolute;
+        top: 2px;
+        right: 5px;
+    }
+    .template-item h4{
+        margin-top: 10px;
+        font-size: 18px;
+    }
+</style>
+{/block}
+
+{block name="main"}
+ 
+<header class="mipcms-container-header">
+    <div class="float-left header-group">
+        <h4 class="title">网站模板</h4>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{$domain}/{$Think.config.admin}">{$indexTitle}</a></li>
+                <li class="breadcrumb-item active">系统</li>
+                <li class="breadcrumb-item active">网站模板</li>
+            </ol>
+        </nav>
+    </div>
+   <a class="pull-right ivu-btn ivu-btn-primary ivu-btn-circle" href="http://www.mipmb.com">
+        <span>更多模板</span>
+    </a>
+</header>
+
+<main class="mipcms-container-body" style="height: calc(100% - 50px)">
+    <div class="row">
+        <div class="col-md-4" v-for='item in templateList'>
+            <section class="mip-box">
+                <section class="mip-box-body template-item">
+                    <Icon type="checkmark-circled" v-if='item.status' size='26' color='#00aaee'></Icon>
+                    <img :src="item.info.thumbnail" @click='chooseTemplate(item.fileName)'/>
+                    <h4 class="p-1">{{item.info.name}}</h4>
+                </section>
+            </section>
+        </div>
+    </div>
+</main>
+{/block}
+    
+{block name="javascript"}
+{__block__}
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            templateList: [],
+            siteInfo: '',
+        },
+        watch: {
+            siteChangeStatus() {
+                this.getSettingData();
+            }
+        },
+        mounted() {
+            this.getSettingData();
+        },
+        methods: {
+            getTemplateList() {
+                var _this = this;
+                this.$mip.ajax('{$domain}/{$Think.config.admin}/ApiAdminTemplate/templateList', {
+                }).then(function(res) {
+                    if(res.code == 1) {
+                        var templateList = res.data;
+                        for (var i = 0; i < templateList.length; i++) {
+                            if (templateList[i].fileName == _this.siteInfo.template) {
+                                templateList[i].status = true;
+                            } else {
+                                templateList[i].status = false;
+                            }
+                              
+                        }
+                        _this.templateList = templateList;
+                    }
+                });
+            },
+            getSettingData() {
+                var _this = this;
+                this.loading = true;
+                this.$mip.ajax('{$domain}/{$Think.config.admin}/ApiAdminSetting/settingSelect', {
+                    
+                }).then(function(res) {
+                    _this.loading = false;
+                    if(res.code == 1) {
+                        _this.siteInfo = res.data;
+                        _this.getTemplateList();
+                    }
+                });
+            },
+            chooseTemplate(val) {
+                this.$Modal.confirm({
+                    title: '消息提示',
+                    content: '<p>确定切换成您选择的模板？</p>',
+                    onOk: () => {
+                        var _this = this;
+                        this.$mip.ajax('{$domain}/{$Think.config.admin}/ApiAdminTemplate/templateSave', {
+                            fileName: val,
+                        }).then(function(res) {
+                            if(res.code == 1) {
+                                _this.$Message.success('设置成功');
+                                _this.getSettingData();
+                            }
+                        });
+                    }, 
+                    onCancel: () => {
+                        //
+                    }
+                });
+            },
+
+        }
+    })
+  </script>
+{/block}

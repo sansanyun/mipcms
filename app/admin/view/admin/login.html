@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
+    <title>登录后台</title>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/iview@2.7.4/dist/styles/iview.css">
+    <link rel="stylesheet" type="text/css" href="{$domainStatic}/{$assets}/admin/css/admin.css"/>
+    {block name="style"}
+        <style type="text/css">
+        	.ivu-input-group-append {
+            padding:0px!important;
+        }
+        .ivu-input-group-append img {
+            height: 30px;
+            display: block;
+        }
+        </style>
+    {/block}
+</head>
+<body class="mip-admin">
+    <div id="app">
+        <div style="width: 350px;margin: 0 auto!important;padding-top: 100px;">
+            <div class="mip-box">
+                <div class="mip-box-body">
+                    <h1 class="text-center login-title">登录</h1>
+                        <i-form ref="ruleForm" :model="ruleForm" :rules="rules"  label-position="top">
+                            <Form-item label="账号" prop="username">
+                                <i-Input v-model="ruleForm.username" placeholder="账号"></i-Input>
+                            </Form-item>
+                            <Form-item label="密码" prop="password">
+                                <i-Input v-model="ruleForm.password" type="password" placeholder="密码"></i-Input>
+                            </Form-item>
+                             <Form-item label="验证码" prop="captcha"  @keyup.enter.native="submitForm('ruleForm')">
+                            <div>
+                                <i-input class="captcha" v-model="ruleForm.captcha" size="large" placeholder="4位字符">
+                                    <template slot="append"><img @click="refreshCaptcha" :src="captchaImg" alt="点击刷新" /></template>
+                                </i-input>
+                            </div>
+                        </Form-item>
+                            <Form-item>
+                                <i-Button type="primary" long @click="submitForm('ruleForm')">登录</i-Button>
+                            </Form-item>
+                        </i-form>
+                </div>
+            </div>
+                        
+                     
+        </div>
+    </div>
+</body>
+{block name="javascript"}
+<script type="text/javascript">
+    var mipGlobal = {
+        domain: '{$domain}',
+        rewrite: '{$rewrite}',
+        mipInfo: {$mipInfoToJson},
+    }
+</script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script type="text/javascript" src="https://cdn.staticfile.org/axios/0.15.3/axios.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/iview"></script>
+<script src="https://cdn.staticfile.org/blueimp-md5/2.7.0/js/md5.min.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+window.axios.defaults.headers['access-key'] = 'cFaLOmUGoz9URROtxaAqe37vHSlI0LL3';
+window.axios.defaults.headers['terminal'] = 'pc';
+if(localStorage.getItem('mip_userInfo') != undefined) {
+    axios.defaults.headers['uid'] = JSON.parse(localStorage.getItem('mip_userInfo')).uid;
+    axios.defaults.headers['access-token'] = JSON.parse(localStorage.getItem('mip_userInfo')).accessToken[0]['access-token'];
+    localStorage.setItem('access-token',JSON.parse(localStorage.getItem('mip_userInfo')).accessToken[0]['access-token']);
+    var rolesNodeList = JSON.parse(localStorage.getItem('mip_userInfo')).rolesNodeList ? JSON.parse(localStorage.getItem('mip_userInfo')).rolesNodeList : [];
+    var roleList = JSON.parse(localStorage.getItem('mip_userInfo')).roleList ? JSON.parse(localStorage.getItem('mip_userInfo')).roleList : [];
+    var role = {};
+    for(var i = 0; i < rolesNodeList.length; i++) {
+        role[rolesNodeList[i][name]] = '';
+    }
+    for(var i = 0; i < roleList.length; i++) {
+        role[roleList[i].name] = roleList[i].name;
+    }
+    Vue.prototype.$role = role;
+    Vue.prototype.$userInfo = JSON.parse(localStorage.getItem('mip_userInfo'));
+}
+var mip = {
+    ajax(url, param) {
+        return new Promise(function(resolve, reject) {
+             
+            axios.post(url, param).then(function(res) {
+                if(res.status == 200) {
+                    if(res.data.code == undefined) {
+                        iview.Message.error('请求无效');
+                        return false;
+                    }
+                    if(res.data.code == 1005 || res.data.code == 1008) {
+                        iview.Message.error('登录状态失效');
+                        location.href = '{$domain}/{$Think.config.admin}/login';
+                    }
+                    if(res.data.code != 200 && res.data.code != 1 && res.data.code != -1) {
+                        iview.Message.error(res.data.msg + ' 错误代码:' + res.data.code);
+                    } else {
+                        if (res.data.code == -1) {
+                            iview.Message.error(res.data.msg);
+                        }
+                    }
+                    resolve(res.data);
+                } else {
+                    iview.Message.error('系统错误');
+                }
+            }, function(err) {
+                iview.Message.error('系统错误，错误代码：' + err.response.status);
+            })
+        });
+    },
+}
+
+Vue.prototype.$mip = mip;
+</script>
+
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            captchaImg: '',
+            ruleForm: {
+                username: '',
+                password: '',
+                captcha: '',
+            },
+            show: 'login-reg show',
+            rules: {
+                username: [
+                    { required: true, message: '请输入用户名', trigger: 'blur' },
+                    { min: 2, max: 25, message: '长度在 2 到25 个字符', trigger: 'blur' }
+                ],
+                password: [
+                    { required: true, message: '请输入密码', trigger: 'blur' },
+                    { min: 5, max: 25, message: '长度在 5 到25 个字符', trigger: 'blur' }
+                ],
+                captcha: [
+                    { required: true, message: '请输入验证码', trigger: 'blur' },
+                    { min: 4, max: 4, message: '长度为4个字符', trigger: 'blur' }
+                ],
+            },
+        },
+        mounted: function mounted() {
+          this.refreshCaptcha();
+        },
+        methods: {
+            submitForm(formName) {
+                let _this = this;
+                let __this = this;
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        this.$mip.ajax('{$domain}/user/ApiUserUser/login', {
+                            terminal: 'pc',
+                            username: _this.ruleForm.username,
+                            password: md5(_this.ruleForm.password),
+                            captcha: _this.ruleForm.captcha,
+                        }).then(function (res) {
+                            if (res.code == 1) {
+                                localStorage.setItem('mip_userInfo',JSON.stringify(res.data));
+                                localStorage.setItem('access-token',res.data.accessToken[0]['access-token']);
+                                localStorage.setItem('user_client_url','');
+                                location.href = '{$domain}/{$Think.config.admin}';
+                            }
+                        });
+                    }
+                });
+            },
+            refreshCaptcha: function() {
+                if (mipGlobal.rewrite) {
+                    this.captchaImg = '{$domain}/captcha.html&t='+(new Date()).getTime();
+                } else {
+                    this.captchaImg = '{$domain}/captcha.html?t='+(new Date()).getTime();
+                }
+            },
+        }
+    })
+  </script>
+{/block}
+
+</html>
+
+    

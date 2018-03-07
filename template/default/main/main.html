@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html mip>
+<head>
+    <meta charset="utf-8">
+    <meta name="applicable-device" content="pc,mobile">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
+    <link rel="shortcut icon" href="{$domain}/favicon.ico" type="image/x-icon" />
+    <title>{block name='mipTitle'}{$mipTitle}{/block}</title>
+    <meta name="keywords" content="{block name='mipKeywords'}{$mipKeywords}{/block}">
+    <meta name="description" content="{block name='mipDescription'}{$mipDescription}{/block}">
+    {block name='so'}
+    {/block}
+    <link rel="stylesheet" type="text/css" href="https://c.mipcdn.com/static/v1/mip.css">
+    <link rel="stylesheet" type="text/css" href="{$domainStatic}/{$assets}/{$tplName}/css/bootstrap-layout.min.css">
+    <link rel="stylesheet" type="text/css" href="{$domainStatic}/{$assets}/{$tplName}/css/app.min.css">
+    <link rel="stylesheet" type="text/css" href="{$domainStatic}/{$assets}/{$tplName}/css/mipcms.css">
+    <style mip-custom>
+    {block name="style"}{/block}
+    </style>
+    <link rel="canonical" href="{$siteUrl}">
+</head>
+<body>
+{if condition='$mipInfo["guanfanghaoStatus"]'}{$mipInfo['guanfanghaoCambrian']}{/if}
+    <mip-fixed type="top">
+    {include file='main/header'}
+    </mip-fixed>
+    <main class="mipcms-main">
+    {block name="main"}{/block}
+    </main>
+    {include file='main/footer'}
+    <mip-fixed type="gototop">
+        <mip-gototop></mip-gototop>
+    </mip-fixed>
+    {block name="script"}
+    <script src="https://c.mipcdn.com/static/v1/mip.js"></script>
+    <script src="https://c.mipcdn.com/static/v1/mip-stats-baidu/mip-stats-baidu.js"></script>
+    <script src="https://c.mipcdn.com/static/v1/mip-gototop/mip-gototop.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://c.mipcdn.com/static/v1/mip-history/mip-history.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://c.mipcdn.com/static/v1/mip-fixed/mip-fixed.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://c.mipcdn.com/extensions/platform/v1/mip-cambrian/mip-cambrian.js"></script>
+    {/block}
+</body>
+</html>

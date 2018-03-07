@@ -1,0 +1,82 @@
+
+{extend name="main/main"/}
+
+{block name="style"}
+{__block__}
+ .no-data-block {
+    height: 300px;
+    padding-top: 80px;
+}
+
+.no-data-block img {
+    margin: 0 auto;
+    width: 60px;
+    position: relative;
+}
+
+.no-data-block p {
+    margin-top: 15px;
+    color: #c3d1d6;
+}
+
+
+  .mip-box .mip-tap-body {
+      position: relative;
+      padding: 5px 20px 15px 20px;
+  }
+.mip-tap-body .el-tabs__item.is-active {
+    color: #00AAEE!important;
+    border-bottom: 3px solid #00AAEE;
+}
+.el-tabs__header {
+    border-bottom: 1px solid #EFEFEF;
+}
+
+ .tag-header .tag-img {
+    border: 1px solid #C3D1D6;
+    padding: 10px;
+    border-radius: 3px;
+    float: left;
+    margin-right: 15px;
+}
+.tag-header .mip-biaoqian{
+     font-size: 35px;
+     margin-bottom: 10px;
+}
+.tag-header .tag-info-content h2{
+    font-size: 20px;
+}
+
+{/block}
+{block name="main"}
+
+  <div class="container">
+    <div class="row">
+                    
+             
+        <main class="col-lg-8">
+            <section class="mip-box mip-box-default">
+                <section class="mip-box-heading">
+                    <h3>{$tagInfo['name']}</h3>
+                </section>
+                <section class="mip-box-body">
+                     <div class="mipui-widget-media-body mipui-category-list-001">
+                        {mipcms:article value='v' tagIds='$tagInfo["id"]' page='$tagInfo["page"]' limit='10'}
+                            {include file='block/article-list'}
+                        {/mipcms:article}
+                    </div>
+                    {$pagination}
+                </section>
+            </section>
+        </main>         
+               
+        <aside class="col-lg-4">
+            {include file='block/tags-hot'}
+        </aside>
+    </div>
+</div>
+{/block}
+
+{block name="script"}
+{__block__}
+{/block}

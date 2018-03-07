@@ -1,0 +1,44 @@
+{extend name="main/main"/}
+
+{block name="main"}
+{include file='block/mipui-crumb'}
+<div class="container">
+    <div class="row">
+        <main class="col-lg-8">
+            <section class="mip-box mip-box-default">
+                <section class="mip-box-heading">
+                    <h3>{$categoryInfo['name']}</h3>
+                </section>
+                <section class="mip-box-body">
+                    <div class="mipui-widget-media-body mipui-category-list-001">
+                        {mipcms:article value='v' cid='$categoryInfo["cid"]' limit='10' page='$categoryInfo["page"]' category='$categoryInfo["category"]' sub='$categoryInfo["sub"]'}
+                            {include file='block/article-list'}
+                        {/mipcms:article}
+                    </div>
+                    {$pagination}
+                </section>
+            </section>
+        </main>
+        <aside class="col-lg-4 hidden-xs">
+            <section class="mip-box mip-box-default">
+                <section class="mip-box-heading">
+                    <h3>热门{$articleModelName}</h3>
+                </section>
+                <section class="mip-box-body">
+                    <ul class="list-unstyled">
+                        {mipcms:article value="v" cid='$categoryInfo["cid"]' orderBy='views' limit='6'}
+                        <li class="li-box-list">
+                            <a href="{$v.url}" data-type="mip" data-title="{$v.title}" title="{$v['title']}">{$v.title}</a>
+                            <p>{$v['publish_time']|date='Y-m-d',###}</p>
+                        </li>
+                        {/mipcms:article}
+                    </ul>
+                </section>
+            </section>
+            
+            {include file='block/tags-hot'}
+        </aside>
+
+    </div>
+</div>
+{/block}

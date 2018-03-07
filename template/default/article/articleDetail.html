@@ -1,0 +1,132 @@
+{extend name="main/main"/}
+<style type="text/css">
+{block name="style"}{__block__}
+ 
+{/block}
+</style>
+{block name="so"}
+<meta property="og:type" content="article" />
+<meta property="og:title" content="{$mipTitle}" />
+<meta property="og:description" content="{$mipDescription}" />
+<meta property="og:image" content="{$itemInfo['firstImg']}" />
+<meta property="og:release_date" content="{$itemInfo['publish_time']|date='Y-m-d',###}" />
+{/block}
+{block name="main"}
+{include file='block/mipui-crumb'}
+<div class="container">
+    <div class="row">
+        <main class="col-lg-8">
+            <section class="mip-box mip-box-main">
+                <section class="mip-box-heading">
+                     <h1 class="detail-title">{$itemInfo['title']}</h1>
+                     <div class="info clearfix">
+                        <ul>
+                            <li>时间:<time>{$itemInfo['publish_time']|date='Y-m-d H:i:s',###}</time></li>
+                            <li>浏览:{$itemInfo['views']}</li>
+                            <li>来源:{$mipInfo['siteName']}</li>
+                        </ul>
+                        {if condition='$tags'}
+                        <ul class="tags hidden-xs pull-right">
+                            {foreach name='$tags' id='v'}
+                            <li><a href="{$v['url']}" data-type="mip" data-title="{$v['tags']['name']}" title="{$v['tags']['name']}" >{$v['tags']['name']}</a></li>
+                            {/foreach}
+                        </ul>
+                        {/if}
+                    </div>
+                </section>
+                <section class="mip-box-body mipcms-detail-body">
+                    {$itemInfo['content']}
+                    <p>猜你喜欢</p>
+                    <div class="mipui-widget-media-body mipui-category-list-001">
+                        {mipcms:article value="v" keywords='$itemInfo["tagsListString"]' notUuids="$itemInfo['uuid']" limit='5'}
+                            {include file='block/article-list'}
+                        {/mipcms:article}
+                    </div>
+                    {mipcms:articleinfo value="itemUpPage" where='"publish_time < " . $itemInfo["publish_time"]' limit='1' /}
+                    {mipcms:articleinfo value="itemDownPage" order="asc" where='"publish_time > " . $itemInfo["publish_time"]' limit='1' /}
+                    {if condition="$itemUpPage || $itemDownPage"}
+                    <div class="mip-box-footer item-up-down-page ">
+                        <ul class="clearfix list-unstyled">
+                            {if condition="$itemUpPage"}<li class="item-up-page"><p>上一篇</p><a href="{$itemUpPage[0]['url']}" data-type="mip" data-title="{$itemUpPage[0]['title']}" title="{$itemUpPage[0]['title']}">{$itemUpPage[0]['title']} </a> </li>{/if}
+                            {if condition="$itemDownPage"}<li class="item-down-page"> <p>下一篇</p> <a href="{$itemDownPage[0]['url']}"  data-type="mip" data-title="{$itemDownPage[0]['title']}" title="{$itemDownPage[0]['title']}">{$itemDownPage[0]['title']}</a></li>{/if}
+                        </ul>
+                    </div>
+                    {/if}
+                </section>
+                
+            </section>
+            
+        </main>
+        <aside class="col-lg-4 hidden-xs">
+            
+            <section class="mip-box mip-box-default">
+                <section class="mip-box-heading">
+                    <h3>最新{$articleModelName}</h3>
+                </section>
+                <section class="mip-box-body">
+                    <ul class="list-unstyled">
+                        {mipcms:article value="v" limit='5'}
+                        <li class="li-box-list">
+                            <a href="{$v.url}" data-type="mip" data-title="{$v.title}" title="{$v.title}">{$v.title}</a>
+                            <p>{$v['publish_time']|date='Y-m-d',###}</p>
+                        </li>
+                        {/mipcms:article}
+                    </ul>
+                </section>
+            </section>
+            
+            <section class="mip-box mip-box-default">
+                <section class="mip-box-heading">
+                    <h3>相关{$articleModelName}</h3>
+                </section>
+                <section class="mip-box-body">
+                    <ul class="list-unstyled">
+                        {mipcms:article value="v" tagNames='$itemInfo["tagsListString"]' notUuids='$itemInfo["uuid"]' limit='5'}
+                        <li class="li-box-list">
+                            <a href="{$v.url}" data-type="mip" data-title="{$v.title}" title="{$v.title}">{$v.title}</a>
+                            <p>{$v['publish_time']|date='Y-m-d',###}</p>
+                        </li>
+                        {/mipcms:article}
+                    </ul>
+                </section>
+            </section>
+            {include file='block/tags-new'}
+        </aside>
+
+    </div>
+</div>
+{/block}
+
+{block name="script"}
+{if condition='$mipInfo["guanfanghaoStatus"]'}
+<script type="application/ld+json">
+{
+    "@context": "https://zhanzhang.baidu.com/contexts/cambrian.jsonld",
+    "@id": "{$currentUrl}",
+    "title":"{$itemInfo['title']}",
+        <?php preg_match_all('/<mip-img.*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>*<\/mip-img>/', $itemInfo['content'], $matches); ?>
+        <?php if(count($matches)){?>
+            <?php $first_img = @$matches [1][0]; ?>
+            <?php $two_img = @$matches [1][1]; ?>
+            <?php $three_img = @$matches [1][2]; ?>
+            <?php if($three_img){?>
+            "images": ["<?php echo $first_img ;?>","<?php echo $two_img ;?>","<?php echo $three_img ;?>"],
+             <?php } else {?>
+                <?php if($first_img){?>  
+                    "images": ["<?php echo $first_img ;?>"],
+                 <?php } else {?>
+                     <?php if ($itemInfo['img_url']) {?>
+                    "images": ["<?php echo $domain . $itemInfo['img_url'] ;?>"],
+                    <?php }?>
+                 <?php }?>
+                 
+            <?php }?>
+        <?php }?>
+    "description": "{$mipDescription}",
+    "pubDate": "{$itemInfo['publish_time']|date='Y-m-d',###}T{$itemInfo['publish_time']|date='H:i:s',###}",
+    "isOriginal": "1"
+}
+</script>
+{/if}
+{__block__}
+{/block}

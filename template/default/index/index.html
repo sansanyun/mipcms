@@ -1,0 +1,115 @@
+{extend name="main/main"/}
+
+{block name="main"}
+
+{mipcms:articleinfo value="recommendList" where='is_recommend = 1' limit='4' /}
+{if condition="$recommendList && count($recommendList) > 3"}
+<div class="container m-b hidden-xs">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="relative">
+                <a href="{$recommendList[0]['url']}" data-type="mip" data-title="{$recommendList[0]['title']}" title="{$recommendList[0]['title']}" class="mip-top-img image-link-left">
+                    <mip-img
+                            layout="full"
+                            class="img left-img"
+                            alt="{$recommendList[0]['title']}"
+                            src="{$recommendList[0]['firstImg']}">
+                    </mip-img>
+                </a>
+                <div class="caption w-100">
+                    <time class="time" datetime="{$recommendList[0]['publish_time'] | date='Y-m-d',###}">{$recommendList[0]['publish_time'] | date='Y-m-d',###}</time>
+                    <h3><a href="{$recommendList[0]['url']}" data-type="mip" data-title="{$recommendList[0]['title']}"  title="{$recommendList[0]['title']}">{$recommendList[0]['title']}</a></h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="mip-top-block mip-top-right m-b">
+                <a href="{$recommendList[1]['url']}"   data-type="mip" data-title="{$recommendList[1]['title']}" title="{$recommendList[1]['title']}" class="mip-top-img image-link-right-top">
+                    <mip-img
+                        layout="full"
+                        class="img right-img-top"
+                        alt="{$recommendList[1]['title']}"
+                        src="{$recommendList[1]['firstImg']}">
+                    </mip-img>
+                </a>
+                <div class="caption">
+                    <a href="{$recommendList[1]['url']}"  data-type="mip" data-title="{$recommendList[1]['title']}"  title="{$recommendList[1]['title']}">{$recommendList[1]['title']}</a>
+                </div>
+            </div>
+            <div class="mip-top-block mip-top-right pull-left">
+                <a href="{$recommendList[2]['url']}" data-type="mip" data-title="{$recommendList[2]['title']}" title="{$recommendList[2]['title']}" class="mip-top-img image-link-right-bottom">
+                    <mip-img
+                        layout="full"
+                        class="img right-img-bottom"
+                        alt="{$recommendList[2]['title']}"
+                        src="{$recommendList[2]['firstImg']}">
+                    </mip-img>
+                </a>
+                <div class="caption">
+                    <a href="{$recommendList[2]['url']}"  data-type="mip" data-title="{$recommendList[2]['title']}" title="{$recommendList[2]['title']}">{$recommendList[2]['title']}</a>
+                </div>
+            </div>
+            <div class="mip-top-block mip-top-right pull-left m-l-md">
+                <a href="{$recommendList[3]['url']}"  data-type="mip" data-title="{$recommendList[3]['title']}" title="{$recommendList[3]['title']}" class="mip-top-img image-link-right-bottom">
+                    <mip-img
+                        layout="full"
+                        class="img right-img-bottom"
+                        alt="{$recommendList[3]['title']}"
+                        src="{$recommendList[3]['firstImg']}">
+                    </mip-img>
+                </a>
+                <div class="caption">
+                   <a href="{$recommendList[3]['url']}"  data-type="mip" data-title="{$recommendList[3]['title']}" title="{$recommendList[3]['title']}">{$recommendList[3]['title']}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/if}
+
+<div class="container">
+    <div class="row">
+        <main class="col-lg-8">
+            <div class="row">
+                {mipcms:articlecategory value="v"}
+                <section class="col-lg-6">
+                    <section class="mip-box">
+                        <section class="mip-box-heading">
+                            <h3>{$v['name']}</h3>
+                        </section>
+                        <section class="mip-box-body">
+                            <ul class="list-unstyled clearfix">
+                                {mipcms:article value="val" cid='$v["id"]' limit='5'}
+                                    <li class="list-time">
+                                        <a href="{$val['url']}" data-type="mip" data-title="{$val['title']}" title="{$val['title']}">{$val['title']}</a><time class="pull-right">{$val['publish_time']|date='m-d',###}</time>
+                                    </li>
+                                {/mipcms:article}
+                            </ul>
+                        </section>
+                    </section>
+                </section>
+                {/mipcms:articlecategory}
+            </div>
+        </main>
+        <aside class="col-lg-4 hidden-xs">
+            <section class="mip-box mip-box-default">
+                <section class="mip-box-heading">
+                    <h3>热门{$articleModelName}</h3>
+                </section>
+                <section class="mip-box-body">
+                    <ul class="list-unstyled">
+                        {mipcms:article value="v" key='k' orderBy='views' limit='6'}
+                        <li class="li-box-list">
+                            <a href="{$v.url}" data-type="mip" data-title="{$v.title}" title="{$v['title']}">{$v.title}</a>
+                            <p>{$v['publish_time']|date='Y-m-d',###}</p>
+                        </li>
+                        {/mipcms:article}
+                    </ul>
+                </section>
+            </section>
+            {include file='block/tags-hot'}
+        </aside>
+
+    </div>
+</div>
+{/block}

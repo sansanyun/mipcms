@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
+    <title>{block name="title"}{/block}{$mipInfo['siteName']}管理后台</title>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{$domainStatic}/{$assets}/admin/css/themify-icons.css"/>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/iview@2.7.4/dist/styles/iview.css">
+    <link rel="stylesheet" type="text/css" href="{$domainStatic}/{$assets}/admin/css/admin.css"/>
+    <style type="text/css">
+      [v-cloak] {
+        display: none;
+        }
+    </style>
+    {block name="style"}
+        
+    {/block}
+</head>
+<body class="mip-admin">
+    <section id="mipcms">
+            
+        <header id='header' class="mip-header clearfix b-b">
+            <div class="mip-logo">
+                <div class="mip-logo-a"><a href="{$domain}/{$Think.config.admin}/">管理系统后台</a><span class="sub-v"></span></div>
+            </div>
+            <ul class="header-switch">
+                <li><a href="{$domain}" target="_blank" class="link">网站前台</a></li>
+                {mipcms:itemselect table='HeaderMenu' value='v'}
+                <li class="{if condition='$action==$v["name"]'}active{/if}"><a class="link" href="{$domain}/{$Think.config.admin}/{$v['admin_url']}" >{$v['title']}</a></li>
+                {/mipcms:itemselect}
+            </ul>
+            <div class="mip-user-info v-cloak">
+                <ul class="nav navbar-nav navbar-right">
+                     <Dropdown trigger="click" >
+                        <a href="javascript:void(0)">
+                            管理员
+                            <Icon type="arrow-down-b"></Icon>
+                        </a>
+                        <Dropdown-Menu slot="list">
+                            <li class="ivu-dropdown-item" @click='editPassword'>修改密码</li>
+                            <li class="ivu-dropdown-item" @click='loginOut'>安全退出</li>
+                        </Dropdown-Menu>
+                    </Dropdown>
+                </ul>
+            </div>
+        </header>
+        <main class="mip-main clearfix" >
+                <aside id="menu" class="mip-menu hidden-xs">
+                    {include file="admin@menu" /}
+                </aside>
+                <section class="mip-container" id="app">
+                    {block name="main"}
+                    {/block}
+                </section>
+          </main>
+      
+    </section>
+    {block name="dialog"}{/block}
+</body>
+{block name="javascript"}
+<script type="text/javascript">
+    var mipGlobal = {
+        domain: '{$domain}',
+        rewrite: '{$rewrite}',
+        mipInfo: {$mipInfoToJson},
+    }
+</script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script type="text/javascript" src="https://cdn.staticfile.org/axios/0.15.3/axios.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/iview"></script>
+<script src="https://cdn.staticfile.org/jquery/1.8.1/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="{$domainStatic}/{$assets}/admin/js/mipcms-admin.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+	$(document).ready(function() {
+    var animationSpeed = 200;
+    $('.sidebar-menu').on('click', 'li.has-sub>a', function(e) {
+        e.preventDefault();
+        var $this = $(this);
+        var nextElem = $(this).next();
+        if (nextElem.parent("li").is('.active')) {
+            nextElem.css('display','block');
+            nextElem.slideUp(animationSpeed, function() {
+                //收起
+                nextElem.parent("li").removeClass("active");
+            });
+        } else {
+            var subUl = $('.sidebar-menu .has-sub');
+            subUl.find('ul:visible').slideUp(animationSpeed, function() {
+                //收起
+                subUl.removeClass("active");
+            });
+            nextElem.slideDown(animationSpeed, function() {
+                //展开
+                nextElem.parent("li").addClass("active");
+            });
+        }
+      });
+});
+</script>
+<script type="text/javascript">
+	 new Vue({
+        el: '#header',
+        data: {
+            displayBlick: true,
+        },
+        watch: {
+        },
+        mounted() {
+        },
+        methods: {
+            loginOut() {
+                 var _this = this;
+               _this.$mip.ajax('{$domain}/user/ApiUserUser/loginOut', {
+                }).then(function (res) {
+                    if (res.code == 1) {
+                        _this.$Message.error(res.msg);
+                        location.href = '/';
+                    }
+                });
+            },
+            editPassword() {
+                location.href = '{$domain}/{$Think.config.admin}/user/account';
+            }
+         }
+    })
+</script>
+{/block}
+
+
+</html>

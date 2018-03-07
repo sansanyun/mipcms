@@ -1,0 +1,153 @@
+{extend name="main/main"/}
+
+{block name="style"}{__block__}
+    {include file="main/css/mip/mip-media-list.css"}
+    .article-main {
+        background-color:#fff;
+        word-break: break-all;
+        word-wrap: break-word;
+        line-height: 1.8;
+    }
+    h1 {
+        margin:0;
+        padding: 15px;
+        font-size:22px;
+        line-height:30px;
+        font-weight: 500;
+    }
+    .info {
+        color:#999;
+        margin:0;
+        padding-left: 15px;
+
+    }
+    .content {
+        padding: 15px;
+    }
+    .content ol,.content ul {
+        padding-left:15px;
+    }
+    .content img{
+        max-width: 100%;
+    }
+    .item-up-down-page {
+        padding:10px;
+        background-color:#fff;
+        margin-top:15px;
+    }
+    .item-up-down-page p{
+      color:#999;
+      font-size:14px;
+      margin:5px 0;
+    }
+    .item-up-down-page a{
+        line-height:30px;
+        color:#333;
+    }
+    
+    .mip-page-pagination {
+        text-align: center;
+    }
+    .mip-page-pagination {
+        overflow: hidden;
+        padding: 1px;
+        width: 100%;
+        text-align: center;
+    }
+    .mip-page-pagination ul{
+        display: inline-block;
+        list-style: none;
+        padding-left: 0;
+    }
+    .mip-page-pagination ul li {
+        float: left;
+        margin-left: 10px;    
+        margin-bottom: 15px;
+    }
+    .mip-page-pagination ul li.active a{
+        background-color: #00AAEE;
+        border: 1px solid #00AAEE;
+        color: #ffffff;
+    }
+    .mip-page-pagination ul li.active a:hover {
+        color: #ffffff;
+    }
+    .mip-page-pagination ul li a {
+        font-size: 12px;
+        color: #333;
+        border: 1px solid #d2d2d2;
+        padding: 5px 8px;
+        border-radius: 3px;
+    }
+    .mip-page-pagination ul li a:hover {
+        color: #00AAEE;
+    }
+{/block}
+{block name="main"}
+<div class="mip-container m-t-header">
+    <article class="article-main">
+        <h1 class="text-left">{$itemInfo['title']}</h1>
+        <p class="info">时间：{$itemInfo['publish_time']|date='Y-m-d H:i:s',###} 出处:{$mipInfo['siteName']} </p>
+        <div class="content">
+            {$itemInfo['content']}
+        </div>
+        {if condition="$mipInfo['articlePages']"}
+            <div class="mip-page-pagination">
+                <ul class="mip-page">
+                    {$itemInfo['pageCode']}
+                </ul>
+            </div>
+        {/if}
+    </article>
+    {mipcms:articleinfo value="itemUpPage" where='"publish_time < " . $itemInfo["publish_time"]' limit='1' /}
+    {mipcms:articleinfo value="itemDownPage" order="asc" where='"publish_time > " . $itemInfo["publish_time"]' limit='1' /}
+    {if condition="$itemUpPage || $itemDownPage"}
+    <div class="mip-box-footer item-up-down-page ">
+        <ul class="clearfix list-unstyled">
+            {if condition="$itemUpPage"}<li class="item-up-page"><p>上一篇</p><a data-type="mip" href="{$itemUpPage[0]['url']}" data-title="{$itemUpPage[0]['title']}">{$itemUpPage[0]['title']} </a> </li>{/if}
+            {if condition="$itemDownPage"}<li class="item-down-page"> <p>下一篇</p> <a data-type="mip" href="{$itemDownPage[0]['url']}" data-title="{$itemDownPage[0]['title']}">{$itemDownPage[0]['title']}</a></li>{/if}
+        </ul>
+    </div>
+    {/if}
+
+    <h4 class="mip-title">猜你喜欢</h4>
+    <ul class="mui-table-view">
+        {mipcms:article value="v" keywords='$itemInfo["tagsListString"]' notUuids="$itemInfo['uuid']" limit='5'}
+            {include file="article/articleBlock"/}
+        {/mipcms:article}
+    </ul>
+</div>
+{/block}
+{block name="script"}
+{if condition='$mipInfo["guanfanghaoStatus"]'}
+<script type="application/ld+json">
+{
+    "@context": "https://zhanzhang.baidu.com/contexts/cambrian.jsonld",
+    "@id": "{$currentUrl}",
+    "title":"{$itemInfo['title']}",
+        <?php preg_match_all('/<mip-img.*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>*<\/mip-img>/', $itemInfo['content'], $matches); ?>
+        <?php if(count($matches)){?>
+            <?php $first_img = @$matches [1][0]; ?>
+            <?php $two_img = @$matches [1][1]; ?>
+            <?php $three_img = @$matches [1][2]; ?>
+            <?php if($three_img){?>
+            "images": ["<?php echo $first_img ;?>","<?php echo $two_img ;?>","<?php echo $three_img ;?>"],
+             <?php } else {?>
+                <?php if($first_img){?>  
+                    "images": ["<?php echo $first_img ;?>"],
+                 <?php } else {?>
+                     <?php if ($itemInfo['img_url']) {?>
+                    "images": ["<?php echo $domain.$itemInfo['img_url'] ;?>"],
+                    <?php }?>
+                 <?php }?>
+                 
+            <?php }?>
+        <?php }?>
+    "description": "{$mipDescription}",
+    "pubDate": "{$itemInfo['publish_time']|date='Y-m-d',###}T{$itemInfo['publish_time']|date='H:i:s',###}",
+    "isOriginal": "1"
+}
+</script>
+{/if}
+{__block__}
+{/block}

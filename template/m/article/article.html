@@ -1,0 +1,31 @@
+{extend name="main/main"/}
+
+{block name="style"}{__block__}
+    {include file="main/css/mip/mip-media-list.css"}
+    {include file="main/css/mip/bootstrap-pagination.css"}
+    .mui-bar .mui-segmented-control {
+        top:4px;
+    }
+    ul {
+        list-style:none;
+    }
+    .page-control {
+        overflow: hidden;
+        text-align: center;
+    }
+    .pagination {
+        float: initial;
+    }
+{/block}
+
+{block name="main"}
+    <ul class="mui-table-view m-t-header">
+        {mipcms:article value='v' cid='$categoryInfo["cid"]' limit='10' page='$categoryInfo["page"]' category='$categoryInfo["category"]' sub='$categoryInfo["sub"]'}
+            {include file="article/articleBlock"/}
+        {/mipcms:article}
+    </ul>
+    {$pagination}
+</div>
+
+{/block}
+{block name="script"}{__block__}{/block}

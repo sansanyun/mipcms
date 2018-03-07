@@ -1,0 +1,36 @@
+{extend name="main/main"/}
+<!--自定义当前页面标题关键词描述-->
+{block name="mipTitle"}MIPCMS示例页面标题{$mipInfo['titleSeparator']}{$mipInfo['siteName']}{/block}
+{block name="mipKeywords"}MIPCMS关键词{/block}
+{block name="mipDescription"}MIPCMS描述{/block}
+
+<style type="text/css">
+/*示例当前页面CSS代码*/
+{block name="style"}{__block__}
+    .demo-title {
+        text-align: center;
+    }
+{/block}
+</style>
+
+<!--注释：当前页面访问方式 http://您的域名/view/demo.html 复制当前文件，修改文件名称，即可对应访问
+         假如当前文件为zhuanlan.html，那么访问的地址为 http://您的域名/view/zhuanlan.html 
+-->
+
+{block name="main"}
+<div class="container">
+    <section class="mip-box mip-box-main">
+        <section class="mip-box-heading">
+             <h1 class="detail-title demo-title">示例页面</h1>
+        </section>
+        <section class="mip-box-body mipcms-detail-body">
+            示例页面
+        </section>
+    </section>
+</div>
+{/block}
+
+{block name="script"}
+{__block__}
+
+{/block}
