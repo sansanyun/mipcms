@@ -1,0 +1,35 @@
+{
+    "name": "5ini99/think-addons",
+    "description": "addons package for thinkphp5",
+    "homepage": "https://github.com/5ini99/think-addons",
+    "license": "Apache-2.0",
+    "minimum-stability": "dev",
+    "version": "2.1.0",
+    "authors": [
+        {
+            "name": "xiaobo.sun",
+            "email": "xiaobo.sun@qq.com"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/5ini99/think-addons/issues"
+    },
+    "require": {
+        "php": ">=5.4.0",
+        "topthink/think-helper": ">=1.0.4",
+        "topthink/think-installer": ">=1.0.10"
+    },
+    "autoload": {
+        "psr-4": {
+            "think\\": "src/"
+        },
+        "files": [
+            "src/common.php"
+        ]
+    },
+    "extra": {
+        "think-config": {
+            "addons": "src/config.php"
+        }
+    }
+}
