@@ -75,7 +75,7 @@ class ArticleDetail extends Mip
         $itemInfo = model('app\article\model\Articles')->getImgList($itemInfo);
         
         //查询当前内容正文
-        $itemInfo['content'] = model('app\article\model\Articles')->getContentFilterByArticleId($itemInfo['id'],$itemInfo['content_id']);
+        $itemInfo['mipContent'] = model('app\article\model\Articles')->getContentFilterByArticleId($itemInfo['id'],$itemInfo['content_id']);
         
         //内链锚文本
         if (@$itemInfo['link_tags']) {

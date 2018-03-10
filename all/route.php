@@ -45,25 +45,6 @@ if (!strpos($request->url(),'Api')) {
     ],[],[]);  
     
 }
-    $pages = [];
-    if (is_dir(ROOT_PATH . 'template' . DS . $mipInfo['template'] . DS . 'view')) {
-        $templateFile = opendir(ROOT_PATH . 'template' . DS . $mipInfo['template'] . DS . 'view');
-        if ($templateFile) {
-            while (false !== ($file = readdir($templateFile))) {
-                if (substr($file, 0, 1) != '.' AND is_file(ROOT_PATH . 'template' . DS . $mipInfo['template'] . DS . 'view' . DS . $file)) {
-                    $pages[] = $file;
-                }
-            }
-            closedir($templateFile);
-        }
-    }
-    if ($pages) {
-        foreach ($pages as $key => $val) {
-            $pages[$key] = preg_replace("/.html/","",$val);
-            Route::rule([$pages[$key].'/:params' => ['view/View/index?name=' . $pages[$key] . '&params=:params',[],[]]]);
-            Route::rule([$pages[$key] => ['view/View/index?name=' . $pages[$key],[],[]]]);
-        }
-    }
     
     if (!strpos($request->url(),'Api')) {
         

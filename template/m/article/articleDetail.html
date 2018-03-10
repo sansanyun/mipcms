@@ -1,7 +1,6 @@
 {extend name="main/main"/}
 
 {block name="style"}{__block__}
-    {include file="main/css/mip/mip-media-list.css"}
     .article-main {
         background-color:#fff;
         word-break: break-all;
@@ -89,7 +88,7 @@
         <h1 class="text-left">{$itemInfo['title']}</h1>
         <p class="info">时间：{$itemInfo['publish_time']|date='Y-m-d H:i:s',###} 出处:{$mipInfo['siteName']} </p>
         <div class="content">
-            {$itemInfo['content']}
+            {$itemInfo['mipContent']}
         </div>
         {if condition="$mipInfo['articlePages']"}
             <div class="mip-page-pagination">
