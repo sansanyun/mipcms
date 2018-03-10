@@ -14,7 +14,7 @@ class ItemModel extends Init
         }
         $itemInfo['content'] = htmlspecialchars_decode($itemInfo['content']);
         preg_match_all('/<img.*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>/', $itemInfo['content'], $imagesArray);
-        $patern = '/^^((https|http|ftp)?:\/\/)[^\s]+$/';
+        $patern = '/^^((https|http|ftp)?:?\/\/)[^\s]+$/';
         foreach($imagesArray[0] as $key => $val) {
             @preg_match('/alt=".+?"/',$val,$tempAlt);
             @preg_match('/<img.+(width=\"?\d*\"?).+>/i',$val,$tempWidth);

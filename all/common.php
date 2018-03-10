@@ -114,6 +114,11 @@ use mip\Mip;
         return $tree;
     }
     
+    function msectime() {
+        list($msec, $sec) = explode(' ', microtime());
+        $msectime = (float)sprintf('%.0f' , (floatval($msec) + floatval($sec)) * 1000);
+        return $msectime;
+    }
     function formatTime($value) {
         if(time() - $value < 60) {
             return (time() - $value).'秒前';

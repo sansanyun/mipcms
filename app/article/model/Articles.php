@@ -292,19 +292,27 @@ class Articles extends Init
                     $count = db($this->articles)->where($where)->where($keywordsWhere)->where($uuidsWhere)->where($notUuidsWhere)->count();
                 }
             } else {
-                $itemCategoryList = db($this->itemCategory)->where('pid',$cid)->select();
-                if ($itemCategoryList) {
-                    foreach ($itemCategoryList as $key => $value) {
-                           $cids[] = $value['id'];
-                    }
-                }
-                if ($itemCategoryList) {
-                    $count = db($this->articles)->where($where)->where($keywordsWhere)->where($uuidsWhere)->where($notUuidsWhere)->whereOr('cid',$cid)->whereOr('cid','in',$cids)->count();
-                } else {
+                 if ($cid == 0) {
                     if ($this->mipInfo['topDomain']) {
-                        $count = db($this->articles)->where($where)->where($keywordsWhere)->where($uuidsWhere)->where($notUuidsWhere)->where('cid',$cid)->where('site_id',$this->dataId)->count();
+                        $count = db($this->articles)->where('cid',$cid)->where($where)->where($keywordsWhere)->where($uuidsWhere)->where($notUuidsWhere)->where('site_id',$this->dataId)->count();
                     } else {
-                        $count = db($this->articles)->where($where)->where($keywordsWhere)->where($uuidsWhere)->where($notUuidsWhere)->where('cid',$cid)->count();
+                        $count = db($this->articles)->where('cid',$cid)->where($where)->where($keywordsWhere)->where($uuidsWhere)->where($notUuidsWhere)->count();
+                    }
+                } else {
+                    $itemCategoryList = db($this->itemCategory)->where('pid',$cid)->select();
+                    if ($itemCategoryList) {
+                        foreach ($itemCategoryList as $key => $value) {
+                               $cids[] = $value['id'];
+                        }
+                    }
+                    if ($itemCategoryList) {
+                        $count = db($this->articles)->where($where)->where($keywordsWhere)->where($uuidsWhere)->where($notUuidsWhere)->whereOr('cid',$cid)->whereOr('cid','in',$cids)->count();
+                    } else {
+                        if ($this->mipInfo['topDomain']) {
+                            $count = db($this->articles)->where($where)->where($keywordsWhere)->where($uuidsWhere)->where($notUuidsWhere)->where('cid',$cid)->where('site_id',$this->dataId)->count();
+                        } else {
+                            $count = db($this->articles)->where($where)->where($keywordsWhere)->where($uuidsWhere)->where($notUuidsWhere)->where('cid',$cid)->count();
+                        }
                     }
                 }
             }
@@ -344,13 +352,13 @@ class Articles extends Init
     {
         $itemCategoryList = null;
         if ($pid == 0) {
-            $itemCategoryList = db($this->itemCategory)->where('pid',0)->where($where)->limit($limit)->order($orderBy,$order)->select();
+            $itemCategoryList = db($this->itemCategory)->where('pid',0)->where('status',1)->where($where)->limit($limit)->order($orderBy,$order)->select();
             if($itemCategoryList) {
                 foreach ($itemCategoryList as $key => $val) {
                     if ($this->mipInfo['aritcleLevelRemove']) {
-                        $itemCategoryList[$key]['url'] =  $this->domain . '/' . $val['url_name'] . '/';
+                        $itemCategoryList[$key]['url'] =  $this->domain . '/' . $val['id'] . '/';
                     } else {
-                        $itemCategoryList[$key]['url'] =  $this->domain . '/' . $this->mipInfo['articleModelUrl']  . '/' . $val['url_name'] . '/';
+                        $itemCategoryList[$key]['url'] =  $this->domain . '/' . $this->mipInfo['articleModelUrl']  . '/' . $val['id'];
                     }
                     $itemCategoryList[$key]['sub'] = db($this->itemCategory)->where('pid',$val['id'])->order($orderBy,$order)->select();
                     if ($itemCategoryList[$key]['sub']) {
@@ -476,7 +484,7 @@ class Articles extends Init
         
         $item['categoryInfo'] = db($this->itemCategory)->where('id',$item['cid'])->find();
         
-        $res = $domain . '/' . $this->mipInfo['articleModelUrl'] . '/' . $tempId . '.html';
+        $res = $domain . '/' . $this->mipInfo['articleModelUrl'] . '/details/' . $tempId;
         
         if ($this->mipInfo['urlCategory']) {
             $item['itemCategory'] = db($this->itemCategory)->where('id',$item['cid'])->find();
