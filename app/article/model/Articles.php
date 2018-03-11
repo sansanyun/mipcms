@@ -363,9 +363,9 @@ class Articles extends Init
             if($itemCategoryList) {
                 foreach ($itemCategoryList as $key => $val) {
                     if ($this->mipInfo['aritcleLevelRemove']) {
-                        $itemCategoryList[$key]['url'] =  $this->domain . '/' . $val['id'] . '/';
+                        $itemCategoryList[$key]['url'] =  $this->domain . '/' . $val['url_name'] . '/';
                     } else {
-                        $itemCategoryList[$key]['url'] =  $this->domain . '/' . $this->mipInfo['articleModelUrl']  . '/' . $val['id'];
+                        $itemCategoryList[$key]['url'] =  $this->domain . '/' . $this->mipInfo['articleModelUrl']  . '/' . $val['url_name'] . '/';
                     }
                     $itemCategoryList[$key]['sub'] = db($this->itemCategory)->where('pid',$val['id'])->order($orderBy,$order)->select();
                     if ($itemCategoryList[$key]['sub']) {
@@ -491,7 +491,7 @@ class Articles extends Init
         
         $item['categoryInfo'] = db($this->itemCategory)->where('id',$item['cid'])->find();
         
-        $res = $domain . '/' . $this->mipInfo['articleModelUrl'] . '/details/' . $tempId;
+        $res = $domain . '/' . $this->mipInfo['articleModelUrl'] . '/' . $tempId . '.html';
         
         if ($this->mipInfo['urlCategory']) {
             $item['itemCategory'] = db($this->itemCategory)->where('id',$item['cid'])->find();
