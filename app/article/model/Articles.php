@@ -4,6 +4,7 @@
 namespace app\article\model;
 use think\Cache;
 use mip\Paginationm;
+use think\Db;
 use mip\Init;
 
 class Articles extends Init
@@ -352,7 +353,13 @@ class Articles extends Init
     {
         $itemCategoryList = null;
         if ($pid == 0) {
-            $itemCategoryList = db($this->itemCategory)->where('pid',0)->where('status',1)->where($where)->limit($limit)->order($orderBy,$order)->select();
+            $sql = "show columns from ".config('database.prefix')."articles_category like 'status';";
+            $tempStatus = Db::query($sql);
+            if ($tempStatus) {
+                $itemCategoryList = db($this->itemCategory)->where('pid',0)->where('status',1)->where($where)->limit($limit)->order($orderBy,$order)->select();
+            } else {
+                $itemCategoryList = db($this->itemCategory)->where('pid',0)->where($where)->limit($limit)->order($orderBy,$order)->select();
+            }
             if($itemCategoryList) {
                 foreach ($itemCategoryList as $key => $val) {
                     if ($this->mipInfo['aritcleLevelRemove']) {

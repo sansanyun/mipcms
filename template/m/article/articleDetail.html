@@ -124,7 +124,7 @@
     "@context": "https://zhanzhang.baidu.com/contexts/cambrian.jsonld",
     "@id": "{$currentUrl}",
     "title":"{$itemInfo['title']}",
-        <?php preg_match_all('/<mip-img.*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>*<\/mip-img>/', $itemInfo['content'], $matches); ?>
+        <?php preg_match_all('/<mip-img.*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>*<\/mip-img>/', $itemInfo['mipContent'], $matches); ?>
         <?php if(count($matches)){?>
             <?php $first_img = @$matches [1][0]; ?>
             <?php $two_img = @$matches [1][1]; ?>
