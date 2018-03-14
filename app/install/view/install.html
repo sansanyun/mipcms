@@ -2,44 +2,51 @@
 <html>
 <head>
   <meta charset="UTF-8">
-      <title>欢迎使用MIPCMS内容管理系统</title>
+    <title>欢迎使用MIPCMS内容管理系统</title>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/iview@2.7.4/dist/styles/iview.css">
     <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-  <style type="text/css">
-    body {
-        padding: 0;
-        margin: 0;
-        background-color: #EFEFEF;
-    }
-    .ivu-icon.ivu-icon-close-circled {
-        color: #E53939;
-    }
-  </style>
+      <style type="text/css">
+        body {
+            background-color: #eff3f6;
+        }
+        .ivu-icon.ivu-icon-close-circled {
+            color: #E53939;
+        }
+        .box.box-default .box-body{
+            padding: 10px;
+            background-color: #FFFFFF;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
-  <div id="install" style="width: 600px;margin: 0 auto;padding-top: 20px;">
-          <h2 style="text-align: center;line-height: 50px;">欢迎使用MIPCMS内容管理系统</h2>
-          <p style="text-align: center;line-height: 50px;">交流QQ群626548966</p>
-
-          <i-form ref="form" :rules="rules" :model="form" :label-width="100">
-
-              <div style="border-radius: 5px;overflow: hidden;padding: 15px;background-color: #fff;">
-                  <h3 style="text-align: center;line-height: 50px;">环境检测</h3>
-                    <div class="col-md-6"><Form-item label="当前PHP版本"><span>{$data['phpversion']}</span>（建议7.0）</Form-item></div>
-                    <div class="col-md-6"><Form-item label="当前环境系统"><span>{$data['os']}</span></Form-item></div>
-                    <div class="col-md-6"><Form-item label="pdo"><span>{$data['pdo']}</span></Form-item></div>
-                    <div class="col-md-6"><Form-item label="pdo_mysql"><span>{$data['pdo_mysql']}</span></Form-item></div>
-                    <div class="col-md-6"><Form-item label="curl"><span>{$data['curl']}</span></Form-item></div>
-                    <div class="col-md-6"><Form-item label="allow_url_fopen"><span>{$data['allow_url_fopen']}</span></Form-item></div>
-                    <div class="col-md-6"><Form-item label="file_get_contents"><span>{$data['file_get_contents']}</span></Form-item></div>
-
-                    <div class="col-md-6"><Form-item label="cache"><span>{$data['checklist']['cache']['w'] ? '<Icon type="checkmark-circled"></Icon> 可写 ' : '<Icon type="close-circled"></Icon></i> 不可写'}</span></Form-item></div>
-                    <div class="col-md-6"><Form-item label="public/install"><span>{$data['checklist']['install']['w'] ? '<Icon type="checkmark-circled"></Icon> 可写 ' : '<Icon type="close-circled"></Icon></i> 不可写'}</span></Form-item></div>
-                    <div class="col-md-6"><Form-item label="system/config"><span>{$data['checklist']['config']['w'] ? '<Icon type="checkmark-circled"></Icon> 可写' : '<Icon type="close-circled"></Icon> 不可写'}</span></Form-item></div>
-              </div>
+    <div id="install" style="width: 600px;margin: 0 auto;padding-top: 20px;">
+        <h2 style="text-align: center;line-height: 70px;">欢迎使用MIPCMS内容管理系统</h2>
+        <p style="text-align: center;color: #7f8fa4!important;line-height: 30px;">交流QQ群626548966</p>
+       
+        <i-form ref="form" :rules="rules" :model="form" :label-width="100">
+            <div class="box box-default">
+                  <div class="box-body">
+                <h3 style="text-align: center;line-height: 50px;">环境检测</h3>
+                      <div class="row">
+                        <div class="col-md-6"><Form-item label="当前PHP版本"><span>{$data['phpversion']}</span>（建议7.0）</Form-item></div>
+                        <div class="col-md-6"><Form-item label="当前环境系统"><span>{$data['os']}</span></Form-item></div>
+                        <div class="col-md-6"><Form-item label="pdo"><span>{$data['pdo']}</span></Form-item></div>
+                        <div class="col-md-6"><Form-item label="pdo_mysql"><span>{$data['pdo_mysql']}</span></Form-item></div>
+                        <div class="col-md-6"><Form-item label="curl"><span>{$data['curl']}</span></Form-item></div>
+                        <div class="col-md-6"><Form-item label="allow_url_fopen"><span>{$data['allow_url_fopen']}</span></Form-item></div>
+                        <div class="col-md-6"><Form-item label="file_get_contents"><span>{$data['file_get_contents']}</span></Form-item></div>
+    
+                        <div class="col-md-6"><Form-item label="cache"><span>{$data['checklist']['cache']['w'] ? '<Icon type="checkmark-circled"></Icon> 可写 ' : '<Icon type="close-circled"></Icon></i> 不可写'}</span></Form-item></div>
+                        <div class="col-md-6"><Form-item label="public/install"><span>{$data['checklist']['install']['w'] ? '<Icon type="checkmark-circled"></Icon> 可写 ' : '<Icon type="close-circled"></Icon></i> 不可写'}</span></Form-item></div>
+                        <div class="col-md-6"><Form-item label="system/config"><span>{$data['checklist']['config']['w'] ? '<Icon type="checkmark-circled"></Icon> 可写' : '<Icon type="close-circled"></Icon> 不可写'}</span></Form-item></div>
+                    </div>
+                  </div>
+            </div>
 
              <div style="background: #fff;padding: 10px;border-radius: 5px;margin-top: 15px;">
-                <h3 style="text-align: center;line-height: 30px;">系统安装（数据库需自行创建）</h3>
+                <h3 style="text-align: center;line-height: 50px;">数据库信息填写</h3>
+                <p style="text-align: center;">注：系统不会创建数据库</p>
                  <Form-item label="安装地址" prop="installAddress">
                     <i-input v-model="form.installAddress" disabled></i-input>
                   </Form-item>
@@ -49,18 +56,20 @@
                   <Form-item label="数据库端口" prop="dbport">
                     <i-input v-model="form.dbport"></i-input>
                   </Form-item>
-                  <Form-item label="数据库用户名" prop="dbuser">
+                  <Form-item label="数据库 名称" prop="dbname">
+                    <i-input v-model="form.dbname"></i-input>
+                  </Form-item>
+                  <Form-item label="数据库 用户" prop="dbuser">
                     <i-input v-model="form.dbuser" placeholder="例如：root"></i-input>
                   </Form-item>
-                  <Form-item label="数据库密码">
+                  <Form-item label="数据库 密码">
                     <i-input type="password" v-model="form.dbpw"></i-input>
-                  </Form-item>
-                  <Form-item label="数据库名称" prop="dbname">
-                    <i-input v-model="form.dbname"></i-input>
                   </Form-item>
                   <Form-item label="数据表前缀" prop="dbprefix">
                     <i-input v-model="form.dbprefix"></i-input>
                   </Form-item>
+                  <hr />
+                    <h3 style="text-align: center;line-height: 50px;">管理员信息填写</h3>
                   <Form-item label="管理账户" prop="username">
                     <i-input v-model="form.username"></i-input>
                   </Form-item>
@@ -72,9 +81,9 @@
                   </Form-item>
                   
              </div>
-                      <div style="text-align: center;padding: 10px;">
-                        <I-button type="primary" @click="submitForm('form')">立即安装</I-button>
-                      </div>
+                  <div style="text-align: center;padding:40px;">
+                    <I-button type="primary" @click="submitForm('form')">立即安装</I-button>
+                  </div>
             </i-form>
        
 

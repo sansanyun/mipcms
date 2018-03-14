@@ -65,7 +65,7 @@ class Mip extends Init
             try {
                 foreach ($itemList as $key => $val) {
                     $addonsName = $val['name'];
-                    $addonsNameSpace = "addons" . "\\" . $addonsName . "\\" . "controller" . "\\" . "globalAction";
+                    $addonsNameSpace = "addons" . "\\" . $addonsName . "\\" . "controller" . "\\" . "GlobalAction";
                     model($addonsNameSpace)->$addonsName();
                 }
             } catch (\Exception $e) {
@@ -108,7 +108,7 @@ class Mip extends Init
      * */
     public function mipView($parent,$name = null)
     {
-        $tplName = $this->tplName;
+        $tplName = Config::get('view_name');
         $this->assign('tplName',$tplName);
         Config::set('view_name', DS . $tplName);
         

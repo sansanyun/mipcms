@@ -125,7 +125,6 @@ class Init extends Controller
             }
         }
         //模板配置
-        $this->tplName = $tplName;
         Config::set('view_name',$tplName);
         $this->assign('config',Config::get());
         //当前网站地址
