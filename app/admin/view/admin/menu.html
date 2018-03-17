@@ -1,78 +1,79 @@
 <div class="menu-wrap">
     <div class="menu-content sidebar-menu">
         
-        <h4 class="sidebar-title">
-            基础
-        </h4>
         <ul class="sidebar-list">
             <li class="li {if condition='$model=="index" || $model==""'}active{/if}">
-                <a href="{$domain}/{$Think.config.admin}/" class="list-link"> 
-                   <i class="ti-home"></i> {$indexTitle}
+                <a href="{$domain}/{$Think.config.admin}/" class="list-link"> <i class="ti-home"></i> {$indexTitle}
                 </a>
             </li>
             
             <li class="li has-sub {if condition='$model=="article"'}active{/if}">
-                <a class="list-link with-sub"> 
-                   <i class="ti-menu"></i> {$mipInfo['articleModelName']}管理
+                <a class="list-link with-sub"><i class="ti-menu"></i> {$mipInfo['articleModelName']}
                    <div class="list-icon"><i class="triangle-facing-left"></i><i class="triangle-facing-bottom"></i></div>
                 </a>
                 <ul class="sub-list">
-                    <li class="{if condition='$action=="article"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/article/article" >全部{$mipInfo['articleModelName']}</a></li>
+                    <li class="{if condition='$action=="article"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/article/article" > <i class="ti-write"></i> 全部{$mipInfo['articleModelName']}</a></li>
                     {if condition='$mipInfo.superSites'}
-                    <li class="{if condition='$action=="articlePush"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/article/articlePush" >SEO推送</a></li>
+                    <li class="{if condition='$action=="articlePush"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/article/articlePush"> <i class="ti-bolt"></i> SEO推送</a></li>
                     {/if}
-                    <li class="{if condition='$action=="articleCategory"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/article/articleCategory">分类管理</a></li>
-                    <li class="{if condition='$action=="articleDiy"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/article/articleDiy">自定义字段</a></li>
+                    <li class="{if condition='$action=="articleCategory"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/article/articleCategory"> <i class="ti-menu-alt"></i> 分类管理</a></li>
+                    <li class="{if condition='$action=="articleDiy"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/article/articleDiy"><i class="ti-filter"></i> 自定义字段</a></li>
                 </ul>
             </li>
              
             <li class="li has-sub {if condition='$model=="tag"'}active{/if}">
-                <a class="list-link"> 
-                   <i class="ti-menu"></i> 标签管理
+                <a class="list-link"><i class="ti-menu"></i> {$mipInfo['tagModelName']}
                    <div class="list-icon"><i class="triangle-facing-left"></i><i class="triangle-facing-bottom"></i></div>
                 </a>
                 <ul class="sub-list">
-                    <li class="{if condition='$action=="tag"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/tag/tag" >全部标签</a></li>
-                    <li class="{if condition='$action=="tagCategory"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/tag/tagCategory">分类管理</a></li>
+                    <li class="{if condition='$action=="tag"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/tag/tag" ><i class="ti-tag"></i> 全部标签</a></li>
+                    <li class="{if condition='$action=="tagCategory"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/tag/tagCategory"><i class="ti-menu-alt"></i> 分类管理</a></li>
+                </ul>
+            </li>
+            
+            <li class="li has-sub {if condition='$model=="addons"'}active{/if}">
+                <a class="list-link"> <i class="ti-menu"></i> 插件
+                   <div class="list-icon"><i class="triangle-facing-left"></i><i class="triangle-facing-bottom"></i></div>
+                </a>
+                <ul class="sub-list">
+                    {mipcms:itemselect table='AddonsMenu' value='v'}
+                    <li class="li {if condition='$action==$v["name"]'}active{/if}"><a class="list-link" href="{$domain}/{$Think.config.admin}/{$v['admin_url']}" ><i class="ti-package"></i> {$v['title']}</a></li>
+                    {/mipcms:itemselect}
+                    <li class="li {if condition='$action=="addons"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/addons/addons" ><i class="ti-menu-alt"></i> 插件管理</a></li>
+                    
+                </ul>
+            </li>
+            
+            
+            <li class="li has-sub {if condition='$model=="xiongzhang"'}active{/if}">
+                <a class="list-link"><i class="ti-menu"></i> 熊掌号
+                   <div class="list-icon"><i class="triangle-facing-left"></i><i class="triangle-facing-bottom"></i></div>
+                </a>
+                <ul class="sub-list">
+                    <li class="li {if condition='$action=="xiongZhangAutoReply"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/xiongzhang/xiongZhangAutoReply"><i class="ti-comment-alt"></i> 自动回复</a></li>
+                    <li class="li {if condition='$action=="xiongZhangDiy"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/xiongzhang/xiongZhangDiy"><i class="ti-mobile"></i> 底部菜单</a></li>
+                    <li class="li {if condition='$action=="xiongZhangUser"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/xiongzhang/xiongZhangUser"><i class="ti-user"></i> 粉丝管理</a></li>
+                    <li class="li {if condition='$action=="xiongZhangSetting"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/xiongzhang/xiongZhangSetting"><i class="ti-shortcode"></i> 开发设置</a></li>
+                </ul>
+            </li>
+            
+            <li class="li has-sub {if condition='$model=="system"'}active{/if}">
+                <a class="list-link"><i class="ti-menu"></i> 系统
+                   <div class="list-icon"><i class="triangle-facing-left"></i><i class="triangle-facing-bottom"></i></div>
+                </a>
+                <ul class="sub-list">
+                    <li class="li {if condition='$action=="setting"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/system/setting" ><i class="ti-settings"></i> 站点设置</a></li>
+                    {if condition='!$mipInfo.superSites'}
+                    <li class="li {if condition='$action=="settingPush"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/system/settingPush"><i class="ti-cloud-up"></i> 推送设置</a></li>
+                    {else/}
+                    <li class="li {if condition='$action=="domainSites"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/system/domainSites"><i class="ti-layers-alt"></i> 超级站点</a></li>
+                    {/if} 
+                    <li class="li {if condition='$action=="template"'}active{/if}"><a class="list-link" href="{$rewrite}/{$Think.config.admin}/system/template"> <i class="ti-layout"></i> 网站模板</a></li>
                 </ul>
             </li>
         </ul>
-        
-        
-        <h4 class="sidebar-title">
-               插件
-        </h4>
-        <ul class="sidebar-list">
-            {mipcms:itemselect table='AddonsMenu' value='v'}
-            <li class="li {if condition='$action==$v["name"]'}active{/if}"><a class="list-link" href="{$domain}/{$Think.config.admin}/{$v['admin_url']}" ><i class="ti-minus"></i> {$v['title']}</a></li>
-            {/mipcms:itemselect}
-            <li class="li {if condition='$action=="addons"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/addons/addons" ><i class="ti-menu-alt"></i> 插件管理</a></li>
-            
-        </ul>
-      
-        <h4 class="sidebar-title">
-            熊掌号
-        </h4>
-        <ul class="sidebar-list">
-            <li class="li {if condition='$action=="xiongZhangAutoReply"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/xiongzhang/xiongZhangAutoReply"><i class="ti-comment-alt"></i> 自动回复</a></li>
-            <li class="li {if condition='$action=="xiongZhangDiy"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/xiongzhang/xiongZhangDiy"><i class="ti-mobile"></i> 底部菜单</a></li>
-            <li class="li {if condition='$action=="xiongZhangUser"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/xiongzhang/xiongZhangUser"><i class="ti-user"></i> 粉丝管理</a></li>
-            <li class="li {if condition='$action=="xiongZhangSetting"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/xiongzhang/xiongZhangSetting"><i class="ti-shortcode"></i> 开发设置</a></li>
-        </ul>
-           
-        <h4 class="sidebar-title">
-            系统
-        </h4>
-        <ul class="sidebar-list">
-            <li class="li {if condition='$action=="template"'}active{/if}"><a class="list-link" href="{$rewrite}/{$Think.config.admin}/system/template"> <i class="ti-layout"></i> 网站模板</a></li>
-            <li class="li {if condition='$action=="setting"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/system/setting" ><i class="ti-settings"></i> 站点设置</a></li>
-            {if condition='!$mipInfo.superSites'}
-            <li class="li {if condition='$action=="settingPush"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/system/settingPush"><i class="ti-cloud"></i> 推送设置</a></li>
-            {else/}
-            <li class="li {if condition='$action=="domainSites"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/system/domainSites"><i class="ti-layers-alt"></i> 超级站点</a></li>
-            {/if}
-
-        </ul>
+ 
+          
         
     </div>
     

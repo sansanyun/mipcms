@@ -167,7 +167,7 @@ class Init extends Controller
         
         //系统关闭状态
         if (!$this->mipInfo['systemStatus']) {
-            if ($this->request->controller() != 'Account') {
+            if ($this->request->module() != 'admin') {
                 if ($this->userInfo['group_id'] != 1) {
                     if (!$this->request->isPost()) {
                         $this->error('站点关闭中...','');
@@ -193,6 +193,11 @@ class Init extends Controller
         if (!$addonsName) {
             $this->error('模板渲染，缺少参数','');
         }
+        
+        $tplName = $this->tplName;
+        $this->assign('tplName',$tplName);
+        $this->assign('themeStatic',$this->domainStatic . '/' . $this->assets . '/' . $tplName);
+        
         if ($template) {
             $template = '../addons' . DS . $addonsName  . DS . 'view' . DS . $template;
         } else {

@@ -51,7 +51,7 @@ class Admin extends Init
             }
         }
         
-        $this->assign('indexTitle','首页概述');
+        $this->assign('indexTitle','首页');
         
         $request = Request::instance();
 //      try {
