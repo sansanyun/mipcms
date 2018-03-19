@@ -37,7 +37,7 @@ class Index extends Mip
     function xml() {
         $page = input('param.id');
         $page = $page ? $page : 1;
-        $itemList = model('app\article\model\Articles')->getItemListNoContent(0, $page, 1000, 'publish_time', 'desc');
+        $itemList = model('app\article\model\Articles')->getItemPushList('', $page, 1000, 'publish_time', 'desc');
 
         $xml = '<?xml version="1.0" encoding="utf-8"?>';
         $xml .= '<urlset>';
@@ -107,7 +107,7 @@ class Index extends Mip
     function pcXml() {
         $page = input('param.id');
         $page = $page ? $page : 1;
-        $itemList = model('app\article\model\Articles')->getItemListNoContent(0, $page, 1000, 'publish_time', 'desc');
+        $itemList = model('app\article\model\Articles')->getItemPushList('', $page, 1000, 'publish_time', 'desc');
 
         $xml = '<?xml version="1.0" encoding="utf-8"?>';
         $xml .= '<urlset>';

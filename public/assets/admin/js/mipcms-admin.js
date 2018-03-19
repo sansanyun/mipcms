@@ -31,8 +31,7 @@ var mip = {
                         return false;
                     }
                     if(res.data.code == 1005 || res.data.code == 1008) {
-                        iview.Message.error('登录状态失效');
-                        location.href = '{$domain}/{$Think.config.admin}/login';
+                        iview.Message.error('登录状态失效，请重新登录');
                     }
                     if(res.data.code != 200 && res.data.code != 1 && res.data.code != -1) {
                         iview.Message.error(res.data.msg + ' 错误代码:' + res.data.code);

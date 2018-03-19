@@ -159,7 +159,7 @@ class Articles extends Init
     
     
     
-    public function getItemPushList($cid = null, $page = 1, $perPage = 10, $orderBy = 'publish_time', $order = 'desc', $domain)
+    public function getItemPushList($cid = null, $page = 1, $perPage = 10, $orderBy = 'publish_time', $order = 'desc', $domain = null)
     {
         if ($cid == '' || $cid == null) {
             if ($this->mipInfo['topDomain']) {
