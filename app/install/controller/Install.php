@@ -126,7 +126,7 @@ class Install extends Controller
                 $dbconfig['username']=input('post.dbuser');
                 $dbconfig['password']=input('post.dbpw');
                 $dbconfig['hostport']=input('post.dbport');
-                $dbname=strtolower(input('post.dbname'));
+                $dbname = input('post.dbname');
                 
                 $username = input('post.username');
                 $password = input('post.password');
@@ -208,7 +208,7 @@ class Install extends Controller
                 $dbconfig['username']=input('post.dbuser');
                 $dbconfig['password']=input('post.dbpw');
                 $dbconfig['hostport']=input('post.dbport');
-                $dbname=strtolower(input('post.dbname'));
+                $dbname = input('post.dbname');
                 
                 $username = input('post.username');
                 $password = input('post.password');
@@ -277,7 +277,7 @@ class Install extends Controller
                 $dbconfig['username']=input('post.dbuser');
                 $dbconfig['password']=input('post.dbpw');
                 $dbconfig['hostport']=input('post.dbport');
-                $dbname=strtolower(input('post.dbname'));
+                $dbname = input('post.dbname');
                 
                 $username = input('post.username');
                 $password = input('post.password');
