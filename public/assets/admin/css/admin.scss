@@ -25,7 +25,7 @@ body {
         width: 100%;
         z-index: 99;
         .mip-logo {
-            width: 180px;
+            width: 150px;
             font-size: 22px;
             float: left;
         }
@@ -72,7 +72,7 @@ body {
     
     //侧边栏菜单
     .mip-menu {
-        width: 180px;
+        width: 150px;
         background-color: #222c3c;
         max-height: none !important;
         position: fixed;
@@ -87,7 +87,7 @@ body {
             overflow-x: hidden;
             overflow-y: scroll;
             .menu-content {
-                width: 180px;  
+                width: 150px;  
                 margin-bottom: 80px;
                 .sidebar-title {
                     padding-top: 25px;
@@ -239,7 +239,7 @@ body {
             z-index: 1;
             bottom: 0;
             top: 50px;
-            padding-left: 180px;
+            padding-left: 150px;
             .mipcms-container-header {
                 .header-group {
                     margin-top: -6px;

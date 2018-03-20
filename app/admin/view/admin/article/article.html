@@ -60,12 +60,11 @@
                             <li class="col-md-1">
                                 <Checkbox v-model="itemListSelectStatus"  :disabled='!itemList.length' @on-change='itemListSelectChange'>全选</Checkbox>
                             </li>
-                            <li class="col-md-1"><span>分类</span></li>
+                            <li class="col-md-2"><span>分类</span></li>
                             <li class="col-md-3"><span>标题</span></li>
                             <li class="col-md-2"><span>时间</span></li>
                             <li class="col-md-1"><span>推荐</span></li>
                             <li class="col-md-1"><span>浏览</span></li>
-                            <li class="col-md-1"><span></span></li>
                             <li class="col-md-2"><span>操作</span></li>
                             <!--<div class="col-md-3">
                                  <span>
@@ -88,12 +87,11 @@
                         <div class="diy-table-item" v-for='item in itemList' >
                              <ul class="list-unstyled row">
                                 <li class="col-md-1"><Checkbox v-model="item.itemListSelectStatus"></Checkbox></li>
-                                <li class="col-md-1"> <span v-if='item.categoryInfo'>{{item.categoryInfo.name}}</span><span v-else>无分类</span></li>
+                                <li class="col-md-2"> <span v-if='item.categoryInfo'>{{item.categoryInfo.name}}</span><span v-else>无分类</span></li>
                                 <li class="col-md-3 over-h-e"><span><a :href="item.url" target="_blank">{{item.title}}</a></span></li>
                                 <li class="col-md-2"><span>{{item.publish_time | time}}</span></li>
                                 <li class="col-md-1"><Tooltip v-if='item.is_recommend' content="已推荐" placement="top" ><span><Icon type="ios-checkmark-empty" size='18'></Icon></span></Tooltip><span v-else></span></li>
                                 <li class="col-md-1"><span>{{item.views}}</span></li>
-                                <li class="col-md-1"></li>
                                 <li class="col-md-2">
                                     <span>
                                         <a @click="itemDel(item)" >删除</a>   

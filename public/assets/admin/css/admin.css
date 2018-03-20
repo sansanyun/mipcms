@@ -23,7 +23,7 @@ body a:hover {
   z-index: 99;
 }
 .mip-admin .mip-header .mip-logo {
-  width: 180px;
+  width: 150px;
   font-size: 22px;
   float: left;
 }
@@ -63,7 +63,7 @@ body a:hover {
   color: #fff;
 }
 .mip-admin .mip-menu {
-  width: 180px;
+  width: 150px;
   background-color: #222c3c;
   max-height: none !important;
   position: fixed;
@@ -80,7 +80,7 @@ body a:hover {
   overflow-y: scroll;
 }
 .mip-admin .mip-menu .menu-wrap .menu-content {
-  width: 180px;
+  width: 150px;
   margin-bottom: 80px;
 }
 .mip-admin .mip-menu .menu-wrap .menu-content .sidebar-title {
@@ -196,7 +196,7 @@ body a:hover {
   z-index: 1;
   bottom: 0;
   top: 50px;
-  padding-left: 180px;
+  padding-left: 150px;
 }
 .mip-admin .mip-main .mip-container .mipcms-container-header {
   padding: 15px;

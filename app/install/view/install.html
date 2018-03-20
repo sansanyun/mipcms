@@ -183,9 +183,11 @@ Vue.prototype.$mip = mip;
                 ],
                 password: [
                     { required: true, message: "必填项", trigger: "blur" },
+                    { min: 5, max: 25, message: '长度在 5 到25 个字符', trigger: 'blur' }
                 ],
                 rpassword: [
                     { required: true, message: "必填项", trigger: "blur" },
+                    { min: 5, max: 25, message: '长度在 5 到25 个字符', trigger: 'blur' }
                 ],
             }
         }
