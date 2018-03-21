@@ -46,22 +46,7 @@ if (!strpos($request->url(),'Api')) {
     
 }
     
-    if (!strpos($request->url(),'Api')) {
-        
-        Route::rule([$mipInfo['productModelUrl'].'/index'.$mipInfo['urlPageBreak'].'<page>' => ['product/Product/index',['ext'=>'html'],['page'=>'\d+']]]); // /product/index_1.html
-        
-        Route::rule([$mipInfo['productModelUrl'].'/[:category]/index'.$mipInfo['urlPageBreak'].'<page>'  => ['product/Product/index',['ext'=>'html'],[]]]); // /product/seo/index_1.html
-            
-        Route::rule([$mipInfo['productModelUrl'].'/:id'  => ['product/productDetail/index',['ext'=>'html'],['id'=>'[a-zA-Z0-9_-]+']]]); // /product/11.html
-        
-        Route::rule([$mipInfo['productModelUrl'].'/[:category]'  => ['product/Product/index',[],['category'=>'[a-zA-Z0-9_-]+']]]); // /product/seo/
-        
-        Route::rule($mipInfo['productModelUrl'],'product/Product/index'); //  /product/
-        
-        Route::rule([$mipInfo['productModelUrl'].'/[:category]/[:sub]' => ['product/Product/index?sub=:sub',[],['category'=>'[a-zA-Z0-9_-]+','sub'=>'[a-zA-Z0-9_-]+']]]); // /seo/sem/
-        
-        Route::rule([$mipInfo['productModelUrl'].'/[:category]/[:sub]/index'.$mipInfo['urlPageBreak'].'<page>' => ['product/Product/index?sub=:sub',['ext'=>'html'],['page'=>'\d+']]]);  // /seo/sem/index_12.html
-    }
+   
     
     foreach (fetch_file_lists(APP_PATH) as $key => $file) {
         if (strstr($file,'route.php')) {
