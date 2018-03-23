@@ -115,11 +115,10 @@ class Install extends Controller
         return $this->fetch('install@/install');
     }
 
-    public function installPost(Request $request) {
-                header('Access-Control-Allow-Origin: *');
-                header('Access-Control-Allow-Credentials: true');
-                header('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
-                header('Access-Control-Allow-Headers: Content-Type, Content-Range,access-token, secret-key,access-key,uid,sid,terminal,X-File-Name,Content-Disposition, Content-Description');
+    public function installPost(Request $request)
+    {
+        if (!is_file(PUBLIC_PATH . 'install' . DS .'install.lock')) {
+            
             if (Request::instance()->isPost()) {
                 $dbconfig['type']="mysql";
                 $dbconfig['hostname']=input('post.dbhost');
@@ -192,15 +191,14 @@ class Install extends Controller
                     }
                     
                 }
-
+            }
         }
 
     }
- public function installPostOne(Request $request) {
-                header('Access-Control-Allow-Origin: *');
-                header('Access-Control-Allow-Credentials: true');
-                header('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
-                header('Access-Control-Allow-Headers: Content-Type, Content-Range,access-token, secret-key,access-key,uid,sid,terminal,X-File-Name,Content-Disposition, Content-Description');
+
+    public function installPostOne(Request $request)
+    {
+        if (!is_file(PUBLIC_PATH . 'install' . DS .'install.lock')) {
             if (Request::instance()->isPost()) {
                 $dbconfig['type']="mysql";
                 $installAddress = input('post.installAddress');
@@ -261,75 +259,11 @@ class Install extends Controller
                 } else {
                     return jsonError('配置文件写入失败');
                 }
-                
-                
-                
+                    
+                    
+                    
             }
         }
-    public function installPostTwo(Request $request) {
-                header('Access-Control-Allow-Origin: *');
-                header('Access-Control-Allow-Credentials: true');
-                header('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
-                header('Access-Control-Allow-Headers: Content-Type, Content-Range,access-token, secret-key,access-key,uid,sid,terminal,X-File-Name,Content-Disposition, Content-Description');
-            if (Request::instance()->isPost()) {
-                $dbconfig['type']="mysql";
-                $dbconfig['hostname']=input('post.dbhost');
-                $dbconfig['username']=input('post.dbuser');
-                $dbconfig['password']=input('post.dbpw');
-                $dbconfig['hostport']=input('post.dbport');
-                $dbname = input('post.dbname');
-                
-                $username = input('post.username');
-                $password = input('post.password');
-                $rpassword = input('post.rpassword');
-                if (!$username) {
-                    return jsonError('请输入用户名');
-                }
-                if (!$password) {
-                    return jsonError('请输入密码');
-                }
-                if (!$rpassword) {
-                    return jsonError('请输入重复密码');
-                }
-                $dsn = "mysql:dbname={$dbname};host={$dbconfig['hostname']};port={$dbconfig['hostport']};charset=utf8";
-                try {
-                    $db = new \PDO($dsn, $dbconfig['username'], $dbconfig['password']);
-                } catch (\PDOException $e) {
-                    return jsonError('错误代码:'.$e->getMessage());
-                }
-                
-                
-                if(is_file(CONF_PATH. '/database.php')) {
-                    $install = ROOT_PATH.'public/install';
-                    if(!is_writable($install)){
-                        return jsonError('路径：/public/install没有写入权限');
-                    }
-                    try {
-                        touch(PUBLIC_PATH.'install'.DS.'install.lock');
-                    } catch (Exception $e) {
-                        return jsonError('install.lock文件写入失败，请检查public/install 文件夹是否可写入');
-                    }
-                    db('accessKey')->insert(array('id' => 999 ,'name' => 'clouds','key' => uuid(),'type' => 'clouds'));
-                    $accessKeyInfo = db('accessKey')->where('id',999)->find();
-                     
-                    $salt = create_salt(8);
-                       db('users')->insert(array(
-                            'uid' => uuid(),
-                            'username' => $username,
-                            'password' => create_md5($password,$salt),
-                            'salt' => $salt,
-                            'reg_time' => time(),
-                            'group_id' => 1,
-                            'rank' => 1,
-                            'terminal' => 'clouds',
-                        ));
-                     return jsonSuccess('安装完成',$accessKeyInfo['key']);
-                } else {
-                    return jsonError('配置文件写入失败');
-                }
-                
-                
-                
-            }
-        }
+    }
+
 }
