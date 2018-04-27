@@ -17,9 +17,7 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "topthink/framework": "^5.0",
-        "jaeger/querylist": "^3.1",
-        "aferrandini/phpqrcode": "1.0.1",
+        "topthink/framework": "5.0.18",
         "topthink/think-captcha": "^1.0",
         "5ini99/think-addons": "dev-master"
     },

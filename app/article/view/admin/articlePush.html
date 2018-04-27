@@ -1,0 +1,340 @@
+{extend name="./app/admin/view/main.html" /}
+{block name="title"}
+{assign name="currentListUrl" value="articlePush" /}
+{assign name="itemName" value="$mipInfo['articleModelName']" /}
+{assign name="itemUrl" value="article" /}
+{assign name="itemApiUrl" value="Article" /}
+SEO推送 - {$mipInfo['articleModelName']} - {__block__}{/block}
+{block name="style"}
+<style>
+</style>
+{/block}
+
+{block name="main"}
+<header class="mipcms-container-header">
+   <div class="float-left header-group">
+        <h4 class="title">{$mipInfo['articleModelName']}</h4> <h5 class="sub-title">SEO推送</h5>
+    </div>
+    <div class="float-right">
+         
+    </div>
+</header>
+<main class="mipcms-container-body" style="height: calc(100% - 50px)">
+    {include file="./app/article/view/admin/articleCategoryList.html" /}
+    <section class="content-box">
+        <section class="mip-box">
+            <section class="mip-box-body">
+                <!--内容列表-->
+                <section class="diy-table-list" v-cloak>
+                    <div class="content-list-header d-flex justify-content-between">
+                        <div>
+                            <i-Select v-model="currentDomainId" transfer style="width:200px">
+                                <i-Option v-for="item in domainSitesList" :value="item.id" :key="item.id">{{item.domain}}({{item.type}}站)</i-Option>
+                            </i-Select>
+                        </div>
+                        <div>
+                            
+                            <button class="ivu-btn ivu-btn-text" type="text" :disabled='!domainSitesInfo.mipApi || !itemListSelectStatus' @click="mipPush('mip')"><i class="ivu-icon ivu-icon-ios-bolt"></i> MIP推送</button>
+                            <button class="ivu-btn ivu-btn-text" type="text" :disabled='!domainSitesInfo.ampApi || !itemListSelectStatus' @click="mipPush('amp')"><i class="ivu-icon ivu-icon-ios-bolt"></i> AMP推送</button>
+                            <button class="ivu-btn ivu-btn-text" type="text" :disabled='!domainSitesInfo.xiongZhangNewApi || !itemListSelectStatus' @click="mipPush('xiongZhangNew')"><i class="ivu-icon ivu-icon-ios-paw"></i> 新增推送</button>
+                            <button class="ivu-btn ivu-btn-text" type="text" :disabled='!domainSitesInfo.xiongZhangOldApi || !itemListSelectStatus' @click="mipPush('xiongZhangOld')"><i class="ivu-icon ivu-icon-ios-paw-outline"></i> 历史推送</button>
+                            <button class="ivu-btn ivu-btn-text" type="text" :disabled='!domainSitesInfo.yuanChuangApi || !itemListSelectStatus' @click="mipPush('yuanChuang')"><i class="ivu-icon ivu-icon-ios-paper-outline"></i> 原创推送</button>
+                            <button class="ivu-btn ivu-btn-text" type="text" :disabled='!domainSitesInfo.linkApi || !itemListSelectStatus' @click="mipPush('link')"><i class="ivu-icon ivu-icon-paper-airplane"></i> 链接推送</button>
+                        </div>
+                    </div>
+                    <div class="diy-table-item diy-table-item-header">
+                        <ul class="list-unstyled row">
+                            <li class="col-md-1">
+                                <Checkbox v-model="itemListSelectStatus"  :disabled='!itemList.length' @on-change='itemListSelectChange'></Checkbox>全选
+                            </li>
+                            <li class="col-md-1"><span>分类</span></li>
+                            <li class="col-md-3"><span>标题</span></li>
+                            <li class="col-md-2"><span>时间</span></li>
+                             
+                        </ul>
+                    </div>
+                    <div v-if='itemList.length' class="diy-table-body">
+                        <div class="diy-table-item" v-for='item in itemList' >
+                             <ul class="list-unstyled row">
+                                <li class="col-md-1">
+                                    <Checkbox v-model="item.itemListSelectStatus"></Checkbox>
+                                </li>
+                                <li class="col-md-1">
+                                    <span v-if='item.categoryInfo'>{{item.categoryInfo.name}}</span>
+                                    <span v-else>无分类</span>
+                                </li>
+                                <li class="col-md-3 over-h-e">
+                                    <span><a :href="item.url" target="_blank">{{item.title}}</a></span>
+                                </li>
+                                <li class="col-md-2">
+                                    <span>{{item.publish_time | time}}</span>
+                                </li>
+                                <li class="col-md-1">
+                                </li>
+                                <li class="col-md-2">
+                                    
+                                </li>
+                                 
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="no-block" v-else>
+                        <Icon type="ios-filing-outline"></Icon>
+                        <p>暂无数据</p>
+                    </div>
+                </section>
+                <!--内容列表结束-->
+                <!--分页-->
+                <div class="text-right clearfix mt-3">
+                    <Page :total="pagination.total"  @on-page-size-change='itemPaginationSelect' :page-size-opts='[10,100,500,1000,5000]' show-total show-sizer placement='top' @on-change='itemPaginationClick'></Page>
+                </div>
+            </section>
+        </section>
+         
+     </section>
+</main>   
+         
+     <!--推送-->
+    <Modal title="推送" v-model="push.pushStatus" v-cloak>
+        <template>
+            <p>以下是本次提交的地址共{{push.pushData.length}}篇</p>
+            <ul class="list-unstyled">
+                <li class="text-999 font-12" style="line-height: 20px;" v-for='item in push.pushData'>{{item.url}}</li>
+            </ul>
+            <p class="m-t">百度站长平台提交的API接口：</p>
+            <pre class="selected m-t-n-xs">{{push.pushAddress}}</pre>
+        </template>
+        <span slot="footer" class="dialog-footer">
+            <i-button @click="push.pushStatus = false">取 消</i-button>
+            <i-button type="primary" @click='pushPost'>确 定</i-button>
+          </span>
+    </Modal>
+</div>
+{/block}
+    
+{block name="javascript"}
+{__block__}
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            itemListSelectStatus: false,
+            cid: parseInt('{$cid}'),
+            itemList: [], 
+            pullData: [],
+            pullBtnInfo: '点击更新最新数据',
+            status: '',
+            statusText: '全部',
+            //域名列表
+            domainSitesList: [],
+            currentDomainId: '',
+            domainSitesInfo: '',
+           //推送
+            push: {
+                pushStatus: false,
+                pushData: [],
+                pushType: '',
+                pushAddress: ''
+            },
+            pagination: {
+                currentPage: 1,
+                limit: 10,
+                total: this.total,
+            },
+        },
+        watch: {
+            currentDomainId() {
+                this.getDomainSettings();
+            },
+            itemList: {
+                handler(newValue, oldValue) {
+                    var tempStatus = false;
+        　　　　　for (var i = 0; i < this.itemList.length; i ++) {
+                    if (this.itemList[i].itemListSelectStatus == true) {
+                        tempStatus = true;
+                    }
+                }
+                if (tempStatus) {
+                    this.itemListSelectStatus = true;
+                } else {
+                    this.itemListSelectStatus = false;
+                }
+        　　　　},
+        　　　　deep: true
+        　　}
+        },
+        mounted() {
+           this.getDomainSites();
+        },
+        methods: {
+             
+            //获取站点信息
+            getDomainSites() {
+                var _this = this;
+                this.$mip.ajax('{$domain}/setting/ApiAdminDomainSites/itemSelect', {
+                }).then(function(res) {
+                    _this.loading = false;
+                    if(res.code == 1) {
+                        _this.domainSitesList = res.data.itemList;
+                        _this.currentDomainId = _this.domainSitesList[0].id;
+                    }
+                 });
+            },
+            getDomainSettings() {
+                var _this = this;
+                this.$mip.ajax('{$domain}/setting/ApiAdminDomainSettings/itemFind', {
+                    id: this.currentDomainId,
+                }).then(function(res) {
+                    _this.loading = false;
+                    if(res.code == 1) {
+                        _this.domainSitesInfo = res.data;
+                        _this.getItemList();
+                    }
+                 });
+            },
+            //获取选择的URL数据
+            getUrl() {
+                var itemUrlList = [];
+                for(var i = 0; i < this.itemList.length; i++) {
+                    if (this.itemList[i].itemListSelectStatus) {
+                        itemUrlList.push({'url': this.itemList[i].url,'id': this.itemList[i].id});
+                    }
+                }
+                return itemUrlList;
+            },
+            //mip推送
+            mipPush(type) {
+                this.push.pushType = type;
+                this.push.pushData = this.getUrl();
+                if (this.push.pushType == 'mip') {
+                    this.push.pushAddress = this.domainSitesInfo.mipApi;
+                }
+                if (this.push.pushType == 'amp') {
+                    this.push.pushAddress = this.domainSitesInfo.ampApi;
+                }
+                if (this.push.pushType == 'xiongZhangNew') {
+                    this.push.pushAddress = this.domainSitesInfo.xiongZhangNewApi;
+                }
+                if (this.push.pushType == 'xiongZhangOld') {
+                    this.push.pushAddress = this.domainSitesInfo.xiongZhangOldApi;
+                }
+                if (this.push.pushType == 'yuanChuang') {
+                    this.push.pushAddress = this.domainSitesInfo.yuanChuangApi;
+                }
+                if (this.push.pushType == 'link') {
+                    this.push.pushAddress = this.domainSitesInfo.linkApi;
+                }
+                this.push.pushStatus = true;
+            },
+            pushPost() {
+                if (!this.push.pushData.length) {
+                    this.$Message.error('请选择要推送的内容链接');
+                    return false;
+                }
+                if (!this.push.pushType) {
+                    this.$Message.error('系统无法识别你推送的类型');
+                    return false;
+                }
+                if (!this.push.pushAddress) {
+                    this.$Message.error('请去完善你要推送的API接口地址');
+                    return false;
+                }
+                var _this = this;
+                this.$mip.ajax('{$domain}/setting/ApiAdminDomainSettings/urlPost', {
+                    pushData: JSON.stringify(this.push.pushData),
+                    postAddress: this.push.pushAddress,
+                    pushType: this.push.pushType,
+                }).then(function(res) {
+                    if(res.code == 1) {
+                        var resMIp = JSON.parse(res.msg);
+                        if (_this.push.pushType == 'mip') {
+                            _this.$Message.success('推送成功：' + resMIp.success_mip + '条；剩余:' + resMIp.remain_mip + '条');
+                        }
+                        if (_this.push.pushType == 'amp') {
+                            _this.$Message.success('推送成功：' + resMIp.success_amp + '条；剩余:' + resMIp.remain_amp + '条');
+                        }
+                        if (_this.push.pushType == 'xiongZhangNew') {
+                            _this.$Message.success('推送成功：' + resMIp.success_realtime + '条；剩余:' + resMIp.remain_realtime + '条');
+                        }
+                        if (_this.push.pushType == 'xiongZhangOld') {
+                            _this.$Message.success('推送成功：' + resMIp.success_batch + '条；剩余:' + resMIp.remain_batch + '条');
+                        }
+                        if (_this.push.pushType == 'yuanChuang') {
+                            _this.$Message.success('推送成功：' + resMIp.success_original + '条；剩余:' + resMIp.remain_original + '条');
+                        }
+                        if (_this.push.pushType == 'link') {
+                            _this.$Message.success('推送成功：' + resMIp.success + '条');
+                        }
+                        _this.push.pushStatus = false;
+                    }
+                });
+            }, 
+             //选择全部
+            itemListSelectChange() {
+                var itemList = this.itemList;
+                for (var i = 0; i < itemList.length; i++) {
+                    if (this.itemListSelectStatus) {
+                        itemList[i].itemListSelectStatus = true;
+                    } else {
+                        itemList[i].itemListSelectStatus = false;
+                    }
+                }
+                this.itemList = itemList;
+            },
+            pushStautsClick(val) {
+                this.status = val;
+                if (val === '') {
+                    this.statusText = '全部';
+                }
+                if (parseInt(val) == 0) {
+                    this.statusText = '未推送';
+                }
+                if (parseInt(val) == 1) {
+                    this.statusText = '已推送';
+                }
+                this.getItemList();
+            },
+            getItemList() {
+                this.loading = true;
+                var _this = this;
+                var tempDomain = '';
+                if (this.currentDomainId) {
+                    for (var i = 0; i < this.domainSitesList.length; i++) {
+                           if (this.domainSitesList[i].id == this.currentDomainId) {
+                               tempDomain = this.domainSitesList[i].http_type + this.domainSitesList[i].domain;
+                           }
+                    }
+                }
+                this.$mip.ajax('{$domain}/{$itemUrl}/ApiAdmin{$itemApiUrl}/itemList', {
+                    domain: tempDomain,
+                    status: this.status,
+                    cid: this.cid,
+                    page: this.pagination.currentPage,
+                    limit: this.pagination.limit,
+                }).then(function(res) {
+                    _this.itemList = [];
+                    if(res.code == 1) {
+                        var itemList = res.data.itemList;
+                        if (itemList) {
+                            for (var i = 0; i < itemList.length; i++) {
+                                itemList[i].itemListSelectStatus = false; 
+                            }
+                            _this.itemList = itemList;
+                        }
+                        _this.pagination.total = res.data.total;
+                    }
+                    _this.loading = false;
+                });
+            },
+            itemPaginationSelect(val) {
+                this.pagination.limit = val;
+                this.getItemList();
+            },
+            itemPaginationClick(val) {
+                this.pagination.currentPage = val;
+                this.getItemList();
+            },
+        }
+    })
+  </script>
+{/block}

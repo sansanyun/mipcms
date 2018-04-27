@@ -1,41 +1,44 @@
-<div class="mip-header mip-header-default" id="mip_header">
-    <div class="container">
-        <div class="logo-text">
-            <a data-type="mip" href="{$domain}" data-title="{$mipInfo['siteName']}">{$mipInfo['siteName']}</a>
+<div class="mipmb-header mipmb-header-default" id="mip_header">
+    <div class="container d-lg-flex justify-content-between">
+        <div class="d-lg-flex justify-content-start">
+            <div class="logo-text">
+                <a data-type="mip" href="{$domain}" data-title="{$mipInfo['siteName']}">{$mipInfo['siteName']}</a>
+            </div>
+            <ul class="mipmb-menu list-unstyled d-lg-flex">
+                <li class='{if condition="$mod=='index'"}active{/if}'>
+                    <a href="{$domain}" data-type="mip" data-title="{$mipInfo['siteName']}" title='首页'>首页</a>
+                </li>
+                {mipcms:articlecategory value="v" type='menu'}
+                <li class='mipmb-dropdown-item {if condition="$categoryUrlName==$v['url_name']"}active{/if}'>
+                    <a href="{$v.url}" data-type="mip" data-title="{$v['name']}" title="{$v['name']}">{$v['name']}</a>
+                    {if condition='$v.sub'}
+                    <ul class="mipmb-dropdown-list">
+                        {volist name='$v.sub' id="val"}
+                        <li>
+                            <a href="{$val.url}" data-type="mip" data-title="{$val.name}" title='{$val.name}'>{$val.name}</a>
+                        </li>
+                        {/volist}
+                    </ul>
+                    {/if}
+                </li>
+                {/mipcms:articlecategory}
+                <li>
+                    <a href="http://zhannei.baidu.com/cse/search?s={$mipInfo['biaduZn']}" target="_blank" title='搜索'>搜索</a>
+                </li>
+            </ul>
         </div>
-         
-        <ul class="mip-menu list-unstyled">
-            <li class='{if condition="$mod=='index'"}active{/if}'>
-                <a href="{$domain}" data-type="mip" data-title="{$mipInfo['siteName']}" title='首页'>首页</a>
-            </li>
-            {mipcms:articlecategory value="v"}
-            <li class='mip-dropdown-item {if condition="$categoryUrlName==$v['url_name']"}active{/if}'>
-                <a href="{$v.url}" data-type="mip" data-title="{$v['name']}" title="{$v['name']}">{$v['name']}</a>
-                {if condition='$v.sub'}
-                <ul class="mip-dropdown-list">
-                    {volist name='$v.sub' id="val"}
-                    <li class="el-dropdown-menu__item">
-                        <a href="{$val.url}" data-type="mip" data-title="{$val.name}" title='{$val.name}'>{$val.name}</a>
-                    </li>
-                    {/volist}
-                </ul>
+        <div class="d-lg-flex d-none">
+            <ul class="mipmb-menu list-unstyled">
+                {if condition='$userInfo["group_id"] == 1'}
+                <li>
+                    <a href="{$domain}/{$Think.config.admin}/">后台管理</a>
+                </li>
+                {else/}
+                <li>
+                    <a href="{$domain}/{$Think.config.admin}/">登录</a>
+                </li>
                 {/if}
-            </li>
-            {/mipcms:articlecategory}
-            <li>
-                <a href="http://zhannei.baidu.com/cse/search?s={$mipInfo['biaduZn']}" target="_blank" title='搜索'>搜索</a>
-            </li>
-        </ul>
-        <ul class="mip-menu list-unstyled hidden-xs pull-right">
-            {if condition='$userInfo["group_id"] == 1'}
-            <li>
-                <a href="{$domain}/{$Think.config.admin}/">后台管理</a>
-            </li>
-            {else/}
-            <li>
-                <a href="{$domain}/{$Think.config.admin}/">登录</a>
-            </li>
-            {/if}
-        </ul>
+            </ul>
+        </div>
     </div>
 </div>

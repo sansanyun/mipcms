@@ -1,0 +1,12 @@
+<li class="li has-sub {if condition='$model=="addons"'}active{/if}">
+    <a class="list-link"> <i class="ion-ios-folder-outline"></i> 插件
+       <div class="list-icon"><i class="triangle-facing-left"></i><i class="triangle-facing-bottom"></i></div>
+    </a>
+    <ul class="sub-list">
+        {mipitem:itemselect table='AddonsMenu' value='v'}
+        <li class="li {if condition='$action==$v["name"]'}active{/if}"><a class="list-link" href="{$domain}/{$Think.config.admin}/{$v['admin_url']}" >{$v['title']}</a></li>
+        {/mipitem:itemselect}
+        <li class="li {if condition='$action=="addons"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/addons/addons">插件管理</a></li>
+        
+    </ul>
+</li>

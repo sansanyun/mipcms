@@ -1,0 +1,461 @@
+{extend name="./app/admin/view/main.html" /}
+{block name="title"}
+{assign name="currentListUrl" value="article" /}
+{assign name="itemName" value="$mipInfo['articleModelName']" /}
+{assign name="itemUrl" value="article" /}
+{assign name="itemApiUrl" value="Article" /}
+全部{$mipInfo['articleModelName']} - {__block__}{/block}
+
+{block name="style"}
+<style>
+</style>
+{/block}
+
+{block name="main"}
+<header class="mipcms-container-header">
+    <div class="float-left header-group">
+        <h4 class="title">{$mipInfo['articleModelName']}</h4> <h5 class="sub-title">全部文章</h5>
+    </div>
+    <div class="float-right">
+        <a href="{$domain}/{$Think.config.admin}/{$itemUrl}/{$itemUrl}Publish/cid-{$cid}" class="ivu-btn ivu-btn-primary ivu-btn-circle">
+            <Icon type="edit"></Icon> 发布{$mipInfo['articleModelName']}
+        </a>
+    </div>
+</header>
+<main class="mipcms-container-body" style="height: calc(100% - 50px)">
+    {include file="./app/article/view/admin/articleCategoryList.html" /}
+    <section class="content-box">
+        <section class="mip-box">
+            <section class="mip-box-body">
+                <!--内容列表-->
+                <section class="diy-table-list" v-cloak>
+                    <div class="content-list-header clearfix">
+                        <div class="float-left m-b-xs">
+                            <i-input v-model="searchData" placeholder="请输入搜索的关键词" style='width: 300px;'>
+                                <i-Button slot="append" icon="ios-search" @click='itemSearchClick'></i-Button>
+                            </i-input>
+                        </div>
+                        <div class="float-right">
+                            <button class="ivu-btn ivu-btn-text" type="text" :disabled='!itemListSelectStatus' @click="itemsDel"><i class="ivu-icon ivu-icon-ios-trash"></i> 批量删除</button>
+                            
+                            <span v-if='!mipGlobal.mipInfo.superSites'>
+                                <button class="ivu-btn ivu-btn-text" type="text" :disabled='!itemListSelectStatus' @click="mipPush('mip')"><i class="ivu-icon ivu-icon-ios-bolt"></i> MIP推送</button>
+                                <button class="ivu-btn ivu-btn-text" type="text" :disabled='!itemListSelectStatus' @click="mipPush('guanfanghaoNew')"><i class="ivu-icon ivu-icon-ios-paw"></i> 新增推送</button>
+                                <button class="ivu-btn ivu-btn-text" type="text" :disabled='!itemListSelectStatus' @click="mipPush('guanfanghaoOld')"><i class="ivu-icon ivu-icon-ios-paw-outline"></i> 历史推送</button>
+                                <button class="ivu-btn ivu-btn-text" type="text" :disabled='!itemListSelectStatus' @click="mipPush('baiduYuanChuangUrl')"><i class="ivu-icon ivu-icon-ios-paper-outline"></i> 原创推送</button>
+                                <button class="ivu-btn ivu-btn-text" type="text" :disabled='!itemListSelectStatus' @click="mipPush('link')"><i class="ivu-icon ivu-icon-paper-airplane"></i> 链接推送</button>
+                            </span>
+                        </div>
+                        
+                    </div>
+                    <div class="diy-table-item diy-table-item-header">
+                        <ul class="list-unstyled row">
+                            <li class="col-md-1">
+                                <Checkbox v-model="itemListSelectStatus"  :disabled='!itemList.length' @on-change='itemListSelectChange'>全选</Checkbox>
+                            </li>
+                            <li class="col-md-2"><span>分类</span></li>
+                            <li class="col-md-3"><span>标题</span></li>
+                            <li class="col-md-2"><span>时间</span></li>
+                            <li class="col-md-1"><span>推荐</span></li>
+                            <li class="col-md-1"><span>浏览</span></li>
+                            <li class="col-md-2"><span>操作</span></li>
+                            <!--<div class="col-md-3">
+                                 <span>
+                                     <Dropdown trigger="click" @on-click='pushStautsClick($event)'>
+                                        <a href="javascript:void(0)">
+                                            MIP状态({{statusText}})
+                                            <Icon type="arrow-down-b"></Icon>
+                                        </a>
+                                        <Dropdown-menu slot="list">
+                                            <Dropdown-Item name=''>全部</Dropdown-Item>
+                                            <Dropdown-Item name='0'>未推送</Dropdown-Item>
+                                            <Dropdown-Item name='1'>已推送</Dropdown-Item>
+                                        </Dropdown-menu>
+                                     </Dropdown>
+                                 </span>
+                            </div>-->
+                        </ul>
+                    </div>
+                    <div v-if='itemList.length' class="diy-table-body">
+                        <div class="diy-table-item" v-for='item in itemList' >
+                             <ul class="list-unstyled row">
+                                <li class="col-md-1"><Checkbox v-model="item.itemListSelectStatus"></Checkbox></li>
+                                <li class="col-md-2"> <span v-if='item.categoryInfo'><a :href="item.categoryInfo.url" target="_blank">{{item.categoryInfo.name}}</a></span><span v-else>无分类</span></li>
+                                <li class="col-md-3 over-h-e"><span><a :href="item.url" target="_blank">{{item.title}}</a></span></li>
+                                <li class="col-md-2"><span>{{item.publish_time | time}}</span></li>
+                                <li class="col-md-1"><Tooltip v-if='item.is_recommend' content="已推荐" placement="top" ><span><Icon type="ios-checkmark-empty" size='18'></Icon></span></Tooltip><span v-else></span></li>
+                                <li class="col-md-1"><span>{{item.views}}</span></li>
+                                <li class="col-md-2">
+                                    <span>
+                                        <a @click="itemDel(item)" >删除</a>   
+                                        <a v-if='!item.is_recommend' @click="itemRecomment(item)" class="ml-1">推荐</a>
+                                        <a v-else @click="itemRecomment(item)" class="ml-1">取消</a>
+                                        <a @click="itemEdit(item)" class="ml-1">编辑</a>   
+                                    </span>
+                                </li>
+                                
+                                <!--<li class="col-md-3">
+                                    <span>{{item.is_push ? '推送' : '未推送'}}</span>
+                                </li>-->
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="no-block" v-else>
+                        <Icon type="ios-filing-outline"></Icon>
+                        <p>暂无数据</p>
+                    </div>
+                </section>
+                <!--内容列表结束-->
+                <!--分页-->
+                <div class="text-right clearfix mt-3">
+                    <div class="diy-table-item float-left" style="margin-left: 10px;">
+                        <Checkbox v-model="itemListSelectStatus"  :disabled='!itemList.length' @on-change='itemListSelectChange'>全选</Checkbox>
+                        <button class="ivu-btn ivu-btn-text" type="text" :disabled='!itemListSelectStatus' @click="transferClick"><Icon type="arrow-swap"></Icon> 批量转移</button>
+                    </div>
+                    <Page :total="pagination.total"  @on-page-size-change='itemPaginationSelect' :page-size-opts='[10,100,500,1000,5000]' show-total show-sizer placement='top' @on-change='itemPaginationClick'></Page>
+                </div>
+            </section>
+        </section>
+    </section>
+</main>
+     <!--推送-->
+    <Modal title="推送" v-model="push.pushStatus"  v-cloak>
+        <template>
+            <p>以下是本次提交的地址共{{push.pushData.length}}篇</p>
+            <ul class="list-unstyled">
+                <li class="text-999 font-12" style="line-height: 20px;" v-for='item in push.pushData'>{{item}}</li>
+            </ul>
+            <p class="m-t">百度站长平台提交的API接口：</p>
+            <pre class="selected m-t-n-xs">{{push.pushAddress}}</pre>
+        </template>
+        <span slot="footer" class="dialog-footer">
+            <i-button @click="push.pushStatus = false">取 消</i-button>
+            <i-button type="primary" @click='pushPost'>确 定</i-button>
+          </span>
+    </Modal>
+    
+     <!--转移-->
+    <Modal title="批量转移" v-model="transferStatus"  v-cloak>
+        <i-form :label-width="80"> 
+            <Form-Item label="提示">
+                <span>请选择您需要转移到的目标分类</span>
+            </Form-Item>
+            <Form-Item label="目标分类">
+                  <Cascader :data="transferList" v-model="transferId"></Cascader>
+            </Form-Item>
+        </i-form>
+        <span slot="footer" class="dialog-footer">
+            <i-button @click="transferStatus = false">取 消</i-button>
+            <i-button type="primary" @click='transferSubmit'>确 定</i-button>
+          </span>
+    </Modal>
+{/block}
+    
+{block name="javascript"}
+{__block__}
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+           itemListSelectStatus: false,
+            searchData: '',
+            cid: parseInt('{$cid}'),
+            categoryList: [],
+            itemList: [], 
+            pullData: [],
+            pullBtnInfo: '点击更新最新数据',
+            status: '',
+            statusText: '全部',
+            //转移
+            transferStatus: false,
+            transferId: [],
+            transferList: [],
+           //推送
+            push: {
+                pushStatus: false,
+                pushData: [],
+                pushType: '',
+                pushAddress: ''
+            },
+            pagination: {
+                currentPage: 1,
+                limit: 10,
+                total: this.total,
+            },
+        },
+        watch: {
+            itemList: {
+                handler(newValue, oldValue) {
+                    var tempStatus = false;
+        　　　　　for (var i = 0; i < this.itemList.length; i ++) {
+                    if (this.itemList[i].itemListSelectStatus == true) {
+                        tempStatus = true;
+                    }
+                }
+                if (tempStatus) {
+                    this.itemListSelectStatus = true;
+                } else {
+                    this.itemListSelectStatus = false;
+                }
+        　　　　},
+        　　　　deep: true
+        　　}
+        },
+        mounted() {
+            this.getItemList();
+            this.getCategoryList();
+        },
+        methods: {
+            //转移
+            transferClick() {
+                this.transferStatus = true;
+                this.transferId = [];
+            },
+            transferSubmit() {
+                var itemIds = [];
+                for(var i = 0; i < this.itemList.length; i++) {
+                    if (this.itemList[i].itemListSelectStatus) {
+                        itemIds.push(this.itemList[i].id);
+                    }
+                }
+                itemIds = itemIds.join(',');
+                this.$mip.ajax('{$domain}/{$itemUrl}/ApiAdmin{$itemApiUrl}/itemTransferAll', {
+                    cid: this.transferId[this.transferId.length-1],
+                    ids:itemIds,
+                }).then(res => {
+                    if(res.code == 1) {
+                        this.$Message.success('操作成功');
+                        this.getItemList();
+                        this.transferStatus = false;
+                    }
+                });
+            },
+            itemEdit(item) {
+                window.location.href = '{$domain}/{$Think.config.admin}/{$itemUrl}/{$itemUrl}Publish/id-' + item.uuid + '__cid-{$cid}';
+            },
+            getCategoryList: function() {
+                var _this = this;
+                this.loading = true;
+                this.$mip.ajax('{$domain}/{$itemUrl}/ApiAdmin{$itemApiUrl}/categoryList', {
+                }).then(res => {
+                    this.loading = false;
+                    if(res.code == 1) {
+                        var categoryList = res.data.categoryList;
+                        var tempCategoryList = [{id:0,pid: 0,name:'全部'}];
+                        for (var i = 0; i < categoryList.length; i++) {
+                            categoryList[i].disabled = false;
+                            if (categoryList[i].pid == 0) {
+                                tempCategoryList.push(categoryList[i]);
+                            }
+                        }
+                        this.categoryList = tempCategoryList;
+
+                        var transferList = res.data.categoryList;
+                        this.transferList = transferList;
+                         
+                    }
+                });
+            },
+            //获取站点信息
+            getSettingData() {
+                var _this = this;
+                this.$mip.ajax('{$domain}/setting/ApiAdminSetting/settingSelect', {}).then(function(res) {
+                    if(res.code == 1) {
+                        _this.siteInfo = res.data;
+                    }
+                });
+            },
+            //获取选择的URL数据
+            getUrl() {
+                var itemUrlList = [];
+                for(var i = 0; i < this.itemList.length; i++) {
+                    if (this.itemList[i].itemListSelectStatus) {
+                        itemUrlList.push(this.itemList[i].url);
+                    }
+                }
+                return itemUrlList;
+            },
+            //mip推送
+            mipPush(type) {
+                this.push.pushType = type;
+                this.push.pushData = this.getUrl();
+                if (this.push.pushType == 'guanfanghaoNew') {
+                    this.push.pushAddress = this.siteInfo.guanfanghaoRealtimeUrl;
+                }
+                if (this.push.pushType == 'baiduYuanChuangUrl') {
+                    this.push.pushAddress = this.siteInfo.baiduYuanChuangUrl;
+                }
+                if (this.push.pushType == 'mip') {
+                    this.push.pushAddress = this.siteInfo.mipApiAddress;
+                }
+                if (this.push.pushType == 'guanfanghaoOld') {
+                    this.push.pushAddress = this.siteInfo.guanfanghaoUrl;
+                }
+                if (this.push.pushType == 'link') {
+                    this.push.pushAddress = this.siteInfo.baiduTimePcUrl;
+                }
+                this.push.pushStatus = true;
+            },
+            pushPost() {
+                if (!this.push.pushData.length) {
+                    this.$Message.error('请选择要推送的内容链接');
+                    return false;
+                }
+                if (!this.push.pushType) {
+                    this.$Message.error('系统无法识别你推送的类型');
+                    return false;
+                }
+                if (!this.push.pushAddress) {
+                    this.$Message.error('请去完善你要推送的API接口地址');
+                    return false;
+                }
+                var _this = this;
+                this.$mip.ajax('{$domain}/{$Think.config.admin}/Api_Admin_Mip_Post/urlPost', {
+                    urls: this.push.pushData.join(','),
+                    postAddress: this.push.pushAddress,
+                }).then(function(res) {
+                    if(res.code == 1) {
+                        var resMIp = JSON.parse(res.msg);
+                        if (_this.push.pushType == 'guanfanghaoNew') {
+                            _this.$Message.success('推送成功：' + resMIp.success_realtime + '条；剩余:' + resMIp.remain_realtime + '条');
+                        }
+                        if (_this.push.pushType == 'baiduYuanChuangUrl') {
+                            _this.$Message.success('推送成功：' + resMIp.success_original + '条；剩余:' + resMIp.remain_original + '条');
+                        }
+                        if (_this.push.pushType == 'mip') {
+                            _this.$Message.success('推送成功：' + resMIp.success_mip + '条；剩余:' + resMIp.remain_mip + '条');
+                        }
+                        if (_this.push.pushType == 'guanfanghaoOld') {
+                            _this.$Message.success('推送成功：' + resMIp.success_batch + '条；剩余:' + resMIp.remain_batch + '条');
+                        }
+                        if (_this.push.pushType == 'link') {
+                            _this.$Message.success('推送成功：' + resMIp.success + '条');
+                        }
+                        _this.push.pushStatus = false;
+                    }
+                });
+            },
+            itemDel(val) {
+                var _this = this;
+               this.$Modal.confirm({
+                    title: '消息提示',
+                    content: '<p>确定删除么？删除后不可恢复</p>',
+                    onOk: () => {
+                        _this = this;
+                        this.$mip.ajax('{$domain}/{$itemUrl}/ApiAdmin{$itemApiUrl}/itemDel', {
+                            id: val.id,
+                        }).then(function(res) {
+                            if(res.code == 1) {
+                                _this.$Message.success('操作成功');
+                                _this.getItemList();
+                            }
+                        });
+                    },
+                    onCancel: () => {
+                    }
+                });
+            },
+            itemsDel() {
+                var _this = this;
+                this.$Modal.confirm({
+                    title: '消息提示',
+                    content: '<p>确定删除么？删除后不可恢复</p>',
+                    onOk: () => {
+                        var itemIds = [];
+                        for(var i = 0; i < this.itemList.length; i++) {
+                            if (this.itemList[i].itemListSelectStatus) {
+                                itemIds.push(this.itemList[i].id);
+                            }
+                        }
+                        itemIds = itemIds.join(',');
+                        this.$mip.ajax('{$domain}/{$itemUrl}/ApiAdmin{$itemApiUrl}/itemsDel', {
+                            ids: itemIds,
+                        }).then(function(res) {
+                            if(res.code == 1) {
+                                _this.$Message.success(res.msg);
+                            }
+                            _this.getItemList();
+                        });
+                    },
+                    onCancel: () => {
+                    }
+                });
+            },
+            itemRecomment(row) {
+                var _this = this;
+                this.$mip.ajax('{$domain}/{$itemUrl}/ApiAdmin{$itemApiUrl}/itemRecomment', {
+                    id: row.id,
+                }).then(function(res) {
+                    if(res.code == 1) {
+                        _this.$Message.success(res.msg);
+                    }
+                    _this.getItemList();
+                });
+            },
+             //选择全部
+            itemListSelectChange() {
+                var itemList = this.itemList;
+                for (var i = 0; i < itemList.length; i++) {
+                    if (this.itemListSelectStatus) {
+                        itemList[i].itemListSelectStatus = true;
+                    } else {
+                        itemList[i].itemListSelectStatus = false;
+                    }
+                }
+                this.itemList = itemList;
+            },
+            pushStautsClick(val) {
+                this.status = val;
+                if (val === '') {
+                    this.statusText = '全部';
+                }
+                if (parseInt(val) == 0) {
+                    this.statusText = '未推送';
+                }
+                if (parseInt(val) == 1) {
+                    this.statusText = '已推送';
+                }
+                this.getItemList();
+            },
+            getItemList() {
+                this.loading = true;
+                var _this = this;
+              
+                this.$mip.ajax('{$domain}/{$itemUrl}/ApiAdmin{$itemApiUrl}/itemList', {
+                    status: this.status,
+                    page: this.pagination.currentPage,
+                    limit: this.pagination.limit,
+                    keywords: this.searchData,
+                    cid: this.cid,
+                }).then(function(res) {
+                    _this.itemList = [];
+                    if(res.code == 1) {
+                        var itemList = res.data.itemList;
+                        if (itemList) {
+                            for (var i = 0; i < itemList.length; i++) {
+                                itemList[i].itemListSelectStatus = false; 
+                            }
+                            _this.itemList = itemList;
+                        }
+                        _this.pagination.total = res.data.total;
+                    }
+                    _this.getSettingData();
+                    _this.loading = false;
+                });
+            },
+            itemPaginationSelect(val) {
+                this.pagination.limit = val;
+                this.getItemList();
+            },
+            itemPaginationClick(val) {
+                this.pagination.currentPage = val;
+                this.getItemList();
+            },
+            //搜索
+            itemSearchClick: function() {
+                this.getItemList();
+            },
+        }
+    })
+  </script>
+{/block}

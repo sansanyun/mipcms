@@ -5,22 +5,65 @@ namespace app\article\model;
 use think\Cache;
 use mip\Paginationm;
 use think\Db;
-use mip\Init;
+use think\Controller;
 
-class Articles extends Init
+class Articles extends Controller
 {
     public $item;
     public $itemCategory;
     public function _initialize()
     {
         parent::_initialize();
-        $this->item = $this->articles;
-        $this->itemCategory = $this->articlesCategory;
-        
+        $this->articles = 'articles';
+        $this->item = 'articles';
+        $this->articlesContent = 'articlesContent';
+        $this->itemCategory = 'articlesCategory';
+        $this->itemTags = 'itemTags';
+        $this->tags = 'tags';
+        $this->mipInfo = config('mipInfo');
+        $this->domain = config('domain');
+        $this->dataId = config('dataId');
     }
-    public function getItemList($cid = null, $page = 1, $perPage = 10, $orderBy = 'publish_time', $order = 'desc', $where = null,$keywords = null, $uuids = null,$notUuids = null,$tagIds = null,$tagNames = null,$ids = null)
+    
+    public function getItemInfoById($id)
+    {
+        if (!$id) {
+            return false;
+        }
+            $itemInfo = db::table($this->item)->where('id',$id)->find();
+        if ($itemInfo) {
+            $itemInfo['cid'] = $itemInfo['typeid'];
+            $itemInfo['categoryInfo'] = $this->getCategoryInfo($itemInfo['typeid']);
+            $itemInfo['url'] = $this->domainUrl($v);
+            $itemInfo['publish_time'] = $itemInfo['pubdate'];
+            $itemInfo['views'] = $itemInfo['click'];
+            $itemInfo['content'] = db::table($this->itemContent)->where('aid',$itemInfo['id'])->find()['body'];
+            $itemInfo['img_url'] = '';
+            return $itemInfo;
+        } else {
+            return false;
+        }
+    }
+    public function getItemList($cid = null, $page = 1, $perPage = 10, $orderBy = 'publish_time', $order = 'desc', $where = null,$keywords = null, $uuids = null,$notUuids = null,$tagIds = null,$tagNames = null,$ids = null,$itemId = null,$type = null)
     {
         $itemList = null;
+        if ($itemId && $type == 'about') {
+            $itemTagsList = db($this->itemTags)->where('item_id',$itemId)->order('item_add_time',$order)->select();
+            if ($itemTagsList) {
+                foreach ($itemTagsList as $k => $v) {
+                    $itemTagsListIds[] = $v['tags_id'];
+                }
+                $tagIds = implode(',', $itemTagsListIds);
+                $tempItemTagsList = db($this->itemTags)->where('tags_id','in',$tagIds)->order('item_add_time',$order)->select();
+                if ($tempItemTagsList) {
+                    foreach ($tempItemTagsList as $key => $val) {
+                        $tempItemTagsListIds[] = $val['item_id'];
+                    }
+                    $uuids = implode(',', $tempItemTagsListIds);
+                }
+                
+            }
+        }
         if (empty($tagIds) && empty($tagNames)) {
             if (empty($keywords)) {
                 $keywordsWhere = null;
@@ -52,52 +95,31 @@ class Articles extends Init
                 $idsWhere['id']  = ['in',$ids];
             }
             if ($cid == '' || $cid == null) {
-                if ($this->mipInfo['topDomain']) {
-                    $itemList = db($this->item)->where('site_id',$this->dataId)->where($where)->where($keywordsWhere)->where($uuidsWhere)->where($notUuidsWhere)->where($idsWhere)->page($page,$perPage)->order($orderBy,$order)->select();
-                } else {
                     $itemList = db($this->item)->where($where)->where($keywordsWhere)->where($uuidsWhere)->where($notUuidsWhere)->where($idsWhere)->page($page,$perPage)->order($orderBy,$order)->select();
-                }
             } else {
-                if ($cid == 0) {
-                    if ($this->mipInfo['topDomain']) {
-                        $itemList = db($this->item)->where($where)->where('site_id',$this->dataId)->where($keywordsWhere)->where($uuidsWhere)->where($notUuidsWhere)->where($idsWhere)->where('cid',$cid)->page($page,$perPage)->order($orderBy,$order)->select();
-                    } else {
-                        $itemList = db($this->item)->where($where)->where($keywordsWhere)->where($uuidsWhere)->where($notUuidsWhere)->where($idsWhere)->where('cid',$cid)->page($page,$perPage)->order($orderBy,$order)->select();
+                $itemCategoryList = db($this->itemCategory)->where('pid',$cid)->select();
+                if ($itemCategoryList) {
+                    foreach ($itemCategoryList as $key => $value) {
+                           $cids[] = $value['id'];
                     }
+                }
+                if ($itemCategoryList) {
+                    $itemList = db($this->item)->where($where)->where($keywordsWhere)->where($uuidsWhere)->where($notUuidsWhere)->whereOr('cid',$cid)->whereOr('cid','in',$cids)->page($page,$perPage)->order($orderBy,$order)->select();
                 } else {
-                    $itemCategoryList = db($this->itemCategory)->where('pid',$cid)->select();
-                    if ($itemCategoryList) {
-                        foreach ($itemCategoryList as $key => $value) {
-                               $cids[] = $value['id'];
-                        }
-                    }
-                    if ($itemCategoryList) {
-                        if ($this->mipInfo['topDomain']) {
-                            $itemList = db($this->item)->where($where)->where('site_id',$this->dataId)->where($keywordsWhere)->where($uuidsWhere)->where($notUuidsWhere)->whereOr('cid',$cid)->whereOr('cid','in',$cids)->page($page,$perPage)->order($orderBy,$order)->select();
-                        } else {
-                            $itemList = db($this->item)->where($where)->where($keywordsWhere)->where($uuidsWhere)->where($notUuidsWhere)->whereOr('cid',$cid)->whereOr('cid','in',$cids)->page($page,$perPage)->order($orderBy,$order)->select();
-                        }
-    
-                    } else {
-                        if ($this->mipInfo['topDomain']) {
-                            $itemList = db($this->item)->where($where)->where($keywordsWhere)->where($uuidsWhere)->where($notUuidsWhere)->where('cid',$cid)->where('site_id',$this->dataId)->page($page,$perPage)->order($orderBy,$order)->select();
-                        } else {
-                            $itemList = db($this->item)->where($where)->where($keywordsWhere)->where($uuidsWhere)->where($notUuidsWhere)->where('cid',$cid)->page($page,$perPage)->order($orderBy,$order)->select();
-                        }
-                    }
+                    $itemList = db($this->item)->where($where)->where($keywordsWhere)->where($uuidsWhere)->where($notUuidsWhere)->where('cid',$cid)->page($page,$perPage)->order($orderBy,$order)->select();
                 }
                 
             }
         } else {
-            return $this->getItemListbyTags($cid, $page, $perPage, $orderBy, $order, $where,$keywords, $uuids,$notUuids,$tagIds,$tagNames,$ids);                
+            return $this->getItemListbyTags($cid, $page, $perPage, $orderBy, $order, $where,$keywords, $uuids,$notUuids,$tagIds,$tagNames,$ids,$itemId,$type);                
         }
         
         if ($itemList) {
             foreach($itemList as $k => $v) {
-                $itemList[$k]['tempId'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
                 $itemList[$k] = $this->getImgList($v);
+                $itemList[$k]['tempId'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
                 $itemList[$k]['users'] = db('Users')->where('uid',$v['uid'])->find();
-                $itemList[$k]['categoryInfo'] = db($this->itemCategory)->where('id',$v['cid'])->find();
+                $itemList[$k]['categoryInfo'] = $this->getCategoryInfo($v['cid']);
                 $itemList[$k]['url'] = $this->getUrlByItemInfo($v);
             }
         } else {
@@ -108,8 +130,6 @@ class Articles extends Init
 
     public function getItemListbyTags($cid = null, $page = 1, $perPage = 10, $orderBy = 'publish_time', $order = 'desc', $where = null,$keywords = null, $uuids = null,$notUuids = null,$tagIds = null,$tagNames = null,$ids = null)
     {
-        
-                
         if ($tagNames) {
             $tagNames = explode(',',$tagNames);
             foreach ($tagNames as $val) {
@@ -124,7 +144,8 @@ class Articles extends Init
             $tagIds = explode(',',$tagIds);
             $tagIdsWhere['tags_id']  = ['in',$tagIds];
         }
-        if ($this->mipInfo['topDomain']) {
+        
+        if (!empty($keywords) || !empty($uuids) || !empty($ids) || !empty($notUuids)) {
             $itemTagsList = db($this->itemTags)->where($tagIdsWhere)->order('item_add_time',$order)->where('item_type','article')->select();
             if ($itemTagsList) {
                 foreach ($itemTagsList as $k => $v) {
@@ -134,39 +155,21 @@ class Articles extends Init
                 return $this->getItemList($cid, $page, $perPage, $orderBy, $order, $where, $keywords, $itemTagsListIds, $notUuids, $ids);
             }
         } else {
-            if (!empty($keywords) || !empty($uuids) || !empty($ids) || !empty($notUuids)) {
-                $itemTagsList = db($this->itemTags)->where($tagIdsWhere)->order('item_add_time',$order)->where('item_type','article')->select();
-                if ($itemTagsList) {
-                    foreach ($itemTagsList as $k => $v) {
-                        $itemTagsListIds[] = $v['item_id'];
-                    }
-                    $itemTagsListIds = implode(',', $itemTagsListIds);
-                    return $this->getItemList($cid, $page, $perPage, $orderBy, $order, $where, $keywords, $itemTagsListIds, $notUuids, $ids);
+            $itemTagsList = db($this->itemTags)->where($tagIdsWhere)->order('item_add_time',$order)->where('item_type','article')->page($page,$perPage)->select();
+            if ($itemTagsList) {
+                foreach ($itemTagsList as $k => $v) {
+                    $itemTagsListIds[] = $v['item_id'];
                 }
-            } else {
-                $itemTagsList = db($this->itemTags)->where($tagIdsWhere)->order('item_add_time',$order)->where('item_type','article')->page($page,$perPage)->select();
-                if ($itemTagsList) {
-                    foreach ($itemTagsList as $k => $v) {
-                        $itemTagsListIds[] = $v['item_id'];
-                    }
-                    $itemTagsListIds = implode(',', $itemTagsListIds);
-                    return $this->getItemList($cid, 1, $perPage, $orderBy, $order, $where, $keywords, $itemTagsListIds, $notUuids,$ids);
-                }
+                $itemTagsListIds = implode(',', $itemTagsListIds);
+                return $this->getItemList($cid, 1, $perPage, $orderBy, $order, $where, $keywords, $itemTagsListIds, $notUuids,$ids);
             }
         }
     }
     
-    
-    
-    
     public function getItemPushList($cid = null, $page = 1, $perPage = 10, $orderBy = 'publish_time', $order = 'desc', $domain = null)
     {
         if ($cid == '' || $cid == null) {
-            if ($this->mipInfo['topDomain']) {
-                $itemList = db($this->articles)->where('site_id',$this->dataId)->page($page,$perPage)->order($orderBy,$order)->select();
-            } else {
-                $itemList = db($this->articles)->page($page,$perPage)->order($orderBy,$order)->select();
-            }
+            $itemList = db($this->articles)->page($page,$perPage)->order($orderBy,$order)->select();
         } else {
             $itemCategoryList = db($this->itemCategory)->where('pid',$cid)->select();
             if ($itemCategoryList) {
@@ -175,27 +178,15 @@ class Articles extends Init
                 }
             }
             if ($itemCategoryList) {
-                if ($this->mipInfo['topDomain']) {
-                    $itemList = db($this->articles)->whereOr('cid',$cid)->whereOr('cid','in',$cids)->where('site_id',$this->dataId)->page($page,$perPage)->order($orderBy,$order)->select();
-                } else {
-                    $itemList = db($this->articles)->whereOr('cid',$cid)->whereOr('cid','in',$cids)->page($page,$perPage)->order($orderBy,$order)->select();
-                }
+                $itemList = db($this->articles)->whereOr('cid',$cid)->whereOr('cid','in',$cids)->page($page,$perPage)->order($orderBy,$order)->select();
             } else {
-                if ($this->mipInfo['topDomain']) {
-                    $itemList = db($this->articles)->where('cid',$cid)->where('site_id',$this->dataId)->page($page,$perPage)->order($orderBy,$order)->select();
-                } else {
-                    $itemList = db($this->articles)->where('cid',$cid)->page($page,$perPage)->order($orderBy,$order)->select();
-                }
+                $itemList = db($this->articles)->where('cid',$cid)->page($page,$perPage)->order($orderBy,$order)->select();
             }
         }
         if ($itemList) {
             foreach($itemList as $k => $v) {
                 $itemList[$k]['tempId'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
-                $itemList[$k]['itemCategory'] = db($this->itemCategory)->where('id',$v['cid'])->find();
-                $itemList[$k]['articlesLastCategory'] = array();
-                if ($itemList[$k]['itemCategory']) {
-                    $itemList[$k]['articlesLastCategory'] = db($this->itemCategory)->where('id',$itemList[$k]['itemCategory']['pid'])->find();
-                }
+                $itemList[$k]['categoryInfo'] = $this->getCategoryInfo($v['cid']);
                 $itemList[$k]['url'] = $this->getUrlByItemInfo($v,$domain);
             }
         } else {
@@ -204,32 +195,76 @@ class Articles extends Init
         return $itemList;
     }
     
+    public function getPage($itemId, $limit = 1, $type, $itemType, $page = 1,$prePage = 10)
+    {
+        if (!$itemId) {
+            return false;
+        }
+        if ($type == 'detail') {
+            if ($itemType == 'upPage') {
+                $itemList = db($this->item)->where('id','<',$itemId)->limit($limit)->order('id','DESC')->select();
+            }
+            if ($itemType == 'downPage') {
+                $itemList = db($this->item)->where('id','>',$itemId)->limit($limit)->order('id','ASC')->select();
+            }
+            if ($itemList) {
+                foreach ($itemList as $k => $v) {
+                    $itemList[$k]['categoryInfo'] = $this->getCategoryInfo($v['cid']);
+                }
+                
+                foreach ($itemList as $k => $v) {
+                    $itemList[$k]['url'] = $this->getUrlByItemInfo($v); 
+                }
+                
+                return $itemList;
+            } else {
+                return false;
+            }
+        }
+
+        if ($type == 'category') {
+            $count = $this->getCount($itemId);
+            $pageNum = ceil($count / $prePage);
+            if ($itemType == 'upPage') {
+                if ($page == 1) {
+                    return false;
+                } else {
+                    $page = $page - 1;
+                    $url = $this->getCategoryPageUrl($itemId,$page);
+                    $tempArray = [];
+                    $tempArray[0]['url'] = $url;
+                    $tempArray[0]['num'] = $page;
+                    return $tempArray;
+                }
+            }
+            if ($itemType == 'downPage') {
+                if ($pageNum <= $page) {
+                    return false;
+                } else {
+                    $page = $page + 1;
+                    $url = $this->getCategoryPageUrl($itemId,$page);
+                    $tempArray = [];
+                    $tempArray[0]['url'] = $url;
+                    $tempArray[0]['num'] = $page;
+                    return $tempArray;
+                }
+            }
+        }
+    }
+
     public function getPaginationm($cid = null, $per_page = 10, $category = null, $sub = null,$where = null, $keywords = null, $uuids = null,$notUuids = null,$tagIds = null,$tagNames = null)
     {
         $count = $this->getCount($cid,$where, $keywords, $uuids,$notUuids,$tagIds,$tagNames);
-        if ($category) {
-            if ($this->mipInfo['aritcleLevelRemove']) {
-                $baseUrl = $this->domain . '/' . $category . '/';
-            } else {
-                $baseUrl = $this->domain . '/' . $this->mipInfo['articleModelUrl'] . '/' . $category . '/';
-            }
-            if ($sub) {
-                $baseUrl = $this->domain . '/' . $category . '/' . $sub . '/';
-            }
-        } else {
-            $baseUrl = $this->domain . '/' .  $this->mipInfo['articleModelUrl'] . '/';
+        
+        if ($cid) {
+            $categoryInfo = $this->getCategoryInfo($cid);
+            $baseUrl = $categoryInfo['url'];
         }
+        $tagInfo = null;
         if ($tagIds) {
             $tempTagIds = explode(',', $tagIds);
             if (count($tempTagIds) == 1) {
                 $tagInfo = db($this->tags)->where('id',$tagIds)->find();
-                if ($tagInfo) {
-                    if ($tagInfo['url_name']) {
-                        $baseUrl = $this->domain . '/' . $this->mipInfo['tagModelUrl'] . '/' . $tagInfo['url_name'] . '/';
-                    } else {
-                        $baseUrl = $this->domain . '/' . $this->mipInfo['tagModelUrl'] . '/' . $tagInfo['id'] . '/';
-                    }
-                }
             } else {
                 return false;
             }
@@ -238,15 +273,16 @@ class Articles extends Init
             $tempTagNames = explode(',', $tagNames);
             if (count($tempTagNames) == 1) {
                 $tagInfo = db($this->tags)->where('name',$tagNames)->find();
-                if ($tagInfo) {
-                    if ($tagInfo['url_name']) {
-                        $baseUrl = $this->domain . '/' . $this->mipInfo['tagModelUrl'] . '/' . $tagInfo['url_name'] . '/';
-                    } else {
-                        $baseUrl = $this->domain . '/' . $this->mipInfo['tagModelUrl'] . '/' . $tagInfo['id'] . '/';
-                    }
-                }
             } else {
                 return false;
+            }
+        }
+        
+        if ($tagInfo) {
+            if ($tagInfo['url_name']) {
+                $baseUrl = $this->domain . '/' . $this->mipInfo['tagModelUrl'] . '/' . $tagInfo['url_name'] . '/';
+            } else {
+                $baseUrl = $this->domain . '/' . $this->mipInfo['tagModelUrl'] . '/' . $tagInfo['id'] . '/';
             }
         }
         $pagination_array = array(
@@ -287,34 +323,18 @@ class Articles extends Init
                 $notUuidsWhere['uuid']  = ['not in',$notUuids];
             }
             if ($cid == '' || $cid == null) {
-                if ($this->mipInfo['topDomain']) {
-                    $count = db($this->articles)->where($where)->where($keywordsWhere)->where($uuidsWhere)->where($notUuidsWhere)->where('site_id',$this->dataId)->count();
-                } else {
-                    $count = db($this->articles)->where($where)->where($keywordsWhere)->where($uuidsWhere)->where($notUuidsWhere)->count();
-                }
+                $count = db($this->articles)->where($where)->where($keywordsWhere)->where($uuidsWhere)->where($notUuidsWhere)->count();
             } else {
-                 if ($cid == 0) {
-                    if ($this->mipInfo['topDomain']) {
-                        $count = db($this->articles)->where('cid',$cid)->where($where)->where($keywordsWhere)->where($uuidsWhere)->where($notUuidsWhere)->where('site_id',$this->dataId)->count();
-                    } else {
-                        $count = db($this->articles)->where('cid',$cid)->where($where)->where($keywordsWhere)->where($uuidsWhere)->where($notUuidsWhere)->count();
+                $itemCategoryList = db($this->itemCategory)->where('pid',$cid)->select();
+                if ($itemCategoryList) {
+                    foreach ($itemCategoryList as $key => $value) {
+                           $cids[] = $value['id'];
                     }
+                }
+                if ($itemCategoryList) {
+                    $count = db($this->articles)->where($where)->where($keywordsWhere)->where($uuidsWhere)->where($notUuidsWhere)->whereOr('cid',$cid)->whereOr('cid','in',$cids)->count();
                 } else {
-                    $itemCategoryList = db($this->itemCategory)->where('pid',$cid)->select();
-                    if ($itemCategoryList) {
-                        foreach ($itemCategoryList as $key => $value) {
-                               $cids[] = $value['id'];
-                        }
-                    }
-                    if ($itemCategoryList) {
-                        $count = db($this->articles)->where($where)->where($keywordsWhere)->where($uuidsWhere)->where($notUuidsWhere)->whereOr('cid',$cid)->whereOr('cid','in',$cids)->count();
-                    } else {
-                        if ($this->mipInfo['topDomain']) {
-                            $count = db($this->articles)->where($where)->where($keywordsWhere)->where($uuidsWhere)->where($notUuidsWhere)->where('cid',$cid)->where('site_id',$this->dataId)->count();
-                        } else {
-                            $count = db($this->articles)->where($where)->where($keywordsWhere)->where($uuidsWhere)->where($notUuidsWhere)->where('cid',$cid)->count();
-                        }
-                    }
+                    $count = db($this->articles)->where($where)->where($keywordsWhere)->where($uuidsWhere)->where($notUuidsWhere)->where('cid',$cid)->count();
                 }
             }
         } else {
@@ -332,64 +352,138 @@ class Articles extends Init
                 $tagIds = explode(',',$tagIds);
                 $tagIdsWhere['tags_id']  = ['in',$tagIds];
             }
-            
-            if ($this->mipInfo['topDomain']) {
-                $itemTagsList = db($this->itemTags)->where($tagIdsWhere)->where('item_type','article')->select();
-                if ($itemTagsList) {
-                    foreach ($itemTagsList as $k => $v) {
-                        $itemTagsListIds[] = $v['item_id'];
-                    }
-                    $itemTagsListIds = implode(',', $itemTagsListIds);
-                    $count = db($this->articles)->where('uuid','in',$itemTagsListIds)->where('site_id',$this->dataId)->count();
-                }
-            } else {
-                $count = db($this->itemTags)->where($tagIdsWhere)->where('item_type','article')->count();
-            }
+            $count = db($this->itemTags)->where($tagIdsWhere)->where('item_type','article')->count();
         }
         return $count;
     }
     
-    public function getCategory($pid = 0, $orderBy = 'sort', $order = 'asc', $limit = null, $where = null)
+    
+    public function getCategoryInfo($cid)
     {
-        $itemCategoryList = null;
-        if ($pid == 0) {
-            $sql = "show columns from ".config('database.prefix')."articles_category like 'status';";
-            $tempStatus = Db::query($sql);
-            if ($tempStatus) {
-                $itemCategoryList = db($this->itemCategory)->where('pid',0)->where('status',1)->where($where)->limit($limit)->order($orderBy,$order)->select();
+        if (!$cid) {
+            return false;
+        }
+        $itemCategoryInfo = db('ArticlesCategory')->where('id',$cid)->find();
+        if ($itemCategoryInfo) {
+            if ($itemCategoryInfo['pid'] == 0) {
+                $urlName = $itemCategoryInfo['url_name'];
             } else {
-                $itemCategoryList = db($this->itemCategory)->where('pid',0)->where($where)->limit($limit)->order($orderBy,$order)->select();
-            }
-            if($itemCategoryList) {
-                foreach ($itemCategoryList as $key => $val) {
-                    if ($this->mipInfo['aritcleLevelRemove']) {
-                        $itemCategoryList[$key]['url'] =  $this->domain . '/' . $val['url_name'] . '/';
-                    } else {
-                        $itemCategoryList[$key]['url'] =  $this->domain . '/' . $this->mipInfo['articleModelUrl']  . '/' . $val['url_name'] . '/';
-                    }
-                    $itemCategoryList[$key]['sub'] = db($this->itemCategory)->where('pid',$val['id'])->order($orderBy,$order)->select();
-                    if ($itemCategoryList[$key]['sub']) {
-                        foreach ($itemCategoryList[$key]['sub'] as $k => $v) {
-                            $itemCategoryList[$key]['sub'][$k]['url'] = $this->domain . '/' . $val['url_name'] . '/' . $v['url_name'] . '/';
-                        }
-                    } else {
-                        $itemCategoryList[$key]['sub'] = array();
-                    }
-                    $itemCategoryList[$key]['children'] = $itemCategoryList[$key]['sub'];
-                }
-            }
-        } else {
-            $itemCategoryList = db($this->itemCategory)->where('pid',$pid)->where($where)->limit($limit)->order($orderBy,$order)->select();
-            if ($itemCategoryList) {
-                foreach ($itemCategoryList as $k => $v) {
-                    $itemCategoryInfo = db($this->itemCategory)->where('id',$pid)->find();
-                    $itemCategoryList[$k]['url'] = $this->domain . '/' . $itemCategoryInfo['url_name'] . '/' . $v['url_name'] . '/';
+                $tempCategoryInfo = $this->getCategoryInfo($itemCategoryInfo['pid']);
+                $itemCategoryInfo['parent'] = $tempCategoryInfo;
+                if ($tempCategoryInfo) {
+                    $urlName = $tempCategoryInfo['url_name'] . '/' . $itemCategoryInfo['url_name'];
                 }
             }
         }
-        
+        $categoryUrl = $itemCategoryInfo['category_url'];
+        if ($categoryUrl) {
+            $categoryUrl = str_replace('<url_name>',$urlName,$categoryUrl);
+            $categoryUrl = str_replace('<id>',$itemCategoryInfo['id'],$categoryUrl);
+        } else {
+            $categoryUrl = '/article/' . $urlName . '/';
+        }
+        $itemCategoryInfo['url'] = $this->domain . $categoryUrl;
+        $itemCategoryInfo['rule'] = $categoryUrl;
+        $categoryPageUrl = $itemCategoryInfo['category_page_url'];
+        if ($categoryPageUrl) {
+            $categoryPageUrl = str_replace('<category_url>', $categoryUrl,$categoryPageUrl);
+            $categoryPageUrl = str_replace('<url_name>',$itemCategoryInfo['url_name'],$categoryPageUrl);
+            $categoryPageUrl = str_replace('<id>',$itemCategoryInfo['id'],$categoryPageUrl);
+        } else {
+            $categoryPageUrl = $categoryUrl . 'index_<page>.html';
+        }
+        $itemCategoryInfo['pageTempRule'] = $categoryPageUrl;
+        if (strpos($categoryPageUrl,'.html')) {
+            $categoryPageUrl = str_replace('.html','',$categoryPageUrl);
+        }
+        $itemCategoryInfo['pageRule'] = $categoryPageUrl;
+        $detailUrl = $itemCategoryInfo['detail_url'];
+        if ($detailUrl) {
+            if (strpos($categoryUrl,'.html')) {
+                $categoryUrl = str_replace('.html','/',$categoryUrl);
+            }
+            $detailUrl = str_replace('<category_url>', $categoryUrl,$detailUrl);
+        } else {
+            $detailUrl = $categoryUrl . '<id>.html';
+        }
+        $itemCategoryInfo['detailRule'] = $detailUrl;
+        $detailUrl = str_replace('.html','',$detailUrl);
+        $tempDetailUrl = substr($detailUrl, 0, 1) == '/' ? substr($detailUrl, 1) : $detailUrl;
+        $itemCategoryInfo['detail__url__'] = str_replace('/','\/',str_replace('<id>','[a-zA-Z0-9_-]+$',$tempDetailUrl));
+        return $itemCategoryInfo;
+    }
+    public function getCategory($pid = 0, $orderBy = 'sort', $order = 'asc', $limit = null, $where = null,$ids = null,$type = null)
+    {
+        $itemCategoryList = null;
+        if ($type == 'menu') {
+            $itemCategoryList = db($this->itemCategory)->where('pid',$pid)->where('status',1)->where($where)->limit($limit)->order($orderBy,$order)->select();
+        } else {
+            $itemCategoryList = db($this->itemCategory)->where('pid',$pid)->where('status',1)->where('is_page',0)->where($where)->limit($limit)->order($orderBy,$order)->select();
+        }
+        if($itemCategoryList) {
+            foreach ($itemCategoryList as $key => $val) {
+                $itemCategoryList[$key] = $this->getCategoryInfo($val['id']);
+            }
+            foreach ($itemCategoryList as $key => $val) {
+                $itemCategoryList[$key]['value'] = $val['id'];
+                $itemCategoryList[$key]['label'] = $val['name'];
+                $itemCategoryList[$key]['sub'] = db($this->itemCategory)->where('pid',$val['id'])->select();
+                if ($itemCategoryList[$key]['sub']) {
+                    foreach ($itemCategoryList[$key]['sub'] as $k => $v) {
+                    	   $itemCategoryList[$key]['sub'][$k] = $this->getCategoryInfo($v['id']);
+                           
+                        $itemCategoryList[$key]['sub'][$k]['value'] = $v['id'];
+                        $itemCategoryList[$key]['sub'][$k]['label'] = $v['name'];
+                    }
+                } else {
+                    $itemCategoryList[$key]['sub'] = array();
+                }
+                $itemCategoryList[$key]['children'] = $itemCategoryList[$key]['sub'];
+            }
+        }
         return $itemCategoryList;
     }
+
+    public function getAllCategory()
+    {
+        $categoryList = null;
+        $itemCategoryList = db($this->itemCategory)->order('sort asc')->select();
+        if($itemCategoryList) {
+            foreach ($itemCategoryList as $key => $val) {
+                $itemCategoryList[$key] = $this->getCategoryInfo($val['id']);
+            }
+        }
+        return $itemCategoryList;
+    }
+    
+    public function getCategoryPageUrl($cid,$page)
+    {
+        $categoryInfo = $this->getCategoryInfo($cid);
+        if ($categoryInfo) {
+            $pageUrl = str_replace('<page>', $page,$categoryInfo['pageTempRule']);
+            $res = $this->domain . $pageUrl;
+            return $res;
+        } else {
+            return false;
+        }
+    }
+    public function getUrlByItemInfo($item,$domain = null)
+    {
+        $tempId = $this->mipInfo['idStatus'] ? $item['uuid'] : $item['id'];
+        $tempId = $this->mipInfo['diyUrlStatus'] ? $item['url_name'] ? $item['url_name'] : $tempId : $tempId;
+        $domain = $domain ? $domain : $this->domain;
+        if (!isset($item['categoryInfo'])) {
+            $item['categoryInfo'] = $this->getCategoryInfo($item['cid']);
+        }
+        if ($item['categoryInfo']) {
+            $detailUrl = str_replace('<id>',$tempId,$item['categoryInfo']['detailRule']);
+            $res = $domain . $detailUrl;
+        } else {
+            $res = $domain . '/article/' . $tempId . '.html';
+        }
+        return $res;
+    }
+    
     
     public function getImgList($item)
     {
@@ -404,7 +498,7 @@ class Articles extends Init
                if (@preg_match($patern,$value)) {
                    $imgs[1][$key] = $value;
                 } else {
-                   $imgs[1][$key] = $this->domain . $value;
+                   $imgs[1][$key] = $this->domainStatic . $value;
                 }
             }
             $item['imgList'] = $imgs[1];
@@ -416,127 +510,46 @@ class Articles extends Init
         }
         return $item;
     }
-     
-    public function getCategoryParentInfoByCid($cid)
+    
+    public function getCrumb($cid = null, $ulClass = 'mipcms-crumb', $liClass = '',$isHome = 1,$separator = '')
     {
         if (!$cid) {
-            return false;
+    	       return false;
         }
-        $articleCategoryInfo = db($this->itemCategory)->where('id',$cid)->find();
-        if ($articleCategoryInfo) {
-            if ($articleCategoryInfo['pid'] == 0) {
-                if ($this->mipInfo['aritcleLevelRemove']) {
-                    $articleCategoryInfo['url'] =  $this->domain . '/' . $articleCategoryInfo['url_name'] . '/';
-                } else {
-                    $articleCategoryInfo['url'] =  $this->domain . '/' . $this->mipInfo['articleModelUrl']  . '/' . $articleCategoryInfo['url_name'] . '/';
-                }
-                $articleCategoryInfo['name'] = $articleCategoryInfo['name'];
-                $articleCategoryInfo['url_name'] = $articleCategoryInfo['url_name'];
+        $categoryInfo = $this->getCategoryInfo($cid);
+        if ($categoryInfo) {
+            if ($categoryInfo['pid'] == 0) {
+                $html = '<ul class="list-unstyled d-flex ' . $ulClass . '">';
+                $html .= intval($isHome) === 1 ? '<li class="' . $liClass .'"><a href="'. $this->domain .'" title="'. $this->mipInfo['siteName'] .'">' . $this->mipInfo['siteName'] . '</a>'.$separator.'</li>' : '';
+                $html .= '<li class="' . $liClass .'">';
+                $html .= '<a href="'. $categoryInfo['url'] .'" title="'. $categoryInfo['name'] .'">';
+                $html .= $categoryInfo['name'];
+                $html .= '</a>';
+                $html .= '</li>';
+                $html .= '</ul>';
+                return $html;
             } else {
-                $articleCategoryInfo['parent'] = db($this->itemCategory)->where('id',$articleCategoryInfo['pid'])->find();
-                if ($articleCategoryInfo['parent']) {
-                    if ($this->mipInfo['aritcleLevelRemove']) {
-                        $articleCategoryInfo['url'] =  $this->domain . '/' . $articleCategoryInfo['parent']['url_name'] . '/';
-                    } else {
-                        $articleCategoryInfo['url'] =  $this->domain . '/' . $this->mipInfo['articleModelUrl']  . '/' . $articleCategoryInfo['parent']['url_name'] . '/';
-                    }
-                    $articleCategoryInfo['name'] = $articleCategoryInfo['parent']['name'];
-                    $articleCategoryInfo['url_name'] = $articleCategoryInfo['parent']['url_name'];
-                }
+                $html = '<ul class="list-unstyled d-flex ' . $ulClass . '">';
+                $html .= intval($isHome) === 1 ? '<li class="' . $liClass .'"><a href="'. $this->domain .'" title="'. $this->mipInfo['siteName'] .'">' . $this->mipInfo['siteName'] . '</a>'.$separator.'</li>' : '';
+                $html .= '<li class="' . $liClass .'">';
+                $html .= '<a href="'. $categoryInfo['parent']['url'] .'" title="'. $categoryInfo['parent']['name'] .'">';
+                $html .= $categoryInfo['parent']['name'];
+                $html .= '</a>'.$separator;
+                $html .= '</li>';
+                $html .= '<li class="' . $liClass .'">';
+                $html .= '<a href="'. $categoryInfo['url'] .'" title="'. $categoryInfo['name'] .'">';
+                $html .= $categoryInfo['name'];
+                $html .= '</a>';
+                $html .= '</li>';
+                $html .= '</ul>';
+                return $html;
             }
         } else {
             return false;
         }
-        return $articleCategoryInfo;
-    }
-
-    public function getCategorySubInfoByCid($cid)
-    {
-        if (!$cid) {
-            return false;
-        }
-        $articleCategoryInfo = db($this->itemCategory)->where('id',$cid)->find();
-        if ($articleCategoryInfo && $articleCategoryInfo['pid'] !== 0) {
-            $articleCategoryInfo['parent'] = db($this->itemCategory)->where('id',$articleCategoryInfo['pid'])->find();
-            if ($articleCategoryInfo['parent']) {
-                $articleCategoryInfo['name'] = $articleCategoryInfo['name'];
-                $articleCategoryInfo['url_name'] = $articleCategoryInfo['url_name'];
-                $articleCategoryInfo['url'] = $this->domain . '/' . $articleCategoryInfo['parent']['url_name'] . '/' . $articleCategoryInfo['url_name'] . '/';
-                return $articleCategoryInfo;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-     
-    public function getUrlByItemInfo($item,$domain = null)
-    {
-        
-        if ($this->mipInfo['idStatus']) {
-            $tempId = $item['uuid'];
-        } else {
-            $tempId = $item['id'];
-        }
-        if ($this->mipInfo['diyUrlStatus']) {
-            if ($item['url_name']) {
-                $tempId = $item['url_name'];
-            }
-        }
-        
-        if (!$domain) {
-            $domain = $this->domain;
-        }
-        
-        $item['categoryInfo'] = db($this->itemCategory)->where('id',$item['cid'])->find();
-        
-        $res = $domain . '/' . $this->mipInfo['articleModelUrl'] . '/' . $tempId . '.html';
-        
-        if ($this->mipInfo['urlCategory']) {
-            $item['itemCategory'] = db($this->itemCategory)->where('id',$item['cid'])->find();
-            if ($item['itemCategory']) {
-                $item['articlesLastCategory'] = db($this->itemCategory)->where('id',$item['itemCategory']['pid'])->find();
-                if ($item['articlesLastCategory']) {
-                    $res = $domain . '/' . $item['articlesLastCategory']['url_name'] . '/' . $item['itemCategory']['url_name'] . '/' . $tempId . '.html';
-                } else {
-                    $res = $domain . '/' . $item['itemCategory']['url_name'] . '/' . $tempId . '.html';
-                }
-            }
-        }
-        return $res;
     }
     
-    public function getArticleDetailCurrentUrlNotHtml($item)
-    {
-        if ($this->mipInfo['idStatus']) {
-            $tempId = $item['uuid'];
-        } else {
-            $tempId = $item['id'];
-        }
-        if ($this->mipInfo['diyUrlStatus']) {
-            if ($item['url_name']) {
-                $tempId = $item['url_name'];
-            }
-        }
-        $item['itemCategory'] = db($this->itemCategory)->where('id',$item['cid'])->find();
-        
-        $res = $this->domain . '/' . $this->mipInfo['articleModelUrl'] . '/' . $tempId;
-        
-        if ($this->mipInfo['urlCategory']) {
-            $item['itemCategory'] = db($this->itemCategory)->where('id',$item['cid'])->find();
-            if ($item['itemCategory']) {
-                $item['articlesLastCategory'] = db($this->itemCategory)->where('id',$item['itemCategory']['pid'])->find();
-                if ($item['articlesLastCategory']) {
-                    $res = $this->domain . '/' . $item['articlesLastCategory']['url_name'] . '/' . $item['itemCategory']['url_name'] . '/' . $tempId;
-                } else {
-                    $res = $this->domain . '/' . $item['itemCategory']['url_name'] . '/' . $tempId;
-                }
-            }
-        }
-        return $res;
-    } 
-
+     
     public function updateViews($id, $uid)
     {
         $tempCache = Cache::get('updateViewsArticle' . md5(session_id()) . intval($id));
@@ -558,87 +571,16 @@ class Articles extends Init
         return db($this->articlesContent)->where('id',$content_id)->find();
     }
     
+    
     public function getContentFilterByArticleId($id,$content_id)
     {
         if (!$id) {
             return false;
         }
         $itemInfo = db($this->articlesContent)->where('id',$content_id)->find();
-        $itemInfo['content'] = htmlspecialchars_decode($itemInfo['content']);
-        preg_match_all('/<img.*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>/', $itemInfo['content'], $imagesArray);
-        $patern = '/^^((https|http|ftp)?:?\/\/)[^\s]+$/';
-        foreach($imagesArray[0] as $key => $val) {
-            @preg_match('/alt=".+?"/',$val,$tempAlt);
-            @preg_match('/<img.+(width=\"?\d*\"?).+>/i',$val,$tempWidth);
-            @preg_match('/<img.+(height=\"?\d*\"?).+>/i',$val,$tempHeight);
-            @$alt = explode('=',$tempAlt[0]);
-            @$alt = explode('"',$alt[1]);
-            if (count($alt) == 1) {
-                $alt = $alt[0];
-            }
-            if (count($alt) == 2) {
-                $alt = $alt[1] ;
-            }
-            if (count($alt) == 3) {
-                $alt = $alt[1] ;
-            }
-            if (@preg_match($patern,$imagesArray[1][$key])) {
-                $src = $imagesArray[1][$key];
-            } else {
-                $src = $this->domain . $imagesArray[1][$key];
-            }
-            if ($tempWidth && $tempHeight) {
-                @preg_match('/\d+/i',$tempWidth[1],$width);
-                if (intval($width[0]) > 320) {
-                    $layout = 'layout="container"';
-                    $tempImg = '<mip-img '.$layout.' alt="'.$alt.'" src="'.$src.'" popup></mip-img>';
-                } else {
-                    $layout = 'layout="fixed"';
-                    $tempImg = '<mip-img ' .$layout. ' ' . $tempWidth[1] . '" ' . $tempHeight[1] .'" alt="'.$alt.'" src="'.$src.'" popup></mip-img>';
-                }
-            } else {
-                $layout = 'layout="container"';
-                $tempImg = '<mip-img '.$layout.' alt="'.$alt.'" src="'.$src.'" popup></mip-img>';
-            }
-            $itemInfo['content'] =  str_replace($val,$tempImg,$itemInfo['content']);
-        }
-        $itemInfo['content'] =  preg_replace("/style=.+?['|\"]/i",'', $itemInfo['content']);
-        @preg_match_all('/<a[^>]*>[^>]+a>/',$itemInfo['content'],$tempLink);
-        foreach($tempLink[0] as $k => $v) {
-            if(strpos($v,"href")) {
-                @preg_match('/href\s*=\s*(?:"([^"]*)"|\'([^\']*)\'|([^"\'>\s]+))/',$v,$hrefRes);
-                $matches = @preg_match($patern,$hrefRes[1]);
-                if (!$matches) {
-                    $itemInfo['content'] = str_replace($v,'',$itemInfo['content']);
-                }
-            } else {
-                $itemInfo['content'] = str_replace($v,'',$itemInfo['content']);
-            }
-        }
-        @preg_match_all('/<iframe.*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>*<\/iframe>/', $itemInfo['content'], $iframeArray);
-        if ($iframeArray) {
-            foreach($iframeArray[0] as $key => $val) {
-                $layout = 'layout="responsive"';
-                $tempiframe = '<mip-iframe   width="320" height="200" '.$layout.' src="'.$iframeArray[1][$key].'"></mip-iframe>';
-                $itemInfo['content'] =  str_replace($val,$tempiframe,$itemInfo['content']);
-            }
-        }
-        @preg_match_all('/<embed.*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>/', $itemInfo['content'], $embedArray);
-        if ($embedArray) {
-            foreach($embedArray[0] as $key => $val) {
-                $layout = '';
-                $tempembed = '<mip-embed type="ad-comm" '.$layout.' src="'.$embedArray[1][$key].'"></mip-embed>';
-                $itemInfo['content'] =  str_replace($val,$tempembed,$itemInfo['content']);
-            }
-        }
-        @preg_match_all('/<video.*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>*<\/video>/', $itemInfo['content'], $videoArray);
-        if ($videoArray) {
-            foreach($videoArray[0] as $key => $val) {
-                $layout = '';
-                $tempvideo = '<mip-video '.$layout.' src="'.$videoArray[1][$key].'"></mip-video>';
-                $itemInfo['content'] =  str_replace($val,$tempvideo,$itemInfo['content']);
-            }
-        }
+        
+        $itemInfo['content'] = model('app\common\model\Common')->getContentFilterByContent($itemInfo['content']);
+        
         return $itemInfo['content'];
     }
     public function getTagsLink($itemInfo)

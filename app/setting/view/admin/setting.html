@@ -1,0 +1,310 @@
+{extend name="./app/admin/view/main.html" /}
+{block name="title"}系统设置 - {__block__}{/block}
+{block name="style"}
+<style>
+</style>
+{/block}
+
+{block name="main"}
+<header class="mipcms-container-header">
+    <div class="float-left header-group">
+        <h4 class="title">设置</h4> <h5 class="sub-title">系统设置</h5>
+    </div>
+    <button type="button" class="pull-right ivu-btn ivu-btn-primary ivu-btn-circle" @click='onSubmitSetting'>
+        <span>立即保存</span>
+    </button>
+</header>
+
+<main class="mipcms-container-body" style="height: calc(100% - 50px)">
+<section class="mip-box">
+    <section class="mip-box-heading">
+        <h3>网站配置</h3>
+    </section>
+    <section class="mip-box-body">
+        <div class="row">
+            <div class="col-md-12">
+                <i-form label-position="top">
+                    <div class="row">
+                        <div class="col-md-1">
+                           <Form-item label="站点状态">
+                                <i-switch v-model="setting.systemStatus">
+                                    <span slot="open">开</span>
+                                    <span slot="close">关</span>
+                                </i-switch>
+                            </Form-item>
+                        </div>
+                        <div class="col-md-1">
+                            <Form-item label="代码压缩">
+                                <i-switch v-model="setting.codeCompression">
+                                    <span slot="open">开</span>
+                                    <span slot="close">关</span>
+                                </i-switch>
+                            </Form-item>
+                        </div>
+                        <div class="col-md-1">
+                            <Form-item label="伪静态">
+                                <i-switch v-model="setting.rewrite">
+                                    <span slot="open">开</span>
+                                    <span slot="close">关</span>
+                                </i-switch>
+                            </Form-item>
+                        </div>
+                        <div class="col-md-1">
+                            <Form-item label="UUID模式">
+                                <i-switch v-model="setting.idStatus">
+                                    <span slot="open">开</span>
+                                    <span slot="close">关</span>
+                                </i-switch>
+                            </Form-item>
+                        </div>
+                        <div class="col-md-1">
+                            <Form-item label="自定义URL">
+                                <i-switch v-model="setting.diyUrlStatus">
+                                    <span slot="open">开</span>
+                                    <span slot="close">关</span>
+                                </i-switch>
+                            </Form-item>
+                        </div>
+                        <div class="col-md-1">
+                            <Form-item label="超级站点">
+                                <i-switch v-model="setting.superSites">
+                                    <span slot="open">开</span>
+                                    <span slot="close">关</span>
+                                </i-switch>
+                            </Form-item>
+                        </div>
+                    </div>
+                </i-form>
+            </div>
+        </div>
+    </section>
+</section>
+
+<section class="mip-box">
+    <section class="mip-box-heading">
+        <h3>基本设置</h3>
+    </section>
+    <section class="mip-box-body">
+        <div class="row">
+            <div class="col-md-6">
+                <i-form label-position="top">
+                    <Form-item label="运行地址">
+                        <i-input v-model="setting.articleDomain"></i-input>
+                    </Form-item>
+                    <Form-item label="网站域名">
+                        <i-input v-model="setting.domain" placeholder="www.baidu.com">
+                        <i-select v-model="setting.httpType" slot="prepend" style="width: 80px">
+                            <i-option value="http://">http://</i-option>
+                            <i-option value="https://">https://</i-option>
+                        </i-select>
+                        </i-input>
+                    </Form-item>
+                    <Form-item label="网站名称">
+                        <i-input v-model="setting.siteName"></i-input>
+                    </Form-item>
+                </i-form>
+            </div>
+        </div>
+    </section>
+</section>
+
+<section class="mip-box">
+    <section class="mip-box-heading">
+        <h3>关键词描述</h3>
+    </section>
+    <section class="mip-box-body">
+        <div class="row">
+            <div class="col-md-6">
+                <i-form label-position="top">
+                    <Form-item label="网站副标题">
+                        <i-input v-model="setting.indexTitle" placeholder=" - 国内最大的互联网创业交流社区"></i-input>
+                    </Form-item>
+                    <Form-item label="网站关键词">
+                        <i-input type="textarea" v-model="setting.keywords"></i-input>
+                    </Form-item>
+                    <Form-item label="网站描述">
+                        <i-input type="textarea" v-model="setting.description"></i-input>
+                    </Form-item>
+                </i-form>
+            </div>
+        </div>
+    </section>
+</section>
+
+<section class="mip-box">
+    <section class="mip-box-heading">
+        <h3>其他</h3>
+    </section>
+    <section class="mip-box-body">
+        <div class="row">
+            <div class="col-md-6">
+                <i-form label-position="top">
+                    <Form-Item label="ICP备案号">
+                        <i-input v-model="setting.icp"></i-input>
+                    </Form-Item>
+                    <Form-Item label="流量统计代码">
+                        <i-input type="textarea" v-model="setting.statistical"></i-input>
+                    </Form-Item>
+                </i-form>
+            </div>
+            <div class="col-md-6">
+                <i-form label-position="top">
+                    <Form-Item label="备注说明：">
+                        您输入的流量统计代码必须符合MIP标准，否则将对整站页面造成MIP校验不合格问题，默认支持百度统计，其余统计请查看官方标准。输入示例：<br>{{codeDemo}}
+                    </Form-Item>
+                </i-form>
+
+            </div>
+        </div>
+    </section>
+</section>
+</main>
+{/block}
+    
+{block name="javascript"}
+{__block__}
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            setting: '',
+            codeDemo: '<mip-stats-baidu token="02890d4a309827eb62bc3335b2b28f7f"></mip-stats-baidu>',
+        },
+        watch: {
+        },
+        mounted() {
+            this.getSettingData();
+        },
+        methods: {
+            onSubmitSetting: function() {
+                var _this = this;
+                this.$mip.ajax('{$domain}/setting/ApiAdminSetting/settingEdit', {
+                    setting: JSON.stringify(this.setting),
+                }).then(function(res) {
+                    if(res.code == 1) {
+                        _this.$Message.success('保存成功');
+                        setTimeout(function() {
+                            window.location.href = '{$domain}/{$Think.config.admin}/setting/setting/';
+                        }, 200);
+                    }
+                });
+            },
+            getSettingData: function() {
+                var _this = this;
+                this.loading = true;
+                this.$mip.ajax('{$domain}/setting/ApiAdminSetting/settingSelect', {
+
+                }).then(function(res) {
+                    _this.loading = false;
+                    if(res.code == 1) {
+                        var temp = res.data;
+                        if(temp.systemStatus) {
+                            temp.systemStatus = true;
+                        } else {
+                            temp.systemStatus = false;
+                        }
+                        if(temp.loginStatus) {
+                            temp.loginStatus = true;
+                        } else {
+                            temp.loginStatus = false;
+                        }
+                        if(temp.registerStatus) {
+                            temp.registerStatus = true;
+                        } else {
+                            temp.registerStatus = false;
+                        }
+                        if(temp.idStatus) {
+                            temp.idStatus = true;
+                        } else {
+                            temp.idStatus = false;
+                        }
+                        if(temp.codeCompression) {
+                            temp.codeCompression = true;
+                        } else {
+                            temp.codeCompression = false;
+                        }
+                        if(temp.baiduSpider) {
+                            temp.baiduSpider = true;
+                        } else {
+                            temp.baiduSpider = false;
+                        }
+                        if(temp.articlePages) {
+                            temp.articlePages = true;
+                        } else {
+                            temp.articlePages = false;
+                        }
+                        if(temp.mipPostStatus) {
+                            temp.mipPostStatus = true;
+                        } else {
+                            temp.mipPostStatus = false;
+                        }
+                        if(temp.baiduYuanChuangStatus) {
+                            temp.baiduYuanChuangStatus = true;
+                        } else {
+                            temp.baiduYuanChuangStatus = false;
+                        }
+                        if(temp.guanfanghaoStatus) {
+                            temp.guanfanghaoStatus = true;
+                        } else {
+                            temp.guanfanghaoStatus = false;
+                        }
+                        if(temp.guanfanghaoStatusPost) {
+                            temp.guanfanghaoStatusPost = true;
+                        } else {
+                            temp.guanfanghaoStatusPost = false;
+                        }
+
+                        if(temp.baiduTimePcStatus) {
+                            temp.baiduTimePcStatus = true;
+                        } else {
+                            temp.baiduTimePcStatus = false;
+                        }
+                        if(temp.baiduTimeMStatus) {
+                            temp.baiduTimeMStatus = true;
+                        } else {
+                            temp.baiduTimeMStatus = false;
+                        }
+                        if(temp.diyUrlStatus) {
+                            temp.diyUrlStatus = true;
+                        } else {
+                            temp.diyUrlStatus = false;
+                        }
+                        if(temp.urlCategory) {
+                            temp.urlCategory = true;
+                        } else {
+                            temp.urlCategory = false;
+                        }
+
+                        if(temp.aritcleLevelRemove) {
+                            temp.aritcleLevelRemove = true;
+                        } else {
+                            temp.aritcleLevelRemove = false;
+                        }
+
+                        if(temp.superSites) {
+                            temp.superSites = true;
+                        } else {
+                            temp.superSites = false;
+                        }
+                        
+                        if(temp.superTpl) {
+                            temp.superTpl = true;
+                        } else {
+                            temp.superTpl = false;
+                        }
+
+                        if(temp.rewrite) {
+                            temp.rewrite = true;
+                        } else {
+                            temp.rewrite = false;
+                        }
+                        temp.baiduSearchPcUrl = '/baiduSitemapPc.xml';
+                        _this.setting = temp;
+                    }
+                });
+            },
+
+        }
+    })
+  </script>
+{/block}

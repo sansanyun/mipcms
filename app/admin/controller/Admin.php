@@ -13,7 +13,7 @@ class Admin extends Init
 
     public function start() {
          
-        $this->assign('mipInfoToJson',json_encode($this->mipInfo));
+        $this->assign('mipInfoToJson',json_encode(config('mipInfo')));
         
         $model = input('model');
         if ($model != 'login') {
@@ -53,6 +53,23 @@ class Admin extends Init
         
         $this->assign('indexTitle','首页');
         
+        $tempAdminMenu = [];
+        foreach (fetch_file_lists(APP_PATH) as $key => $file) {
+            if (strstr($file,'adminMenu.php')) {
+                $tempAdminMenu[] = require_once $file;
+            }
+        }
+        if ($tempAdminMenu) {
+            sort($tempAdminMenu);
+            foreach ($tempAdminMenu as $key => $value) {
+                   if (isset($tempAdminMenu[$key]['path'])) {
+                       $tempAdminMenu[$key]['html'] = $this->display(file_get_contents(ROOT_PATH . $tempAdminMenu[$key]['path']));
+                   }
+            }
+        }
+        $this->assign('AdminMenu',$tempAdminMenu);
+        
+        
         $request = Request::instance();
 //      try {
             if (input('model') != 'index.php' && input('model')) {
@@ -62,14 +79,13 @@ class Admin extends Init
                         $addonsNameSpace = "addons" . "\\" . $action . "\\" . "controller" . "\\" . $addonsCtr;
                         return model($addonsNameSpace)->$addonsAct();
                     } else {
-                        return $this->fetch('admin@admin' .'/'. input('model').'/'.input('action'));
+                        return $this->fetch(input('model').'@admin' .'/' .input('action'));
                     }
                 } else {
-                    return $this->fetch('admin@admin' .'/'. input('model'));
+                    return $this->fetch('admin@' .'/'. input('model'));
                 }
             } else {
-               
-                return $this->fetch('admin@admin/index/index');
+                return $this->fetch('index@index');
             }
 //      }catch(\Exception $e) {
 //          $this->error('模板不存在','');

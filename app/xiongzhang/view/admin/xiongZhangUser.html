@@ -1,0 +1,130 @@
+{extend name="./app/admin/view/main.html" /}
+{block name="title"}
+{assign name="itemName" value="粉丝" /}
+{$itemName}管理 - {/block}
+{block name="style"}
+<style>
+</style>
+{/block}
+{block name="main"}
+<header class="mipcms-container-header">
+    <div class="float-left header-group">
+        <h4 class="title">熊掌号</h4> <h5 class="sub-title">粉丝运营</h5>
+    </div>
+</header>
+
+<main class="mipcms-container-body" style="height: calc(100% - 50px)">
+    <section class="mip-box">
+        <section class="mip-box-body">
+            <!--内容列表-->
+            <section class="diy-table-list" v-cloak>
+                <div class="diy-table-item diy-table-item-header">
+                    <ul class="list-unstyled row">
+                       
+                        <li class="col-md-2">
+                            <span>昵称</span>
+                        </li>
+                        <li class="col-md-3">
+                            <span>用户openid</span>
+                        </li>
+                        <li class="col-md-2">
+                            <span>关注时间</span>
+                        </li>
+                        <li class="col-md-1">
+                            <span>省份</span>
+                        </li>
+                        <li class="col-md-2">
+                            <span>备注</span>
+                        </li>
+                        <li class="col-md-2">
+                            <span>操作</span>
+                        </li>
+                    </ul>
+                </div>
+                <div v-if='itemList.length' class="diy-table-body">
+                    <div class="diy-table-item" v-for='item in itemList' >
+                         <ul class="list-unstyled row">
+                            <li class="col-md-2">
+                                {{item.nickname}}
+                            </li>
+                            <li class="col-md-3 over-h-e">
+                                {{item.openid}}
+                            </li>
+                            <li class="col-md-2">
+                                {{item.subscribe_time | dateTime}}
+                            </li>
+                            <li class="col-md-1">
+                                {{item.province}}
+                            </li>
+                            <li class="col-md-2">
+                                {{item.remark}}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="no-block" v-else>
+                    <Spin fix v-if="loading">数据正在加载中...</Spin>
+                    <Icon type="ios-filing-outline"></Icon>
+                    <p v-if='settingStatus'>暂无数据</p>
+                    <p v-else>尚未配置熊掌号开发者信息，请<a href="{$domain}/{$Think.config.admin}/xiongzhang/xiongZhangSetting/">前去配置</a></p>
+                </div>
+            </section>
+            <!--内容列表结束-->
+        </section>
+    </section>
+      
+</main>
+{/block}
+    
+{block name="javascript"}
+{__block__}
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            loading: false,
+            itemName: '{$itemName}',
+            itemList: [], 
+            settingStatus: false,
+        },
+        watch: {
+             
+        },
+        mounted() {
+            this.getSettingData();
+        },
+        methods: {
+            getSettingData: function() {
+                this.loading = true;
+                this.$mip.ajax('{$domain}/xiongzhang/ApiAdminXiongZhangSetting/settingList', {
+
+                }).then(res => {
+                    this.loading = false;
+                    if(res.code == 1) {
+                        if (res.data.baiduXZClientId && res.data.baiduXZClientSecret) {
+                            this.settingStatus = true;
+                            this.getItemList();
+                        } else {
+                            this.settingStatus = false;
+                        }
+                    }
+                });
+            },
+            getItemList() {
+                this.loading = true;
+                this.$mip.ajax('{$domain}/xiongzhang/ApiAdminXiongZhangUser/getUserList', {
+                }).then(res => {
+                    this.itemList = [];
+                    if(res.code == 1) {
+                        var itemList = res.data.itemList.user_info_list;
+                        this.itemList = itemList;
+                    }
+                    this.loading = false;
+                });
+            },
+            
+             
+        }
+    })
+  </script>
+{/block}

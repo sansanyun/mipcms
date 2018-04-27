@@ -1,0 +1,520 @@
+{extend name="./app/admin/view/main.html" /}
+{block name="title"}
+{assign name="currentListUrl" value="article" /}
+{assign name="itemName" value="$mipInfo['articleModelName']" /}
+{assign name="itemUrl" value="article" /}
+{assign name="itemApiUrl" value="Article" /}
+{$mipInfo['articleModelName']}{if condition='$id'}编辑{else/}发布{/if} - {__block__}{/block}
+{block name="style"}
+<style> 
+    .simditor-body {
+        height: 400px;
+        overflow-y: auto;
+    }
+    .tags-btn:hover {
+        background-color: #dddee1;
+    }
+    .ivu-select-group-title {
+        padding-left: 15px;
+    }
+    .ivu-select-group .ivu-select-item{
+        padding-left: 30px;
+    }
+    
+    /**/
+   .fieldList .simditor {
+        width: 500px!important;
+        min-width: 500px!important;
+   }
+   .fieldList .simditor-body {
+        height: 200px!important;
+        min-height: 200px!important;
+        overflow-y: auto;
+    }
+    
+    
+</style>
+{/block}
+
+{block name="main"}
+<header class="mipcms-container-header">
+    <div class="float-left header-group">
+        <h4 class="title">{$mipInfo['articleModelName']}</h4> <h5 class="sub-title">{if condition='$id'}编辑{else/}发布{/if}</h5>
+    </div>
+    <div class="float-right">
+        <button type="button" class="float-right ivu-btn ivu-btn-primary ivu-btn-circle" @click='publishPost'>
+            <span><Icon type="checkmark-round"></Icon> 提交保存</span>
+        </button>
+    </div>
+</header>
+<main class="mipcms-container-body" style="height: calc(100% - 50px)">
+    <section class="">
+        <section class="mip-box">
+            <section class="mip-box-body">
+                 <i-Form :label-width="80" class="m-t-md v-h" :class='vShow'>
+                    <Form-Item label="标题" prop="title">
+                        <i-Input style="width: 500px;" v-model="title" placeholder="请输入标题..."></i-Input>
+                    </Form-Item>
+                     {:hook('diyKeywordsHook')}
+                    <Form-Item label="URl别名" v-if='mipGlobal.mipInfo.diyUrlStatus'>
+                        <i-input v-model="url_name"  style="width: 500px;" placeholder="输入英文字母"><i-Button slot="append" class="tags-btn" @click='getPinyin'>获取拼音</i-Button></i-input>
+                    </Form-Item>
+                    <Form-Item v-for='(item,index) in fieldList' class="fieldList" :label="item.name" >
+                          <i-Input type='textarea' :id='"diy_"+index' v-model="item.value" style="width: 500px;"></i-Input>
+                    </Form-Item>
+                    
+                    <Form-Item label="分类" prop="title">
+                        <i-Select v-model="cid" style="width:200px">
+                            <span v-for="item in categoryList">
+                                 <i-Option v-if='item.children.length==0'  :value="item.id" :key="item.id">{{ item.name }}</i-Option>
+                                <Option-Group v-else :label="item.name">
+                                    <i-Option v-for='sub in item.children' :value="sub.id" :key="sub.id">{{ sub.name }}</i-Option>
+                                </Option-Group>
+                            </span>
+                        </i-Select>
+                    </Form-Item> 
+                    
+                    <Form-Item label="标签" prop="title">
+                        <div class="m-b-sm">
+                            <i-Input transfer filterable v-model='tagName' style="width: 300px;"  placeholder="请选择标签,或直接输入回车即可" @on-focus='tagsSearch' @on-blur='timeShowList' @on-click="tagsClick($event)" @on-keyup="enterTags($event)">
+                                 <i-Button slot="append" class="tags-btn" @click='btnTags'><Icon type="ios-checkmark-empty"></Icon></i-Button>
+                            </i-Input>
+                            <div class="ivu-select-dropdown ivu-auto-complete" v-show='isShowTagsList' style="width: 300px;">
+                                <ul class="ivu-select-dropdown-list">
+                                    <li class="ivu-select-item" v-for="item in tagsList" :value="item" :key="item" @click='tagsClick(item)'>{{item}}</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <Tag class='m-t-xs' closable v-for="item in selectedTagsList" :key="item" :name='item' @on-close="selectedTagsListClose">{{item}}</Tag>
+                    </Form-Item> 
+                    
+                    <Form-Item label="内容">
+                        <textarea id="article_editor" class="simditor" style="height: 400px;" placeholder="请输入内容..."></textarea>
+                    </Form-Item>
+                    
+                </i-Form>
+                <Spin size="large" fix v-if="spinShow"></Spin>
+                <div class="text-center">
+                    <button type="button" class="ivu-btn ivu-btn-primary ivu-btn-circle m-b-sm" @click='publishPost'>
+                        <span><Icon type="checkmark-round"></Icon> 提交保存</span>
+                    </button>
+                </div>
+            </section>
+        </section>
+    </section>
+     
+</main>
+{/block}
+    
+{block name="javascript"}
+{__block__}
+    <link rel="stylesheet" type="text/css" href="{$domainStatic}/{$assets}/plugin/simditor/styles/simditor.css" />
+    <link rel="stylesheet" href="{$domainStatic}/{$assets}/plugin/simditor/styles/simditor-html.css" media="screen" charset="utf-8" />
+
+    <script type="text/javascript" src="{$domainStatic}/{$assets}/plugin/simditor/scripts/jquery.min.js"></script>
+    <script type="text/javascript" src="{$domainStatic}/{$assets}/plugin/simditor/scripts/module.js"></script>
+    <script type="text/javascript" src="{$domainStatic}/{$assets}/plugin/simditor/scripts/hotkeys.js"></script>
+    <script type="text/javascript" src="{$domainStatic}/{$assets}/plugin/simditor/scripts/uploader.js"></script>
+
+    <script type="text/javascript" src="{$domainStatic}/{$assets}/plugin/simditor/scripts/simditor.min.js"></script>
+
+    <script type="text/javascript" src="{$domainStatic}/{$assets}/plugin/simditor/scripts/simditor-autosave.js"></script>
+
+    <script type="text/javascript" src="{$domainStatic}/{$assets}/plugin/simditor/scripts/beautify-html.js"></script>
+    <script type="text/javascript" src="{$domainStatic}/{$assets}/plugin/simditor/scripts/simditor-html.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            vShow: '',
+            spinShow: true,
+            articlePublishUuid: '',
+            uuid: '',
+            title: '',
+            keywords: '',
+            description: '',
+            link_tags: '',
+            categoryList: [],
+            cid: parseInt({$cid}),
+            is_recommend: '',
+            content: '',
+            url_name: '',
+            
+            fieldList: [],
+            tempFieldList: [],
+            
+            tagsList: [],
+            tagsListDefault: [],
+            tagName: '',
+            selectedTagsList: [], //已选中的标签列表
+            isShowTagsList: false, //标签下拉状态
+            toolbar : ['title', 'bold', 'italic', 'underline', 'strikethrough', 'fontScale', 'color', '|', 'ol', 'ul', 'blockquote', 'code', '|', 'link', 'image', 'hr', '|', 'indent', 'outdent', 'alignment', 'html'],
+            fieldToolbar : ['bold', 'italic', 'underline'],
+            articlePublishStatus: 'add',
+        },
+        watch: {
+        },
+        mounted() {
+            {if condition='$id'}
+            this.articlePublishStatus = '{$id}';
+            this.articlePublishUuid = '{$id}';
+            {/if}
+            this.getFieldList();
+            this.getCategoryList();
+            this.getTags();
+            this.editorInit();
+        },
+        methods: {
+            editorInit() {
+                var _this = this;
+                setTimeout(function() {
+                    _this.createEditor();
+                }, 100);
+            },
+            //创建编辑器
+            createEditor() {
+                var _this = this;
+                
+                document.getElementById('article_editor').innerHTML = '';
+                this.editor = new Simditor({
+                    textarea: document.getElementById('article_editor'),
+                    toolbar: _this.toolbar,
+                    upload: {
+                        url: '{$domain}/{$Think.config.admin}/ApiAdminUpload/defaultImgUpload',
+                        params: {
+                            type: 'article',
+                        },
+                        fileKey: 'fileDataFileName',
+                        connectionCount: 3,
+                        leaveConfirm: '正在上传文件'
+                    },
+                    pasteImage: true,
+                    autosave: 'editor-content'
+                });
+                this.vShow = 'v-s';
+                this.spinShow = false;
+            },
+            getPinyin: function() {
+                if (!this.title) {
+                    this.$Message.error('请输入名称');
+                    return false;
+                }
+                this.$mip.ajax('{$domain}/admin/ApiAdminMipPost/getPinyin', {
+                    words: this.title,
+                    type: '',
+                }).then(res => {
+                    if(res.code == 1) {
+                        this.url_name = res.data;
+                    }
+                });
+            },
+            fieldEditor(s) {
+                var _this = this;
+                setTimeout(function() {
+                    document.getElementById('diy_'+s).innerHTML = '';
+                    _this.tempFieldList[s].editor = new Simditor({
+                        textarea: document.getElementById('diy_'+s),
+                        toolbar: _this.fieldToolbar,
+                        upload: {
+                            url: '{$domain}/{$Think.config.admin}/ApiAdminUpload/defaultImgUpload',
+                            params: {
+                                type: 'article',
+                            },
+                            fileKey: 'fileDataFileName',
+                            connectionCount: 3,
+                            leaveConfirm: '正在上传文件'
+                        },
+                        pasteImage: true,
+                    });
+                }, 1000,s);
+            },
+            getFieldList: function() {
+                this.$mip.ajax('{$domain}/{$itemUrl}/ApiAdmin{$itemApiUrl}Diy/itemFieldList', {
+                }).then(res => {
+                    if (res.code == 1) {
+                        var fieldList = res.data;
+                        var tempFieldListOne = [];
+                        var tempFieldListTwo = [];
+                        if (fieldList) {
+                            for (var i = 0; i < fieldList.length; i++) {
+                                tempFieldListOne.push({value:'',key:fieldList[i].value, name: fieldList[i].name,editor:""});
+                                tempFieldListTwo.push({value:'',key:fieldList[i].value, name: fieldList[i].name,editor:""});
+                            }
+                        }
+                        
+                       this.fieldList = tempFieldListOne;
+                       this.tempFieldList = tempFieldListTwo;
+                        for (var s = 0; s < this.fieldList.length; s++) {
+                            this.fieldEditor(s);                        
+                        }
+                    }
+                });
+            },
+            getCategoryList: function() {
+                var _this = this;
+                this.$mip.ajax('{$domain}/{$itemUrl}/ApiAdmin{$itemApiUrl}/categoryList', {
+                    
+                }).then(res => {
+                    if(res.code == 1) {
+                        var categoryList = res.data.categoryList;
+                        var tempCategoryList = [{children: [],id:0,pid: 0,name:'无分类'}];
+                        for (var i = 0; i < categoryList.length; i++) {
+                            tempCategoryList.push(categoryList[i]);
+                        }
+                        this.categoryList = tempCategoryList;
+                                    
+                        if (_this.articlePublishStatus != 'add') {
+                            _this.getItemInfo();
+                        }
+                    }
+                });
+            },
+            getTags: function() {
+                var _this = this;
+                this.$mip.ajax('{$domain}/tag/ApiAdminTag/tagsSelect', {
+                    limit: 10,
+                    orderBy: 'relevance_num',
+                }).then(function(res) {
+                    if(res.code == 1) {
+                        var tagsList = res.data.tagsList;
+                        _this.tagsListDefault = [];
+                        if (tagsList.length) {
+                            for (var i = 0; i < tagsList.length; i++) {
+                                _this.tagsListDefault.push(tagsList[i].name);
+                            }
+                        }
+                    }
+                });
+            },
+            //编辑时
+            getItemInfo() {
+                var _this = this;
+                this.$mip.ajax('{$domain}/{$itemUrl}/ApiAdmin{$itemApiUrl}/itemFind', {
+                    uuid: this.articlePublishUuid,
+                }).then(function(res) {
+                    if(res.code == 1) {
+                        var itemInfo = res.data;
+                        _this.keywords = itemInfo.keywords;
+                        _this.description = itemInfo.description;
+                        _this.link_tags = itemInfo.link_tags;
+                        _this.uuid = itemInfo.uuid;
+                        _this.title = itemInfo.title;
+                        _this.url_name = itemInfo.url_name;
+                        _this.cid = itemInfo.cid;
+                        var _that = _this;
+                        setTimeout(function() {
+                            for(var i = 0; i < _that.fieldList.length; i++) {
+    //                          _this.fieldList[i].value = itemInfo[_this.fieldList[i].key];
+                                _that.tempFieldList[i].editor.setValue(itemInfo[_that.fieldList[i].key]);
+                            }
+                        },1100);
+                        _this.is_recommend = itemInfo.is_recommend == 0 ? false : true;
+                        _this.tags = [];
+                        _this.publish_time = itemInfo.publish_time ? new Date(parseInt(itemInfo.publish_time) * 1000) : '';
+                        _this.editor.setValue(itemInfo.content);
+                        _this.getItemTags(itemInfo.uuid);
+                    }
+                });
+            },
+            getItemTags: function(itemId) {
+                var _this = this;
+                this.$mip.ajax('{$domain}/tag/ApiAdminTag/itemTagsSelectByItem', {
+                    'itemType': 'article',
+                    'itemId': itemId,
+                }).then(function(res) {
+                    if(res.code == 1) {
+                        var tagsList = res.data.tagsList;
+                        if(tagsList.length > 0) {
+                            for(var i = 0; i < tagsList.length; i++) {
+                                tagsList[i].name = tagsList[i].tags.name;
+                                _this.selectedTagsList.push(tagsList[i].name);
+                            }
+                        }
+                    }
+                });
+            },
+            //开始发布
+            publishPost: function(param) {
+                for (var i = 0; i < this.fieldList.length; i++) {
+                    this.fieldList[i].value	= this.tempFieldList[i].editor.getValue();
+                }
+                var _this = this;
+                this.content = this.editor.getValue();
+                var timestamp = Date.parse(this.publish_time);
+                timestamp = timestamp / 1000;
+                if(this.articlePublishStatus != 'add') {
+                    this.$mip.ajax('{$domain}/{$itemUrl}/ApiAdmin{$itemApiUrl}/itemEdit', {
+                        uuid: this.uuid,
+                        title: this.title,
+                        keywords: this.keywords,
+                        description: this.description,
+                        link_tags:this.link_tags,
+                        url_name: this.url_name,
+                        content: this.content,
+                        cid: this.cid,
+                        is_recommend: this.is_recommend ? '1' : '0',
+                        tags: this.selectedTagsList.join(','),
+                        publish_time: timestamp ? timestamp : '',
+                        fieldList: JSON.stringify(this.fieldList),
+                    }).then(function(res) {
+                        if(res.code == 1) {
+                            _this.$Message.success(res.msg);
+                            _this.editor.setValue('');
+                            setTimeout(function() {
+                                window.location.href = '{$domain}/{$Think.config.admin}/{$itemUrl}/{$itemUrl}/cid-{$cid}';
+                            }, 200);
+                        }
+                    });
+                } else {
+                    var _this = this;
+                    this.$mip.ajax('{$domain}/{$itemUrl}/ApiAdmin{$itemApiUrl}/itemAdd', {
+                        title: this.title,
+                        keywords: this.keywords,
+                        description: this.description,
+                        link_tags:this.link_tags,
+                        url_name: this.url_name,
+                        content: this.content,
+                        cid: this.cid,
+                        is_recommend: this.is_recommend ? '1' : '0',
+                        tags: this.selectedTagsList.join(','),
+                        publish_time: timestamp ? timestamp : '',
+                        fieldList: JSON.stringify(this.fieldList),
+                    }).then(function(res) {
+                        if(res.code == 1) {
+                            if(res.data) {
+                                var resMIp = JSON.parse(res.data);
+                                _this.$Message.success('推送成功：' + resMIp.success_mip + '条，当天剩余条数：' + resMIp.remain_mip);
+                            }
+                            _this.$Message.success('操作成功');
+                            _this.editor.setValue('');
+                            setTimeout(function() {
+                                window.location.href = '{$domain}/{$Think.config.admin}/{$itemUrl}/{$itemUrl}/cid-{$cid}';
+                            }, 200);
+                        }
+                    });
+                }
+
+            },
+            //标签
+            
+            
+            //标签tags
+            tagsListFiltr(list) {
+                //去除原来的tags中含有的已经确认的tags
+                if (this.selectedTagsList.length) {
+                    var tempList = [];
+                    for (var i = 0; i < list.length; i++) {
+                           tempList.push(list[i]);
+                    }
+                    for (var i = 0; i < this.selectedTagsList.length; i++) {
+                        for (var j = 0; j < tempList.length; j++) {
+                               if (this.selectedTagsList[i] == tempList[j]) {
+                                   tempList.splice(j,1);
+                               }
+                        }
+                    }
+                } else {
+                    tempList = list;
+                }
+                if (tempList.length) {
+                    this.isShowTagsList = true; //开启下拉
+                } else {
+                    this.isShowTagsList = false; //搜索不到 取消下拉
+                }
+                return tempList;
+            },
+            //tags搜索
+            tagsSearch(val) {
+                if (this.tagName) {
+                    var tempTagsList = this.tagsListDefault;
+                    var tempTagsListTwo = [];
+                    for (var i = 0; i < tempTagsList.length; i++) {
+                           if (tempTagsList[i].indexOf(this.tagName) != -1) {
+                               tempTagsListTwo.push(tempTagsList[i]);
+                           }
+                    }
+                    if (tempTagsListTwo.length) {
+                        this.tagsList = this.tagsListFiltr(tempTagsListTwo);
+                    } else {
+                        this.isShowTagsList = false; //搜索不到 取消下拉
+                    }
+                } else {
+                    this.tagsList = this.tagsListFiltr(this.tagsListDefault); //空的时候 默认
+                }
+            },
+            //tags按钮确认
+            btnTags: function() {
+                if (this.tagName) {
+                    //支持,号空格分割
+                    if (tempTagName = this.tagName.split(' ')) {
+                        for (var i = 0; i < tempTagName.length; i++) {
+                            if (tempTagName[i]) {
+                                if (tempSubTagName = tempTagName[i].split(',')) {
+                                    for (var j = 0; j < tempSubTagName.length; j++) {
+                                        if (tempSubTagName[j]) {
+                                            if (this.selectedTagsList.indexOf(tempSubTagName[j]) == -1) {
+                                                this.selectedTagsList.push(tempSubTagName[j]);
+                                            }
+                                        }
+                                    }     
+                                                
+                                }
+                            }
+                        }
+                    }
+                    this.tagName = ''; //将input值为空
+                    this.isShowTagsList = false; //取消下拉
+                }
+            },
+            //tags回车
+            enterTags: function(ev) {
+                if(ev.keyCode == 13) {
+                    if (this.tagName) {
+                        if (tempTagName = this.tagName.split(' ')) {
+                            for (var i = 0; i < tempTagName.length; i++) {
+                                if (tempTagName[i]) {
+                                    if (tempSubTagName = tempTagName[i].split(',')) {
+                                        for (var j = 0; j < tempSubTagName.length; j++) {
+                                            if (tempSubTagName[j]) {
+                                                if (this.selectedTagsList.indexOf(tempSubTagName[j]) == -1) {
+                                                    this.selectedTagsList.push(tempSubTagName[j]);
+                                                }
+                                            }
+                                        }     
+                                                    
+                                    }
+                                }
+                            }
+                        }
+                        this.tagName = ''; //将input值为空
+                        this.isShowTagsList = false; //取消下拉
+                    }
+                } else {
+                    this.tagsSearch();
+                }
+            },
+            timeShowList() {
+                var _this = this;
+                setTimeout(function(){
+                    _this.isShowTagsList = false;
+                },200)
+                
+            },
+            //下拉tags点击
+            tagsClick(val) {
+                console.log(val);
+                if (this.selectedTagsList.indexOf(val) == -1) {
+                    this.selectedTagsList.push(val);
+                }
+                this.tagName = ''; //将input值为空
+                this.isShowTagsList = false; //取消下拉
+            },
+            //取消已经选择tags
+            selectedTagsListClose(event, name) {
+                const index = this.selectedTagsList.indexOf(name);
+                this.selectedTagsList.splice(index, 1);
+            },
+        }
+    })
+  </script>
+{/block}

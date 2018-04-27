@@ -86,9 +86,9 @@ class Install extends Controller
             $data['session'] = $icon_error.'未开启';
         }
         //检测文件夹属性
-        $cache =  ROOT_PATH.'cache';
+        $cache =  ROOT_PATH.'runtime';
         $install = ROOT_PATH.'public/install';
-        $config = ROOT_PATH.'system/config';
+        $config = ROOT_PATH.'app';
         $new_checklist = array();
         if(is_writable($cache)){
             $new_checklist['cache']['w']=true;
@@ -149,7 +149,7 @@ class Install extends Controller
                 $dbconfig['database'] = $dbname;
                 $dbconfig['prefix']=trim(input('dbprefix'));
                 $tablepre = input("dbprefix");
-                $sql = file_get_contents(PUBLIC_PATH.'package'.DS.'mipcms_v_3_3_0.sql');
+                $sql = file_get_contents(PUBLIC_PATH.'package'.DS.'mipcms_v_3_5_0.sql');
                 $sql = str_replace("\r", "\n", $sql);
                 $sql = explode(";\n", $sql);
                 $default_tablepre = "mip_";

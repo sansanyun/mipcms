@@ -12,7 +12,9 @@
 <meta property="og:release_date" content="{$itemInfo['publish_time']|date='Y-m-d',###}" />
 {/block}
 {block name="main"}
-{include file='block/mipui-crumb'}
+<div class="container">
+    {mipcms:crumb isHome='1' cid="$itemInfo['cid']" ulClass='breadcrumb p-0 bg-transparent' liClass="breadcrumb-item" separator='' /}
+</div>
 <div class="container">
     <div class="row">
         <main class="col-lg-8">
@@ -66,22 +68,6 @@
                 <section class="mip-box-body">
                     <ul class="list-unstyled">
                         {mipcms:article value="v" limit='5'}
-                        <li class="li-box-list">
-                            <a href="{$v.url}" data-type="mip" data-title="{$v.title}" title="{$v.title}">{$v.title}</a>
-                            <p>{$v['publish_time']|date='Y-m-d',###}</p>
-                        </li>
-                        {/mipcms:article}
-                    </ul>
-                </section>
-            </section>
-            
-            <section class="mip-box mip-box-default">
-                <section class="mip-box-heading">
-                    <h3>相关{$mipInfo['articleModelName']}</h3>
-                </section>
-                <section class="mip-box-body">
-                    <ul class="list-unstyled">
-                        {mipcms:article value="v" tagNames='$itemInfo["tagsListString"]' notUuids='$itemInfo["uuid"]' limit='5'}
                         <li class="li-box-list">
                             <a href="{$v.url}" data-type="mip" data-title="{$v.title}" title="{$v.title}">{$v.title}</a>
                             <p>{$v['publish_time']|date='Y-m-d',###}</p>

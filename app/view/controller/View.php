@@ -8,8 +8,10 @@ class View extends Mip
     public function index()
     {
         $name = input('name');
+        $dir = input('dir');
         $params = input('params');
         $this->assign('name',$name);
+        $this->assign('dir',$dir);
         $this->assign('params',$params);
         if (!empty($params)) {
             $params = explode('__', $params);
@@ -29,8 +31,11 @@ class View extends Mip
         
         $this->assign('mipDescription','');
         
-        
-        return $this->mipView('view/'.$name);
+        if ($dir) {
+            return $this->mipView('view/' . $dir . '/' . $name);
+        } else {
+            return $this->mipView('view/' . $name);
+        }
     }
  
     

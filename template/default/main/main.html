@@ -5,6 +5,7 @@
     <meta name="applicable-device" content="pc,mobile">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
+    <base href="{$domain}" />
     <link rel="shortcut icon" href="{$domainStatic}/favicon.ico" type="image/x-icon" />
     <title>{block name='mipTitle'}{$mipTitle}{/block}</title>
     <meta name="keywords" content="{block name='mipKeywords'}{$mipKeywords}{/block}">
@@ -12,8 +13,7 @@
     {block name='so'}
     {/block}
     <link rel="stylesheet" type="text/css" href="https://c.mipcdn.com/static/v1/mip.css">
-    <link rel="stylesheet" type="text/css" href="{$domainStatic}/{$assets}/{$tplName}/css/bootstrap-layout.min.css">
-    <link rel="stylesheet" type="text/css" href="{$domainStatic}/{$assets}/{$tplName}/css/app.min.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="{$domainStatic}/{$assets}/{$tplName}/css/mipcms.css">
     <style mip-custom>
     {block name="style"}{/block}

@@ -9,8 +9,7 @@ class Index extends Mip
 {
     public function index()
     {
-        
-        if ($this->domainSettingsInfo && $this->mipInfo['topDomain'] && $this->domainSettingsInfo['diySiteName']) {
+        if ($this->domainSettingsInfo && $this->domainSettingsInfo['diySiteName']) {
             $this->assign('mipTitle',$this->domainSettingsInfo['diySiteName']);
         } else {
             $this->assign('mipTitle',$this->mipInfo['siteName'].$this->mipInfo['indexTitle']);

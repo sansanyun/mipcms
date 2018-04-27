@@ -21,10 +21,6 @@ class ComposerStaticInit47dc77bd3df7b9e15abb6d463d1174ed
             'think\\captcha\\' => 14,
             'think\\' => 6,
         ),
-        'Q' => 
-        array (
-            'QL\\' => 3,
-        ),
     );
 
     public static $prefixDirsPsr4 = array (
@@ -42,23 +38,12 @@ class ComposerStaticInit47dc77bd3df7b9e15abb6d463d1174ed
         ),
         'think\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/thinkphp/library/think',
-            1 => __DIR__ . '/..' . '/5ini99/think-addons/src',
-        ),
-        'QL\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/jaeger/querylist',
+            0 => __DIR__ . '/..' . '/5ini99/think-addons/src',
+            1 => __DIR__ . '/../..' . '/thinkphp/library/think',
         ),
     );
 
     public static $prefixesPsr0 = array (
-        'P' => 
-        array (
-            'PHPQRCode' => 
-            array (
-                0 => __DIR__ . '/..' . '/aferrandini/phpqrcode/lib',
-            ),
-        ),
         'H' => 
         array (
             'HTMLPurifier' => 
@@ -68,29 +53,12 @@ class ComposerStaticInit47dc77bd3df7b9e15abb6d463d1174ed
         ),
     );
 
-    public static $classMap = array (
-        'Callback' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
-        'CallbackBody' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
-        'CallbackParam' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
-        'CallbackParameterToReference' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
-        'CallbackReturnReference' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
-        'CallbackReturnValue' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
-        'DOMDocumentWrapper' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
-        'DOMEvent' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
-        'ICallbackNamed' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
-        'phpQuery' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
-        'phpQueryEvents' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
-        'phpQueryObject' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
-        'phpQueryPlugins' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
-    );
-
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit47dc77bd3df7b9e15abb6d463d1174ed::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit47dc77bd3df7b9e15abb6d463d1174ed::$prefixDirsPsr4;
             $loader->prefixesPsr0 = ComposerStaticInit47dc77bd3df7b9e15abb6d463d1174ed::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit47dc77bd3df7b9e15abb6d463d1174ed::$classMap;
 
         }, null, ClassLoader::class);
     }

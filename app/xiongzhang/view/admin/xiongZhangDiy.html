@@ -1,0 +1,331 @@
+{extend name="./app/admin/view/main.html" /}
+{block name="title"}
+{assign name="itemName" value="自定义菜单" /}
+自定义菜单 - {/block}
+{block name="style"}
+<style>
+    .mobile-preview {
+        
+    }
+    
+    .mobile-preview .mobile-frame .mobile-frame-top {
+        background: url({$domainStatic}/{$assets}/admin/images/mobile-preview/phone-top.v3.png) center 0 no-repeat;
+        width: 382px;
+        height: 45px;
+    }
+    
+    .mobile-preview .mobile-frame .site-shadow {
+        background: url({$domainStatic}/{$assets}/admin/images/mobile-preview/phone-bg.v3.png) center 0 repeat-y;
+        background-size: 382px 10px;
+        width: 382px;
+        height: 415px;
+        position: relative;
+    }
+    
+    .mobile-preview .mobile-frame .mobile-frame-bottom {
+        background: url({$domainStatic}/{$assets}/admin/images/mobile-preview/phone-bottom.v3.png) center 0 no-repeat;
+        width: 382px;
+        height: 115px
+    }
+    .footer-bar {
+        position: absolute;
+        display: flex;
+        left: 62px;
+        bottom: 0;
+        width: 320px;
+        height: 42px;
+        color: #333;
+        line-height: 42px;
+        font-size: 15px;
+        text-align: center;
+        background: #fafafa;
+        overflow: visible;
+        border-top: 1px solid #eff1f2;
+    }
+    .bar-item {
+        cursor: pointer;
+        -webkit-box-flex: 1;
+        -webkit-flex: 1;
+        flex: 1;    
+        position: relative;
+    }
+    .bar-item.active {
+        color: #00AAEE;
+        background-color: transparent;
+        border: 1px dashed #dddee1;
+    }
+    .bar-item.right-border:before {
+        position: absolute;
+        content:"";
+        top: 12px!important;
+        right: 0;
+        height: 16px;
+        z-index: 10;
+        width: 1px;
+        background-color: #e6e6e6;
+    }
+    .btn-del {
+        position: absolute;
+        bottom: 105px;
+        right: -50px;
+    }
+    .btn-edit {
+        position: absolute;
+        bottom: 55px;
+        right: -50px;
+    }
+    .btn-add {
+        position: absolute;
+        bottom: 5px;
+        right: -50px;
+    }
+</style>
+{/block}
+{block name="main"}
+<header class="mipcms-container-header">
+    <div class="float-left header-group">
+        <h4 class="title">熊掌号</h4> <h5 class="sub-title">自定义菜单</h5>
+    </div>
+   <button type="button" class="pull-right ivu-btn ivu-btn-primary ivu-btn-circle" @click='itemSave' :disabled='button.length == 0'>
+        <span><Icon type="checkmark-round"></Icon> 保存更新</span>
+    </button>
+</header>
+
+<main class="mipcms-container-body" style="height: calc(100% - 50px)">
+    
+   <aside style="width: 450px;margin: 0 auto;">
+         <div class="mobile-preview">
+             <div class="mobile-frame">
+                 <div class="mobile-frame-top"></div>
+                 <div class="site-shadow">
+                    <div class="footer-bar" v-if='button.length == 0'>
+                        <div class="bar-item">
+                            <div class="item-text" @click="newAdd(1)">点击新建</div>
+                        </div>
+                    </div>
+                    <div class="footer-bar" v-else>
+                        <div class="bar-item" v-for='(item,index) in button' @click='itemClick(item,index)' :class='{"right-border":(button.length == 2 && index == 0) || (button.length == 3 && (index == 0 || index == 1)),"active":item.active}'>
+                            <div class="item-text">{{item.name}}</div>
+                        </div>
+                    </div>
+                    <i-Button class='btn-del' :disabled='!clickItem' @click="itemDel()" type="error" shape="circle" icon="ios-trash-outline"></i-Button>
+                    <i-Button class='btn-edit' :disabled='!clickItem' @click="itemEdit()" type="primary" shape="circle" icon="ios-gear-outline"></i-Button>
+                    <i-Button class='btn-add' :disabled='button.length > 2' @click="newAdd()" type="primary" shape="circle" icon="ios-plus-empty"></i-Button>
+                 </div>
+                 <div class="mobile-frame-bottom"></div>
+             </div>
+         </div> 
+   </aside>
+   
+    <Modal :title="dialogItemTitle" v-model='dialogItemStatus' v-cloak>
+        <i-form :model="item" :rules="itemRules" ref="item" :label-width="80" >
+            <Form-Item label="名称" prop="name">
+                <i-input v-model="item.name"></i-input>
+            </Form-Item>
+            <Form-Item label="类型" prop="type">
+                 <i-Select v-model="item.type" transfer>
+                    <i-Option value="click" key="click">消息类型</i-Option>
+                    <i-Option value="view" key="view">跳转链接</i-Option>
+                    <i-Option value="list" key="list" disabled>子菜单</i-Option>
+                </i-Select>
+            </Form-Item>
+            <Form-Item v-if='item.type == "click"' label="回复标题" prop="msg">
+                <i-input v-model="item.msg.text"></i-input>
+            </Form-Item>
+            <Form-Item v-if='item.type == "click"' label="回复类型" prop="msg">
+                <i-input v-model="item.msg.type" disabled></i-input>
+            </Form-Item>
+            <Form-Item v-if='item.type == "click"' label="key" prop="key">
+                <i-input v-model="item.key"></i-input>
+            </Form-Item>
+            <Form-Item v-if='item.type == "view"' label="跳转地址" prop="url">
+                <i-input v-model="item.url"></i-input>
+            </Form-Item>
+        </i-form>
+        <div slot="footer" class="dialog-footer">
+            <i-button @click="dialogItemStatus = false">取 消</i-button>
+            <i-button type="primary" @click="itemSubmit('item')">确 定</i-button>
+        </div>
+    </Modal>
+   
+   
+</main>
+{/block}
+    
+{block name="javascript"}
+{__block__}
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            button: [],
+            clickItem: '',
+            clickIndex: '',
+            currentStatus: false,
+            item: {
+                name: '',
+                type: 'view',
+                msg: {
+                    text: '回复文本',
+                    type: 'view_text',
+                },
+                url: 'http://www.mipcms.com',
+                key: 'test',
+            },
+            dialogItemTitle: '添加菜单',
+            dialogItemStatus: false,
+            
+            itemRules: {
+                name: [{
+                    required: true,
+                    message: '请输入名称',
+                    trigger: 'blur'
+                }],
+                key: [{
+                    required: true,
+                    message: '请输入key',
+                    trigger: 'blur'
+                }],
+            },
+        },
+        watch: {
+             
+        },
+        mounted() {
+            this.getItemList();
+        },
+        methods: {
+            itemClick(item,index) {
+                var button = this.button;
+                for (var i = 0; i < button.length; i++) {
+                    button[i].active = false;
+                    this.clickIndex = '';
+                }
+                for (var i = 0; i < button.length; i++) {
+                	   if (i == index) {
+                        button[i].active = true;
+                        this.clickIndex = i;
+                	   }
+                }
+                this.clickItem = item;
+                this.button = button;
+            },
+            itemDel(param) {
+                if (!this.clickItem) {
+                    return false;
+                }
+                this.button.splice(this.clickIndex,1);
+            },
+            itemEdit(param) {
+                if (!this.clickItem) {
+                    return false;
+                }
+                this.currentStatus = true;
+                this.dialogItemTitle = '编辑菜单';
+                if (this.clickItem.type == 'click') {
+                    this.item.name = this.clickItem.name;
+                    this.item.type = this.clickItem.type;
+                    this.item.msg.text = this.clickItem.msg.text;
+                    this.item.msg.type = this.clickItem.msg.type;
+                    this.item.key = this.clickItem.key;
+                }
+                if (this.clickItem.type == 'view') {
+                    this.item.name = this.clickItem.name;
+                    this.item.type = this.clickItem.type;
+                    this.item.url = this.clickItem.url;
+                }
+                this.dialogItemStatus = true;
+            },
+            newAdd(param) {
+                this.currentStatus = false;
+                this.item.name = '';
+                this.item.type = 'view';
+                this.dialogItemStatus = true;
+            },
+            getItemList() {
+                this.$mip.ajax('{$domain}/xiongzhang/ApiAdminXiongZhangDiy/itemList', {
+                }).then(res => {
+                    if(res.code == 1) {
+                        if (res.data.error_msg) {
+                            this.button = [];
+                        } else {
+                            var button = res.data.menu.button;
+                            for (var i = 0; i < button.length; i++) {
+                            	delete button[i].sub_button;
+                            }
+                            this.button = button;
+                        }
+                        //{"error_code":0,"error_msg":""}
+                    }
+                });
+            },
+            itemSubmit(val) {
+                this.$refs[val].validate((valid) => {
+                    if(valid) {
+                        if (this.currentStatus) {
+                            if (this.item.type == 'click') {
+                                var button = this.button;
+                                for (var i = 0; i < button.length; i++) {
+                                    if (i == this.clickIndex) {
+                                        button[i].name = this.item.name;
+                                        button[i].type = this.item.type;
+                                        button[i].msg.text = this.item.msg.text;
+                                        button[i].msg.type = this.item.msg.type;
+                                        button[i].key = this.item.key;
+                                    }
+                                }
+                                this.button = button;
+                            }
+                            if (this.item.type == 'view') {
+                                var button = this.button;
+                                for (var i = 0; i < button.length; i++) {
+                                    if (i == this.clickIndex) {
+                                        button[i].name = this.item.name;
+                                        button[i].type = this.item.type;
+                                        button[i].url = this.item.url;
+                                    }
+                                }
+                                this.button = button;
+                            }
+                        } else {
+                            if (this.item.type == 'click') {
+                                var tempArray = {};
+                                tempArray.msg = {};
+                                tempArray.active = false;
+                                tempArray.name = this.item.name;
+                                tempArray.type = this.item.type;
+                                tempArray.msg.text = this.item.msg.text;
+                                tempArray.msg.type = this.item.msg.type;
+                                tempArray.key = this.item.key;
+                                this.button.push(tempArray);
+                            }
+                            if (this.item.type == 'view') {
+                                var tempArray = {};
+                                tempArray.active = false;
+                                tempArray.name = this.item.name;
+                                tempArray.type = this.item.type;
+                                tempArray.url = this.item.url;
+                                this.button.push(tempArray);
+                            }
+                        }
+                        
+                        this.dialogItemStatus = false;
+                    }
+                });
+            },
+            itemSave() {
+                
+                this.$mip.ajax('{$domain}/xiongzhang/ApiAdminXiongZhangDiy/itemEdit', {
+                    button: JSON.stringify(this.button),
+                }).then(res => {
+                    if(res.code == 1) {
+                        this.$Message.success(res.data);
+                        this.getItemList();
+                    }
+                });
+            }
+            
+        }
+    })
+  </script>
+{/block}

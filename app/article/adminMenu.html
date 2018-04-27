@@ -1,0 +1,14 @@
+<!--文章-->
+<li class="li has-sub {if condition='$model=="article"'}active{/if}">
+    <a class="list-link with-sub"><i class="ion-ios-book-outline"></i> {$mipInfo['articleModelName']}
+       <div class="list-icon"><i class="triangle-facing-left"></i><i class="triangle-facing-bottom"></i></div>
+    </a>
+    <ul class="sub-list">
+        <li class="{if condition='$action=="article"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/article/article" >全部{$mipInfo['articleModelName']}</a></li>
+        {if condition='$mipInfo.superSites'}
+        <li class="{if condition='$action=="articlePush"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/article/articlePush">SEO推送</a></li>
+        {/if}
+        <li class="{if condition='$action=="articleCategory"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/article/articleCategory">分类管理</a></li>
+        <li class="{if condition='$action=="articleDiy"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/article/articleDiy">自定义字段</a></li>
+    </ul>
+</li>

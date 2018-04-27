@@ -1,0 +1,22 @@
+<aside class="side-box mip-box" style="height: calc(100% - 50px - 92px);bottom: 15px;">
+    <section class="side-box-body">
+        <section class="side-list">
+            <ul>
+                <li class="nav-item {if condition='$cid == ""'}active{/if}"><a href="{$domain}/{$Think.config.admin}/{$itemUrl}/{$currentListUrl}/">全部{$itemName}</a></li>
+                {miptag:tagscategory value='v' pid='0'}
+                <li class="nav-item {if condition='$cid == $v["id"]'}active{/if}">
+                    <a href="{$domain}/{$Think.config.admin}/{$itemUrl}/{$currentListUrl}/cid-{$v.id}">{$v.name}</a>
+                    <ul class="list-unstyled children">
+                        {foreach name='$v["sub"]' id='val'}
+                        <li class="{if condition='$cid == $val["id"]'}active{/if}"><a href="{$domain}/{$Think.config.admin}/{$itemUrl}/{$currentListUrl}/cid-{$val.id}" title="{$val['name']}"><span>{$val['name']}</span></a></li>
+                        {/foreach}
+                    </ul>
+                </li>
+                {/miptag:tagscategory}
+            </ul>
+            <div class="pt-3 p-3">
+                <a href="{$domain}/{$Think.config.admin}/{$itemUrl}/{$itemUrl}Category/" class="ivu-btn ivu-btn-dashed ivu-btn-long"><i class="ion-ios-plus-empty"></i> <span>添加分类</span></a>
+            </div>
+        </section>
+    </section>
+</aside>

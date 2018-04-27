@@ -9,36 +9,18 @@ $mipInfo = Config::get('mipInfo');
 $request = Request::instance();
 
 if (!strpos($request->url(),'Api')) {
-    if ($mipInfo['aritcleLevelRemove']) {
-        if ($mipInfo['urlCategory']) {
-            Route::rule([$mipInfo['articleModelUrl'].'/index'.$mipInfo['urlPageBreak'].'<page>' => ['article/Article/index',['ext'=>'html'],['page'=>'\d+']]]);
-            Route::rule(['[:category]/index'.$mipInfo['urlPageBreak'].'<page>' => ['article/Article/index',['ext'=>'html'],['page'=>'\d+']]]);
-            Route::rule(['[:category]/[:sub]/index'.$mipInfo['urlPageBreak'].'<page>' => ['article/Article/index?sub=:sub',['ext'=>'html'],['page'=>'\d+']]]);
-            Route::rule(['[:category]/[:sub]/<id>'.$mipInfo['urlPageBreak'].'<page>'=>['article/ArticleDetail/index?sub=:sub',['ext'=>'html'],['id'=>'[a-zA-Z0-9_-]+'],['page'=>'\d+']]]);
-            Route::rule(['[:category]/[:sub]/:id'=>['article/ArticleDetail/index?sub=:sub',['ext'=>'html'],['id'=>'[a-zA-Z0-9_-]+']]]);
-            Route::rule(['[:category]/<id>'.$mipInfo['urlPageBreak'].'<page>'=>['article/ArticleDetail/index?category=:category',['ext'=>'html'],['id'=>'[a-zA-Z0-9_-]+'],['page'=>'\d+']]]);
-            Route::rule(['[:category]/:id'=>['article/ArticleDetail/index?category=:category',['ext'=>'html'],['id'=>'[a-zA-Z0-9_-]+']]]);
-            Route::rule(['[:category]/[:sub]' => ['article/Article/index?sub=:sub',[],['category'=>'[a-zA-Z0-9_-]+','sub'=>'[a-zA-Z0-9_-]+']]]);
-            Route::rule(['[:category]' => ['article/Article/index',[],['category'=>'[a-zA-Z0-9_-]+']]]);
-            Route::rule($mipInfo['articleModelUrl'],'article/Article/index');
-        } else {
-            Route::rule([$mipInfo['articleModelUrl'].'/index'.$mipInfo['urlPageBreak'].'<page>' => ['article/Article/index',['ext'=>'html'],['page'=>'\d+']]]);
-            Route::rule(['[:category]/index'.$mipInfo['urlPageBreak'].'<page>' => ['article/Article/index',['ext'=>'html'],['page'=>'\d+']]]);
-            Route::rule(['[:category]/[:sub]/index'.$mipInfo['urlPageBreak'].'<page>' => ['article/Article/index?sub=:sub',['ext'=>'html'],['page'=>'\d+']]]);
-            Route::rule([$mipInfo['articleModelUrl'].'/<id>'.$mipInfo['urlPageBreak'].'<page>'=>['article/ArticleDetail/index',['ext'=>'html'],['id'=>'[a-zA-Z0-9_-]+'],['page'=>'\d+']]]);
-            Route::rule([$mipInfo['articleModelUrl'].'/:id'=>['article/ArticleDetail/index',['ext'=>'html'],['id'=>'[a-zA-Z0-9_-]+']]]);
-            Route::rule(['[:category]/[:sub]' => ['article/Article/index?sub=:sub',[],['category'=>'[a-zA-Z0-9_-]+','sub'=>'[a-zA-Z0-9_-]+']]]);
-            Route::rule(['[:category]' => ['article/Article/index',[],['category'=>'[a-zA-Z0-9_-]+']]]);
-            Route::rule($mipInfo['articleModelUrl'],'article/Article/index');
+    $categoryList = model('app\\article\\model\\Articles')->getAllCategory();
+    if ($categoryList) {
+        foreach ($categoryList as $key => $value) {
+            Route::rule([$value['pageRule'] => ['article/Article/index?id=' . $value["id"] . '&cid=' . $value["cid"],[],[]]]);
+            
+            Route::rule([str_replace('.html','',$value['detailRule']).$mipInfo['urlPageBreak'].'<page>' => ['article/ArticleDetail/index',['ext'=>'html'],['id'=>'[a-zA-Z0-9_-]+']]]);
+
+            Route::rule([str_replace('.html','',$value['detailRule']) => ['article/ArticleDetail/index',['ext'=>'html'],['__url__' => $value['detail__url__']],[]]]);
+            Route::rule([$value['rule'] => ['article/Article/index?id=' . $value["id"] . '&cid=' . $value["cid"],[],[]]]);
         }
     } else {
-        Route::group($mipInfo['articleModelUrl'], [
-            '[:category]/index'.$mipInfo['urlPageBreak'].'<page>'  =>['article/Article/index',['ext'=>'html'],[]],
-            'index'.$mipInfo['urlPageBreak'].'<page>'=>['article/Article/index',['ext'=>'html'],[]],
-            '/publish'  =>['article/Article/publish',['ext'=>'html'],[]],
-            '<id>'.$mipInfo['urlPageBreak'].'<page>'=>  ['article/ArticleDetail/index',['ext'=>'html'],['id'=>'[a-zA-Z0-9_-]+']],
-            ':id'=>  ['article/ArticleDetail/index',['ext'=>'html'],['id'=>'[a-zA-Z0-9_-]+']],
-            '[:category]'  => ['article/Article/index',[],['category'=>'[a-zA-Z0-9_-]+']],
-            ],[],['page'=>'\d+']);
-    }   
+        Route::rule(['/article/:id' => ['article/ArticleDetail/index',['ext'=>'html'],[],[]]]);
+    }
+    Route::rule($modelName,'article/Article/index');
 }

@@ -1,22 +1,27 @@
-//配置区域
-@color: #00aaee; //主题色
+@color: #00AAEE;
+@hoverColor: #33bbf1;
+[v-cloak] {
+    display: none;
+}
 body {
+    font-family: Tahoma, Helvetica, "microsoft yahei", "Hiragino Sans GB", Simsun,sans-serif;
     background-color: #ECF0F1;
     color: #333;
     font-size: 14px;
     -webkit-font-smoothing: antialiased;
 }
-
-a:hover {
-    color: @color;
+a {
+    color: #333;
+    &:hover {
+        color: @color;
+        text-decoration: none;
+    }
 }
 
 //导航
-.mip-header-default {
+.mipmb-header-default {
     background-color: #303641;
-    width: 100%;
     .logo-text {
-        float: left;
         margin-right: 15px;
         font-size: 20px;
         line-height: 60px;
@@ -25,61 +30,43 @@ a:hover {
         }
     }
     //菜单
-    .mip-nav li {
-        float: left
-    }
-    .mip-nav li.active,
-    .mip-nav li.active:hover {
-        background-color: #e4e4e4
-    }
-    .mip-nav li:hover {
-        background-color: #f4f5f9
-    }
-    .mip-nav li a {
-        display: block;
-        padding: 10px 15px
-    }
-    .mip-menu {
+    .mipmb-menu {
         background-color: #303641;
         line-height: 0;
         padding: 0;
         margin: 0;
-    }
-    .mip-menu:after,
-    .mip-menu:before {
-        content: " ";
-        display: table
-    }
-    .mip-menu>li {
-        float: left;
-        display: block;
-        position: relative
-    }
-    .mip-menu>li>a {
-        margin-left: 2px;
-        margin-right: 2px;
-        display: block;
-        padding: 30px 15px;
-        position: relative;
-        -webkit-transition: ease-in color .15s;
-        transition: ease-in color .15s;
-        color: #ECEFF1
-    }
-    .mip-menu>li>a:hover {
-        color: #fff;
-        background-color: #242931
-    }
-    .mip-menu>li.active {
-        color: #fff;
-        background-color: #242931
-    }
-    .mip-menu>li.active>a:hover {
-        color: #fff;
-        background-color: #242931
+        &>li {
+            margin-left: 1px;
+            margin-right: 1px;
+            position: relative;
+            &>a {
+                display: block;
+                position: relative;
+                -webkit-transition: ease-in color .15s;
+                transition: ease-in color .15s;
+                color: #ECEFF1;
+                padding: 0px 15px;
+                line-height: 60px;
+                &:hover {
+                    color: #fff;
+                    background-color: #242931
+                }
+            }
+            &.active {
+                color: #fff;
+                background-color: #242931;
+                &>a {
+                    &:hover {
+                        color: #fff;
+                        background-color: #242931
+                    }
+                }
+            }
+        }
     }
     //下拉二级菜单
-    .mip-dropdown-item {
-        .mip-dropdown-list {
+    .mipmb-dropdown-item {
+        .mipmb-dropdown-list {
             display: none;
             top: 50px;
             position: absolute;
@@ -114,7 +101,7 @@ a:hover {
             }
         }
         &:hover {
-            .mip-dropdown-list {
+            .mipmb-dropdown-list {
                 display: block;
             }
         }
@@ -592,6 +579,7 @@ a:hover {
     .item-content {
         padding-left: 255px;
         h4 {
+            font-size: 18px;
             margin: 10px 0;
             a {
                 display: block;
@@ -639,7 +627,7 @@ a:hover {
     }
     
     //自适应 头部
-    .mip-header {
+    .mipmb-header {
         .container {
             padding: 0;
         }
@@ -665,11 +653,11 @@ a:hover {
             white-space: nowrap;
             li {
                 display: inline-block;
-                float: none;
             }
         }
         .list-unstyled > li > a {
             display: block;
+            line-height: 30px;
             padding: 5px 5px;
             position: relative;
             color: #ECEFF1;
@@ -782,12 +770,14 @@ a:hover {
     }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1200px) {
     .mipcms-main .col-lg-8 {
-        width: 798px;
+        max-width: 798px;
+        flex: none;
     }
     .mipcms-main .col-lg-4 {
         width: 315px;
+        flex: none;
         padding-left: 0px;
     }
 }
@@ -798,12 +788,6 @@ a:hover {
 
 .container .row .col-lg-8 .row .col-lg-6:nth-of-type(odd) {
     padding-right: 7px;
-}
-
-//bootstarp
-//面包屑导航
-.breadcrumb {
-    margin-bottom: 15px;
 }
 
 //分页

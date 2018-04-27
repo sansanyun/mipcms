@@ -1,78 +1,64 @@
+[v-cloak] {
+  display: none;
+}
 body {
+  font-family: Tahoma, Helvetica, "microsoft yahei", "Hiragino Sans GB", Simsun, sans-serif;
   background-color: #ECF0F1;
   color: #333;
   font-size: 14px;
   -webkit-font-smoothing: antialiased;
 }
+a {
+  color: #333;
+}
 a:hover {
-  color: #00aaee;
+  color: #00AAEE;
+  text-decoration: none;
 }
-.mip-header-default {
+.mipmb-header-default {
   background-color: #303641;
-  width: 100%;
 }
-.mip-header-default .logo-text {
-  float: left;
+.mipmb-header-default .logo-text {
   margin-right: 15px;
   font-size: 20px;
   line-height: 60px;
 }
-.mip-header-default .logo-text a {
+.mipmb-header-default .logo-text a {
   color: #fff;
 }
-.mip-header-default .mip-nav li {
-  float: left;
-}
-.mip-header-default .mip-nav li.active,
-.mip-header-default .mip-nav li.active:hover {
-  background-color: #e4e4e4;
-}
-.mip-header-default .mip-nav li:hover {
-  background-color: #f4f5f9;
-}
-.mip-header-default .mip-nav li a {
-  display: block;
-  padding: 10px 15px;
-}
-.mip-header-default .mip-menu {
+.mipmb-header-default .mipmb-menu {
   background-color: #303641;
   line-height: 0;
   padding: 0;
   margin: 0;
 }
-.mip-header-default .mip-menu:after,
-.mip-header-default .mip-menu:before {
-  content: " ";
-  display: table;
-}
-.mip-header-default .mip-menu > li {
-  float: left;
-  display: block;
+.mipmb-header-default .mipmb-menu > li {
+  margin-left: 1px;
+  margin-right: 1px;
   position: relative;
 }
-.mip-header-default .mip-menu > li > a {
-  margin-left: 2px;
-  margin-right: 2px;
+.mipmb-header-default .mipmb-menu > li > a {
   display: block;
-  padding: 30px 15px;
   position: relative;
   -webkit-transition: ease-in color 0.15s;
   transition: ease-in color 0.15s;
   color: #ECEFF1;
+  padding: 0px 15px;
+  line-height: 60px;
 }
-.mip-header-default .mip-menu > li > a:hover {
+.mipmb-header-default .mipmb-menu > li > a:hover {
   color: #fff;
   background-color: #242931;
 }
-.mip-header-default .mip-menu > li.active {
+.mipmb-header-default .mipmb-menu > li.active {
   color: #fff;
   background-color: #242931;
 }
-.mip-header-default .mip-menu > li.active > a:hover {
+.mipmb-header-default .mipmb-menu > li.active > a:hover {
   color: #fff;
   background-color: #242931;
 }
-.mip-header-default .mip-dropdown-item .mip-dropdown-list {
+.mipmb-header-default .mipmb-dropdown-item .mipmb-dropdown-list {
   display: none;
   top: 50px;
   position: absolute;
@@ -87,10 +73,10 @@ a:hover {
   border-radius: 4px;
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
 }
-.mip-header-default .mip-dropdown-item .mip-dropdown-list li {
+.mipmb-header-default .mipmb-dropdown-item .mipmb-dropdown-list li {
   line-height: 25px;
 }
-.mip-header-default .mip-dropdown-item .mip-dropdown-list li a {
+.mipmb-header-default .mipmb-dropdown-item .mipmb-dropdown-list li a {
   margin: 0;
   display: inline-block;
   line-height: normal;
@@ -103,10 +89,10 @@ a:hover {
   transition: background 0.2s ease-in-out;
   min-width: 90px;
 }
-.mip-header-default .mip-dropdown-item .mip-dropdown-list li a:hover {
+.mipmb-header-default .mipmb-dropdown-item .mipmb-dropdown-list li a:hover {
   background-color: #f3f3f3;
 }
-.mip-header-default .mip-dropdown-item:hover .mip-dropdown-list {
+.mipmb-header-default .mipmb-dropdown-item:hover .mipmb-dropdown-list {
   display: block;
 }
 .mipcms-main {
@@ -233,12 +219,12 @@ a:hover {
   margin: 0 1px;
 }
 .mip-box .mip-box-heading .tap-list li:hover a {
-  color: #00aaee;
-  border-bottom: 3px solid #00aaee;
+  color: #00AAEE;
+  border-bottom: 3px solid #00AAEE;
 }
 .mip-box .mip-box-heading .tap-list li.active a {
-  color: #00aaee;
-  border-bottom: 3px solid #00aaee;
+  color: #00AAEE;
+  border-bottom: 3px solid #00AAEE;
 }
 .mip-box .mip-box-heading .detail-title {
   margin-top: 10px;
@@ -566,6 +552,7 @@ a:hover {
   padding-left: 255px;
 }
 .mipui-category-list-item .item-content h4 {
+  font-size: 18px;
   margin: 10px 0;
 }
 .mipui-category-list-item .item-content h4 a {
@@ -606,10 +593,10 @@ a:hover {
   .mipui-category-list-001 .mipui-category-list-item p {
     padding-left: 136px;
   }
-  .mip-header .container {
+  .mipmb-header .container {
     padding: 0;
   }
-  .mip-header .logo-text {
+  .mipmb-header .logo-text {
     float: none;
     margin-right: 0;
     display: block;
@@ -618,7 +605,7 @@ a:hover {
     line-height: 44px;
     border-bottom: 1px solid #242932;
   }
-  .mip-header .list-unstyled {
+  .mipmb-header .list-unstyled {
     overflow: hidden;
     width: 100%;
     list-style: none;
@@ -630,12 +617,12 @@ a:hover {
     -webkit-overflow-scrolling: touch;
     white-space: nowrap;
   }
-  .mip-header .list-unstyled li {
+  .mipmb-header .list-unstyled li {
     display: inline-block;
-    float: none;
   }
-  .mip-header .list-unstyled > li > a {
+  .mipmb-header .list-unstyled > li > a {
     display: block;
+    line-height: 30px;
     padding: 5px 5px;
     position: relative;
     color: #ECEFF1;
@@ -725,12 +712,14 @@ a:hover {
     width: 1113px!important;
   }
 }
-@media (min-width: 768px) {
+@media (min-width: 1200px) {
   .mipcms-main .col-lg-8 {
-    width: 798px;
+    max-width: 798px;
+    flex: none;
   }
   .mipcms-main .col-lg-4 {
     width: 315px;
+    flex: none;
     padding-left: 0px;
   }
 }
@@ -739,9 +728,6 @@ a:hover {
 }
 .container .row .col-lg-8 .row .col-lg-6:nth-of-type(odd) {
   padding-right: 7px;
-}
-.breadcrumb {
-  margin-bottom: 15px;
 }
 .pagination {
   display: inline-block;

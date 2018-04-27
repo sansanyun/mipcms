@@ -1,0 +1,11 @@
+<li class="li has-sub {if condition='$model=="xiongzhang"'}active{/if}">
+    <a class="list-link"><i class="ion-ios-paw-outline"></i> 熊掌
+       <div class="list-icon"><i class="triangle-facing-left"></i><i class="triangle-facing-bottom"></i></div>
+    </a>
+    <ul class="sub-list">
+        <li class="li {if condition='$action=="xiongZhangAutoReply"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/xiongzhang/xiongZhangAutoReply">自动回复</a></li>
+        <li class="li {if condition='$action=="xiongZhangDiy"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/xiongzhang/xiongZhangDiy">底部菜单</a></li>
+        <li class="li {if condition='$action=="xiongZhangUser"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/xiongzhang/xiongZhangUser">粉丝运营</a></li>
+        <li class="li {if condition='$action=="xiongZhangSetting"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/xiongzhang/xiongZhangSetting">开发设置</a></li>
+    </ul>
+</li>

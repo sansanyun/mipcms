@@ -1,0 +1,14 @@
+<li class="li has-sub {if condition='$model=="setting"'}active{/if}">
+    <a class="list-link"><i class="ion-ios-gear-outline"></i> 设置
+       <div class="list-icon"><i class="triangle-facing-left"></i><i class="triangle-facing-bottom"></i></div>
+    </a>
+    <ul class="sub-list">
+        <li class="li {if condition='$action=="setting"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/setting/setting">站点设置</a></li>
+        {if condition='!$mipInfo.superSites'}
+        <li class="li {if condition='$action=="settingPush"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/setting/settingPush">推送设置</a></li>
+        {else/}
+        <li class="li {if condition='$action=="domainSites"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/setting/domainSites">超级站点</a></li>
+        {/if} 
+        <li class="li {if condition='$action=="template"'}active{/if}"><a class="list-link" href="{$domain}/{$Think.config.admin}/setting/template">网站模板</a></li>
+    </ul>
+</li>

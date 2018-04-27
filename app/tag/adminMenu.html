@@ -1,0 +1,9 @@
+<li class="li has-sub {if condition='$model=="tag"'}active{/if}">
+    <a class="list-link"><i class="ion-ios-pricetags-outline"></i> {$mipInfo['tagModelName']}
+       <div class="list-icon"><i class="triangle-facing-left"></i><i class="triangle-facing-bottom"></i></div>
+    </a>
+    <ul class="sub-list">
+        <li class="{if condition='$action=="tag"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/tag/tag" >全部{$mipInfo['tagModelName']}</a></li>
+        <li class="{if condition='$action=="tagCategory"'}active{/if}"><a href="{$domain}/{$Think.config.admin}/tag/tagCategory">分类管理</a></li>
+    </ul>
+</li>

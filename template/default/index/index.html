@@ -1,13 +1,12 @@
 {extend name="main/main"/}
 
 {block name="main"}
-
 {mipcms:articleinfo value="recommendList" where='is_recommend = 1' limit='4' /}
 {if condition="$recommendList && count($recommendList) > 3"}
-<div class="container m-b hidden-xs">
+<div class="container mb-3 d-lg-block">
     <div class="row">
         <div class="col-lg-8">
-            <div class="relative">
+            <div class="position-relative">
                 <a href="{$recommendList[0]['url']}" data-type="mip" data-title="{$recommendList[0]['title']}" title="{$recommendList[0]['title']}" class="mip-top-img image-link-left">
                     <mip-img
                             layout="full"
@@ -23,7 +22,7 @@
             </div>
         </div>
         <div class="col-lg-4">
-            <div class="mip-top-block mip-top-right m-b">
+            <div class="mip-top-block mip-top-right mb-3">
                 <a href="{$recommendList[1]['url']}"   data-type="mip" data-title="{$recommendList[1]['title']}" title="{$recommendList[1]['title']}" class="mip-top-img image-link-right-top">
                     <mip-img
                         layout="full"
@@ -36,30 +35,32 @@
                     <a href="{$recommendList[1]['url']}"  data-type="mip" data-title="{$recommendList[1]['title']}"  title="{$recommendList[1]['title']}">{$recommendList[1]['title']}</a>
                 </div>
             </div>
-            <div class="mip-top-block mip-top-right pull-left">
-                <a href="{$recommendList[2]['url']}" data-type="mip" data-title="{$recommendList[2]['title']}" title="{$recommendList[2]['title']}" class="mip-top-img image-link-right-bottom">
-                    <mip-img
-                        layout="full"
-                        class="img right-img-bottom"
-                        alt="{$recommendList[2]['title']}"
-                        src="{$recommendList[2]['firstImg']}">
-                    </mip-img>
-                </a>
-                <div class="caption">
-                    <a href="{$recommendList[2]['url']}"  data-type="mip" data-title="{$recommendList[2]['title']}" title="{$recommendList[2]['title']}">{$recommendList[2]['title']}</a>
+            <div class="d-flex justify-content-between">
+                <div class="mip-top-block mip-top-right">
+                    <a href="{$recommendList[2]['url']}" data-type="mip" data-title="{$recommendList[2]['title']}" title="{$recommendList[2]['title']}" class="mip-top-img image-link-right-bottom">
+                        <mip-img
+                            layout="full"
+                            class="img right-img-bottom"
+                            alt="{$recommendList[2]['title']}"
+                            src="{$recommendList[2]['firstImg']}">
+                        </mip-img>
+                    </a>
+                    <div class="caption">
+                        <a href="{$recommendList[2]['url']}"  data-type="mip" data-title="{$recommendList[2]['title']}" title="{$recommendList[2]['title']}">{$recommendList[2]['title']}</a>
+                    </div>
                 </div>
-            </div>
-            <div class="mip-top-block mip-top-right pull-left m-l-md">
-                <a href="{$recommendList[3]['url']}"  data-type="mip" data-title="{$recommendList[3]['title']}" title="{$recommendList[3]['title']}" class="mip-top-img image-link-right-bottom">
-                    <mip-img
-                        layout="full"
-                        class="img right-img-bottom"
-                        alt="{$recommendList[3]['title']}"
-                        src="{$recommendList[3]['firstImg']}">
-                    </mip-img>
-                </a>
-                <div class="caption">
-                   <a href="{$recommendList[3]['url']}"  data-type="mip" data-title="{$recommendList[3]['title']}" title="{$recommendList[3]['title']}">{$recommendList[3]['title']}</a>
+                <div class="mip-top-block mip-top-right">
+                    <a href="{$recommendList[3]['url']}"  data-type="mip" data-title="{$recommendList[3]['title']}" title="{$recommendList[3]['title']}" class="mip-top-img image-link-right-bottom">
+                        <mip-img
+                            layout="full"
+                            class="img right-img-bottom"
+                            alt="{$recommendList[3]['title']}"
+                            src="{$recommendList[3]['firstImg']}">
+                        </mip-img>
+                    </a>
+                    <div class="caption">
+                       <a href="{$recommendList[3]['url']}"  data-type="mip" data-title="{$recommendList[3]['title']}" title="{$recommendList[3]['title']}">{$recommendList[3]['title']}</a>
+                    </div>
                 </div>
             </div>
         </div>

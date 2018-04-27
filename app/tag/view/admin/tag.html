@@ -1,0 +1,446 @@
+{extend name="./app/admin/view/main.html" /}
+{block name="title"}
+{assign name="currentListUrl" value="tag" /}
+{assign name="itemName" value="$mipInfo['tagModelName']" /}
+{assign name="itemUrl" value="tag" /}
+{assign name="itemApiUrl" value="Tag" /}
+{$itemName}管理 - {/block}
+{block name="style"}
+<style>
+</style>
+{/block}
+{block name="main"}
+
+
+<header class="mipcms-container-header">
+    <div class="float-left header-group">
+        <h4 class="title">{$mipInfo['tagModelName']}</h4> <h5 class="sub-title">全部</h5>
+    </div>
+    
+    <div class="float-right">
+         <button type="button" class="pull-right ivu-btn ivu-btn-primary ivu-btn-circle" @click='itemAdd'>
+            <span><Icon type="plus-round"></Icon> 添加{$itemName}</span>
+        </button>
+    </div>
+</header>
+<main class="mipcms-container-body" style="height: calc(100% - 50px)">
+    {include file="./app/tag/view/admin/tagCategoryList.html" /}
+    <section class="content-box">
+        <section class="mip-box">
+            <section class="mip-box-body">
+                <!--内容列表-->
+                <section class="diy-table-list" v-cloak>
+                    <div class="content-list-header clearfix">
+                         <div class="float-left m-b-xs">
+                            <i-input v-model="searchData" placeholder="请输入搜索的关键词" style='width: 300px;'>
+                                <i-Button slot="append" icon="ios-search" @click='itemSearchClick'></i-Button>
+                            </i-input>
+                        </div>
+                        <div class="float-right">
+                            <button class="ivu-btn ivu-btn-text" type="text" :disabled='!itemListSelectStatus' @click="itemsDel"><i class="ivu-icon ivu-icon-ios-trash"></i> 批量删除</button>
+                        </div>
+                    </div>
+                    <div class="diy-table-item diy-table-item-header">
+                        <ul class="list-unstyled row">
+                           
+                            <li class="col-md-1">
+                                <Checkbox v-model="itemListSelectStatus"  :disabled='!itemList.length' @on-change='itemListSelectChange'></Checkbox>全选
+                            </li>
+                            <li class="col-md-2">
+                                <span>分类</span>
+                            </li>
+                            <li class="col-md-2">
+                                <span>名称</span>
+                            </li>
+                            <li class="col-md-2">
+                                <span>别名</span>
+                            </li>
+                            <li class="col-md-1">
+                                <span>关联</span>
+                            </li>
+                            <li class="col-md-2">
+                                <span>描述</span>
+                            </li>
+                            <li class="col-md-2">
+                                <span>操作</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div v-if='itemList.length' class="diy-table-body">
+                        <div class="diy-table-item" v-for='item in itemList' >
+                             <ul class="list-unstyled row">
+                                    
+                                <li class="col-md-1">
+                                    <Checkbox v-model="item.itemListSelectStatus"></Checkbox>
+                                </li>
+                                <li class="col-md-2"> <span v-if='item.categoryInfo'>{{item.categoryInfo.name}}</span><span v-else>无分类</span></li>
+                                <li class="col-md-2">
+                                    <span>{{item.name}}</span>
+                                </li>
+                                <li class="col-md-2">
+                                    <span>{{item.url_name}}</span>
+                                </li>
+                                <li class="col-md-1">
+                                    <span>{{item.relevance_num}}</span>
+                                </li>
+                                <li class="col-md-2 over-h-e">
+                                    <span :title="item.description">{{item.description}}</span>
+                                </li>
+                                <li class="col-md-2">
+                                    <a @click='itemDel(item)'>删除</a>
+                                    <a @click='itemEdit(item)' class="ml-1">修改</a>
+                                </li>
+                             
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="no-block" v-else>
+                        <Icon type="ios-filing-outline"></Icon>
+                        <p>暂无数据</p>
+                    </div>
+                </section>
+                <!--内容列表结束-->
+                <!--分页-->
+                <div class="text-right clearfix mt-3">
+                    <div class="diy-table-item float-left" style="margin-left: 10px;">
+                        <Checkbox v-model="itemListSelectStatus" :disabled='!itemList.length' @on-change='itemListSelectChange'>全选</Checkbox>
+                        <button class="ivu-btn ivu-btn-text" type="text" :disabled='!itemListSelectStatus' @click="transferClick"><Icon type="arrow-swap"></Icon> 批量转移</button>
+                    </div>
+                    <Page :total="pagination.total" @on-page-size-change='itemPaginationSelect' :page-size-opts='[10,100,500,1000,5000]' show-total show-sizer placement='top' @on-change='itemPaginationClick'></Page>
+                </div>
+            </section>
+        </section>
+    </section>
+</main> 
+     <Modal :title="dialogItemTitle" size="small" v-model='dialogItemStatus' v-cloak>
+            <i-form :model="item" :rules="itemRules" ref="item" :label-width="80" >
+                <Form-Item label="分类" prop="title">
+                        <i-Select v-model="item.cid" style="width:200px">
+                            <span v-for="item in categoryList">
+                                 <i-Option v-if='item.children.length==0'  :value="item.id" :key="item.id">{{ item.name }}</i-Option>
+                                <Option-Group v-else :label="item.name">
+                                    <i-Option v-for='sub in item.children' :value="sub.id" :key="sub.id">{{ sub.name }}</i-Option>
+                                </Option-Group>
+                            </span>
+                        </i-Select>
+                </Form-Item> 
+                <Form-Item label="{$itemName}名称" prop="name">
+                    <i-input v-model="item.name" placeholder="例：网站优化"></i-input>
+                </Form-Item>
+                <Form-Item label="{$itemName}别名" prop="url_name">
+                    <i-input v-model="item.url_name" placeholder="例：seo" ><i-Button slot="append" class="tags-btn" @click='getPinyin'>获取拼音</i-Button></i-input>
+                </Form-Item>
+                <Form-Item label="{$itemName}描述">
+                    <i-input type="textarea" v-model="item.description"></i-input>
+                </Form-Item>
+            </i-form>
+            <div slot="footer" class="dialog-footer">
+                <i-button @click="dialogItemStatus = false">取 消</i-button>
+                <i-button type="primary" @click="itemPost('item')">确 定</i-button>
+            </div>
+        </Modal>
+                
+         <!--转移-->
+        <Modal title="批量转移" v-model="transferStatus"  v-cloak>
+            <i-form :label-width="80"> 
+                <Form-Item label="提示">
+                    <span>请选择您需要转移到的目标分类</span>
+                </Form-Item>
+                <Form-Item label="目标分类">
+                      <Cascader :data="transferList" v-model="transferId"></Cascader>
+                </Form-Item>
+            </i-form>
+            <span slot="footer" class="dialog-footer">
+                <i-button @click="transferStatus = false">取 消</i-button>
+                <i-button type="primary" @click='transferSubmit'>确 定</i-button>
+              </span>
+        </Modal>
+        
+{/block}
+    
+{block name="javascript"}
+{__block__}
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            itemName: '{$itemName}',
+            itemListSelectStatus: false,
+            cid: parseInt('{$cid}'),
+            itemList: [], 
+            searchData: '',
+            
+            categoryList: [],
+            
+            item: {
+                cid: 0,
+                id: '',
+                name: '',
+                url_name: '',
+                description: '',
+                item_type: 'article',
+            },
+            dialogItemTitle: '添加{$itemName}',
+            dialogItemStatus: false,
+            
+            itemRules: {
+                name: [{
+                    required: true,
+                    message: '请输入名称',
+                    trigger: 'blur'
+                }],
+            },
+            
+            //转移
+            transferStatus: false,
+            transferId: [],
+            transferList: [],
+            
+            pagination: {
+                currentPage: 1,
+                limit: 10,
+                total: this.total,
+            },
+        },
+       watch: {
+            itemList: {
+                handler(newValue, oldValue) {
+                    var tempStatus = false;
+        　　　　　for (var i = 0; i < this.itemList.length; i ++) {
+                    if (this.itemList[i].itemListSelectStatus == true) {
+                        tempStatus = true;
+                    }
+                }
+                if (tempStatus) {
+                    this.itemListSelectStatus = true;
+                } else {
+                    this.itemListSelectStatus = false;
+                }
+        　　　　},
+        　　　　deep: true
+        　　}
+        },
+        mounted() {
+            this.getCategoryList();
+            this.getItemList();
+        },
+        methods: {
+             //转移
+            transferClick() {
+                this.transferStatus = true;
+                this.transferId = [];
+            },
+            transferSubmit() {
+                var itemIds = [];
+                for(var i = 0; i < this.itemList.length; i++) {
+                    if (this.itemList[i].itemListSelectStatus) {
+                        itemIds.push(this.itemList[i].id);
+                    }
+                }
+                itemIds = itemIds.join(',');
+                this.$mip.ajax('{$domain}/{$itemUrl}/ApiAdmin{$itemApiUrl}/itemTransferAll', {
+                    cid: this.transferId[this.transferId.length-1],
+                    ids:itemIds,
+                }).then(res => {
+                    if(res.code == 1) {
+                        this.$Message.success('操作成功');
+                        this.getItemList();
+                        this.transferStatus = false;
+                    }
+                });
+            },
+             
+            getPinyin: function() {
+                if (!this.item.name) {
+                    this.$Message.error('请输入名称');
+                    return false;
+                }
+                this.$mip.ajax('{$domain}/admin/ApiAdminMipPost/getPinyin', {
+                    words: this.item.name,
+                }).then(res => {
+                    if(res.code == 1) {
+                        this.item.url_name = res.data;
+                    }
+                });
+            },
+            itemAdd() {
+                this.item.id = '';
+                this.item.cid = 0;
+                this.dialogItemTitle = '添加{$itemName}';
+                this.item.name = '';
+                this.item.url_name = '';
+                this.item.description = '';
+                this.dialogItemStatus = true;
+            },
+            itemsDel() {
+                var _this = this;
+                this.$Modal.confirm({
+                    title: '消息提示',
+                    content: '<p>确定删除么？删除后不可恢复</p>',
+                    onOk: () => {
+                        var itemIds = [];
+                        for(var i = 0; i < this.itemList.length; i++) {
+                            if (this.itemList[i].itemListSelectStatus) {
+                                itemIds.push(this.itemList[i].id);
+                            }
+                        }
+                        itemIds = itemIds.join(',');
+                        this.$mip.ajax('{$domain}/tag/ApiAdminTag/TagsDel', {
+                            tagIds: itemIds,
+                        }).then(function(res) {
+                            if(res.code == 1) {
+                                _this.$Message.success(res.msg);
+                            }
+                            _this.getItemList();
+                        });
+                    },
+                    onCancel: () => {
+                    }
+                });
+            },
+            itemDel(item) {
+                 var _this = this;
+                this.$Modal.confirm({
+                    title: '消息提示',
+                    content: '<p>确定删除么？删除后不可恢复</p>',
+                    onOk: () => {
+                        _this = this;
+                        this.$mip.ajax('{$domain}/tag/ApiAdminTag/itemDel', {
+                            id: item.id,
+                        }).then(function(res) {
+                            if(res.code == 1) {
+                                _this.$Message.success('删除成功');
+                                _this.getItemList();
+                            }
+                        });
+                    },
+                    onCancel: () => {
+                    }
+                });
+            },
+            itemEdit(item) {
+                this.item.id = item.id;
+                this.item.cid = item.cid;
+                this.dialogItemTitle = '修改{$itemName}';
+                this.item.url_name = item.url_name;
+                this.item.name = item.name;
+                this.item.description = item.description;
+                this.dialogItemStatus = true;
+            },
+            itemPost(val) {
+                var _this = this;
+                this.$refs[val].validate((valid) => {
+                    if(valid) {
+                        if (this.item.url_name) {
+                            var parent=/^[a-zA-Z0-9_-]+$/;
+                            if (!parent.test(this.item.url_name)) {
+                                _this.$Message.error('别名输入值不支持');
+                                return false;
+                            }
+                        }
+                        if (this.item.id) {
+                            this.$mip.ajax('{$domain}/tag/ApiAdminTag/tagsEdit', {
+                                id: this.item.id,
+                                name: this.item.name,
+                                url_name: this.item.url_name,
+                                description: this.item.description,
+                                item_type: this.item.item_type,
+                                cid: this.item.cid,
+                            }).then(function(res) {
+                                if(res.code == 1) {
+                                    _this.$Message.success('修改成功');
+                                    _this.getItemList();
+                                    _this.dialogItemStatus = false;
+                                }
+                            });
+                        } else {
+                            this.$mip.ajax('{$domain}/tag/ApiAdminTag/tagAdd', {
+                                name: this.item.name,
+                                url_name: this.item.url_name,
+                                description: this.item.description,
+                                item_type: this.item.item_type,
+                                cid: this.item.cid,
+                            }).then(function(res) {
+                                if(res.code == 1) {
+                                    _this.$Message.success('添加成功');
+                                    _this.getItemList();
+                                    _this.dialogItemStatus = false;
+                                }
+                            });
+                        }
+                        
+                    }
+                });
+            },
+            getItemList() {
+                this.loading = true;
+                var _this = this;
+                this.$mip.ajax('{$domain}/tag/ApiAdminTag/tagsSelect', {
+                    page: this.pagination.currentPage,
+                    limit: this.pagination.limit,
+                    orderBy: 'add_time',
+                    keywords: this.searchData,
+                    cid: this.cid,
+                }).then(function(res) {
+                    _this.itemList = [];
+                    if(res.code == 1) {
+                        var itemList = res.data.tagsList;
+                        if (itemList) {
+                            for (var i = 0; i < itemList.length; i++) {
+                                itemList[i].itemListSelectStatus = false; 
+                            }
+                            _this.itemList = itemList;
+                        }
+                        _this.pagination.total = res.data.total;
+                    }
+                    _this.loading = false;
+                });
+            },
+            getCategoryList: function() {
+                var _this = this;
+                this.loading = true;
+                this.$mip.ajax('{$domain}/{$itemUrl}/ApiAdmin{$itemApiUrl}/categoryList', {
+                }).then(res => {
+                    _this.loading = false;
+                    if(res.code == 1) {
+                        var categoryList = res.data.categoryList;
+                        var tempCategoryList = [{children: [],id:0,pid: 0,name:'无分类'}];
+                        for (var i = 0; i < categoryList.length; i++) {
+                            tempCategoryList.push(categoryList[i]);
+                        }
+                        this.categoryList = tempCategoryList;
+                        
+                        var transferList = res.data.categoryList;
+                        this.transferList = transferList;
+                        this.transferList.unshift({name:"无分类",id:0,label: '无分类',value: 0});
+                    }
+                });
+            },
+            //选择全部
+            itemListSelectChange() {
+                var itemList = this.itemList;
+                for (var i = 0; i < itemList.length; i++) {
+                    if (this.itemListSelectStatus) {
+                        itemList[i].itemListSelectStatus = true;
+                    } else {
+                        itemList[i].itemListSelectStatus = false;
+                    }
+                }
+                this.itemList = itemList;
+            },
+            itemPaginationSelect(val) {
+                this.pagination.limit = val;
+                this.getItemList();
+            },
+            itemPaginationClick(val) {
+                this.pagination.currentPage = val;
+                this.getItemList();
+            },
+            //搜索
+            itemSearchClick: function() {
+                this.getItemList();
+            },
+        }
+    })
+  </script>
+{/block}

@@ -22,7 +22,6 @@
 <body>
     <div id="install" style="width: 600px;margin: 0 auto;padding-top: 20px;">
         <h2 style="text-align: center;line-height: 70px;">欢迎使用MIPCMS内容管理系统</h2>
-        <p style="text-align: center;color: #7f8fa4!important;line-height: 30px;">交流QQ群626548966</p>
        
         <i-form ref="form" :rules="rules" :model="form" :label-width="100">
             <div class="box box-default">
@@ -37,18 +36,19 @@
                         <div class="col-md-6"><Form-item label="allow_url_fopen"><span>{$data['allow_url_fopen']}</span></Form-item></div>
                         <div class="col-md-6"><Form-item label="file_get_contents"><span>{$data['file_get_contents']}</span></Form-item></div>
     
-                        <div class="col-md-6"><Form-item label="cache"><span>{$data['checklist']['cache']['w'] ? '<Icon type="checkmark-circled"></Icon> 可写 ' : '<Icon type="close-circled"></Icon></i> 不可写'}</span></Form-item></div>
+                        <div class="col-md-6"><Form-item label="runtime"><span>{$data['checklist']['cache']['w'] ? '<Icon type="checkmark-circled"></Icon> 可写 ' : '<Icon type="close-circled"></Icon></i> 不可写'}</span></Form-item></div>
                         <div class="col-md-6"><Form-item label="public/install"><span>{$data['checklist']['install']['w'] ? '<Icon type="checkmark-circled"></Icon> 可写 ' : '<Icon type="close-circled"></Icon></i> 不可写'}</span></Form-item></div>
-                        <div class="col-md-6"><Form-item label="system/config"><span>{$data['checklist']['config']['w'] ? '<Icon type="checkmark-circled"></Icon> 可写' : '<Icon type="close-circled"></Icon> 不可写'}</span></Form-item></div>
+                        <div class="col-md-6"><Form-item label="app"><span>{$data['checklist']['config']['w'] ? '<Icon type="checkmark-circled"></Icon> 可写' : '<Icon type="close-circled"></Icon> 不可写'}</span></Form-item></div>
                     </div>
                   </div>
             </div>
 
              <div style="background: #fff;padding: 10px;border-radius: 5px;margin-top: 15px;">
                 <h3 style="text-align: center;line-height: 50px;">数据库信息填写</h3>
-                <p style="text-align: center;">注：系统不会创建数据库</p>
-                 <Form-item label="安装地址" prop="installAddress">
-                    <i-input v-model="form.installAddress" disabled></i-input>
+                <p style="text-align: center;">注：系统不会自动创建数据库</p>
+            
+                 <Form-item label="安装地址">
+                    <i-input v-model="form.installAddress" placeholder="用于二级目录安装"></i-input>
                   </Form-item>
                  <Form-item label="数据库地址" prop="dbhost">
                     <i-input v-model="form.dbhost"></i-input>
@@ -57,13 +57,13 @@
                     <i-input v-model="form.dbport"></i-input>
                   </Form-item>
                   <Form-item label="数据库 名称" prop="dbname">
-                    <i-input v-model="form.dbname"></i-input>
+                    <i-input v-model="form.dbname" placeholder="链接数据库的名称"></i-input>
                   </Form-item>
                   <Form-item label="数据库 用户" prop="dbuser">
-                    <i-input v-model="form.dbuser" placeholder="例如：root"></i-input>
+                    <i-input v-model="form.dbuser" placeholder="链接数据库的用户名"></i-input>
                   </Form-item>
                   <Form-item label="数据库 密码">
-                    <i-input type="password" v-model="form.dbpw"></i-input>
+                    <i-input type="password" v-model="form.dbpw" placeholder="链接数据库的密码"></i-input>
                   </Form-item>
                   <Form-item label="数据表前缀" prop="dbprefix">
                     <i-input v-model="form.dbprefix"></i-input>
@@ -154,13 +154,14 @@ Vue.prototype.$mip = mip;
       data: function(){
         return {
              form: {
-                    installAddress: '{$installAddress}',
-                  dbhost: "127.0.0.1",
-                  dbport: "3306",
-                  dbuser: "",
-                  dbpw: "",
-                  dbname: "",
-                  dbprefix: "mip_",
+                domain: '{$Think.server.HTTP_HOST}',
+                installAddress: '',
+                dbhost: "127.0.0.1",
+                dbport: "3306",
+                dbuser: "",
+                dbpw: "",
+                dbname: "",
+                dbprefix: "mip_",
                 },
             rules: {
                 dbhost: [
@@ -197,9 +198,10 @@ Vue.prototype.$mip = mip;
             this.$refs[formName].validate((valid) => {
               if (valid) {
                         var _this = this
-                        this.$mip.ajax('{$installAddress}index.php?s=/install/installPost', {
+                        this.$mip.ajax('index.php?s=/install/installPost', {
                             "installAddress" : this.form.installAddress,
-                             "dbhost": this.form.dbhost,
+                            "domain" : _this.form.domain,
+                            "dbhost": this.form.dbhost,
                             "dbport": this.form.dbport,
                             "dbuser": this.form.dbuser,
                             "dbpw": this.form.dbpw,
@@ -211,8 +213,9 @@ Vue.prototype.$mip = mip;
                         }).then(function (res) {
                             if (res.code == 1) {
                                 if (res.data == 1) {
-                                   _this.$mip.ajax('{$installAddress}index.php?s=/install/installPostOne', {
+                                   _this.$mip.ajax('index.php?s=/install/installPostOne', {
                                        "installAddress" : _this.form.installAddress,
+                                       "domain" : _this.form.domain,
                                         "dbhost": _this.form.dbhost,
                                         "dbport": _this.form.dbport,
                                         "dbuser": _this.form.dbuser,

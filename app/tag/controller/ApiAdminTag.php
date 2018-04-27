@@ -8,7 +8,7 @@ class ApiAdminTag extends AdminBase
 {
      protected $beforeActionList = ['start'];
     public function start() {
-        $this->itemModelNameSpace = 'tagLib\TagsModel';
+        $this->itemModelNameSpace = 'app\common\model\Tags';
         $this->itemName = $this->mipInfo['tagModelName'];
         $this->item = $this->tags;
         $this->itemCategory = $this->tagsCategory;

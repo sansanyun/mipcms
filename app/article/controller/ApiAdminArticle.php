@@ -26,7 +26,7 @@ class ApiAdminArticle extends AdminBase
         $url_name = input('post.url_name');
         $content = input('post.content');
         $publish_time = input('post.publish_time') ? input('post.publish_time') : time();
-        $cid = input('post.cid') ? input('post.cid') : 0;
+        $cid = input('post.cid');
         $is_recommend = input('post.is_recommend') ? input('post.is_recommend') : 0;
         $fieldList = input('post.fieldList');
         $fieldList = json_decode($fieldList,true);
@@ -37,6 +37,9 @@ class ApiAdminArticle extends AdminBase
         $itemType = $this->itemType;
         if (!$title) {
           return jsonError('请输入标题');
+        }
+        if (!$cid) {
+          return jsonError('请选择分类');
         }
         if (!$content) {
           return jsonError('请输入内容');
@@ -304,6 +307,10 @@ class ApiAdminArticle extends AdminBase
         $url_name = input('post.url_name');
         $seo_title = input('post.seo_title');
         $template =  input('post.template');
+        $detail_template =  input('post.detail_template');
+        $category_url =  input('post.category_url');
+        $category_page_url =  input('post.category_page_url');
+        $detail_url =  input('post.detail_url');
         $description = input('post.description');
         $keywords = input('post.keywords');
         if (!$pid) {
@@ -318,15 +325,24 @@ class ApiAdminArticle extends AdminBase
 
         $itemCategoryInfo = db($this->itemCategory)->where('name',$name)->find();
         if ($itemCategoryInfo) {
-            return jsonError('分类存在');
+            return jsonError('添加项已存在');
+        }
+        $itemInfo = db($this->itemCategory)->where('url_name',$url_name)->find();
+        if ($itemInfo) {
+            return jsonError('别名已存在，请重新输入');
         }
         if (db($this->itemCategory)->insert(array(
             'name' => $name,
             'url_name' => $url_name,
             'seo_title' => $seo_title,
             'template' => $template,
+            'detail_template' => $detail_template,
+            'category_url' => $category_url,
+            'category_page_url' => $category_page_url,
+            'detail_url' => $detail_url,
             'keywords' => $keywords,
             'description' => $description,
+            'status' => 1,
             'pid' => $pid
         ))) {
             return jsonSuccess('添加成功');
@@ -363,7 +379,11 @@ class ApiAdminArticle extends AdminBase
         if (!$id) {
           return jsonError('缺少参数');
         }
-        if (db($this->itemCategory)->where('id',$id)->find()) {
+        if ($categoryInfo = db($this->itemCategory)->where('id',$id)->find()) {
+            $itemInfo = db($this->item)->where('cid',$categoryInfo['id'])->find();
+            if ($itemInfo) {
+                return jsonError('删除的项中含有已发布的内容，系统无法删除');
+            }
             db($this->itemCategory)->where('id',$id)->delete();
             return jsonSuccess('删除成功');
             } else {
@@ -393,20 +413,6 @@ class ApiAdminArticle extends AdminBase
             $order = 'asc';
         }
         $categoryList = model($this->itemModelNameSpace)->getCategory($pid,$orderBy,$order,$limit);
-        if ($categoryList) {
-            foreach ($categoryList as $key => $val) {
-                $categoryList[$key]['value'] = $val['id'];
-                $categoryList[$key]['label'] = $val['name'];
-                if ($categoryList[$key]['children']) {
-                    foreach ($categoryList[$key]['children'] as $k => $v) {
-                        $categoryList[$key]['children'][$k]['value'] = $v['id'];
-                        $categoryList[$key]['children'][$k]['label'] = $v['name'];
-                    }
-                }
-            }
-        } else {
-            $categoryList = array();
-        }
         return jsonSuccess('',['categoryList' => $categoryList]);
     }
 
@@ -418,8 +424,13 @@ class ApiAdminArticle extends AdminBase
         $url_name = input('post.url_name');
         $seo_title = input('post.seo_title');
         $template =  input('post.template');
+        $detail_template =  input('post.detail_template');
+        $category_url =  input('post.category_url');
+        $category_page_url =  input('post.category_page_url');
+        $detail_url =  input('post.detail_url');
         $description = input('post.description');
         $keywords = input('post.keywords');
+        $status = input('post.status');
 
         if (!$id) {
             return jsonError('缺少ID');
@@ -429,6 +440,11 @@ class ApiAdminArticle extends AdminBase
         }
         if (!$pid) {
             $pid = 0;
+        }
+        if (isset($status) && $status == 0) {
+            $status = 0;
+        } else {
+            $status = 1;
         }
         if (!$name) {
             return jsonError('请输入名称');
@@ -454,7 +470,12 @@ class ApiAdminArticle extends AdminBase
             'seo_title' => $seo_title,
             'description' => $description,
             'template' => $template,
+            'detail_template' => $detail_template,
+            'category_url' => $category_url,
+            'category_page_url' => $category_page_url,
+            'detail_url' => $detail_url,
             'keywords' => $keywords,
+            'status' => $status,
             'pid' => $pid
         ])) {
             return  jsonSuccess('修改成功');
@@ -466,20 +487,16 @@ class ApiAdminArticle extends AdminBase
     public function getTemplate()
     {
         $pages = [];
-        if (is_dir(ROOT_PATH . 'template' . DS . $this->mipInfo['template'] . DS . 'article')) {
-            $templateFile = opendir(ROOT_PATH . 'template' . DS . $this->mipInfo['template'] . DS . 'article');
+        $template = ROOT_PATH . 'template' . DS . $this->mipInfo['template'] . DS . 'article';
+        if (is_dir($template)) {
+            $templateFile = opendir($template);
             if ($templateFile) {
                 while (false !== ($file = readdir($templateFile))) {
-                    if (substr($file, 0, 1) != '.' AND is_file(ROOT_PATH . 'template' . DS . $this->mipInfo['template'] . DS . 'article' . DS . $file)) {
+                    if (substr($file, 0, 1) != '.' AND is_file($template . DS . $file)) {
                         $pages[] = $file;
                     }
                 }
                 closedir($templateFile);
-            }
-        }
-        if ($pages) {
-            foreach ($pages as $key => $val) {
-                $pages[$key] = preg_replace("/.html/","",$val);
             }
         }
         return jsonSuccess('',$pages);

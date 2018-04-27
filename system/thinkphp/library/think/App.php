@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2006~2017 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2006~2018 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -273,19 +273,13 @@ class App
             if (is_file(CONF_PATH . $module . 'tags' . EXT)) {
                 Hook::import(include CONF_PATH . $module . 'tags' . EXT);
             }
-            
+
             // 加载公共文件
             $path = APP_PATH . $module;
             if (is_file($path . 'common' . EXT)) {
                 include $path . 'common' . EXT;
             }
-            
-            //自定义转移common目录 
-            $config_path = ALL_PATH . $module;
-            if (is_file($config_path . 'common' . EXT)) {
-                include $config_path . 'common' . EXT;
-            }
-            
+
             // 加载当前模块语言包
             if ($module) {
                 Lang::load($path . 'lang' . DS . Request::instance()->langset() . EXT);
@@ -587,6 +581,13 @@ class App
         if (is_callable([$instance, $action])) {
             // 执行操作方法
             $call = [$instance, $action];
+            // 严格获取当前操作方法名
+            $reflect    = new \ReflectionMethod($instance, $action);
+            $methodName = $reflect->getName();
+            $suffix     = $config['action_suffix'];
+            $actionName = $suffix ? substr($methodName, 0, -strlen($suffix)) : $methodName;
+            $request->action($actionName);
+
         } elseif (is_callable([$instance, '_empty'])) {
             // 空操作
             $call = [$instance, '_empty'];
@@ -626,9 +627,9 @@ class App
             } else {
                 $files = $config['route_config_file'];
                 foreach ($files as $file) {
-                    if (is_file(ALL_PATH . $file . CONF_EXT)) {
+                    if (is_file(CONF_PATH . $file . CONF_EXT)) {
                         // 导入路由配置
-                        $rules = include ALL_PATH . $file . CONF_EXT;
+                        $rules = include CONF_PATH . $file . CONF_EXT;
                         is_array($rules) && Route::import($rules);
                     }
                 }

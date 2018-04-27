@@ -1,8 +1,8 @@
 {extend name="main/main"/}
 
 {block name="main"}
-{include file='block/mipui-crumb'}
 <div class="container">
+    {mipcms:crumb isHome='1' cid="$categoryInfo['id']" ulClass='breadcrumb p-0 bg-transparent' liClass="breadcrumb-item" separator='' /}
     <div class="row">
         <main class="col-lg-8">
             <section class="mip-box mip-box-default">
