@@ -76,7 +76,7 @@ class Mip extends Init
    
     public function siteInfoInit()
     {
-        if ($this->domainSettingsInfo && $this->mipInfo['topDomain']) {
+        if ($this->domainSettingsInfo) {
             if ($this->domainSettingsInfo['siteName']) {
                 $this->mipInfo['siteName'] = $this->domainSettingsInfo['siteName'];
             }
@@ -98,6 +98,51 @@ class Mip extends Init
             if ($this->domainSettingsInfo['diySiteName']) {
                 $this->mipInfo['diySiteName'] = $this->domainSettingsInfo['diySiteName'];
             }
+            if ($this->domainSettingsInfo['mipApi']) {
+                $this->mipInfo['mipApiAddress'] = $this->domainSettingsInfo['mipApi'];
+            }
+            if ($this->domainSettingsInfo['mipAutoStatus']) {
+                $this->mipInfo['mipPostStatus'] = $this->domainSettingsInfo['mipAutoStatus'];
+            }
+            if ($this->domainSettingsInfo['ampApi']) {
+                $this->mipInfo['ampApi'] = $this->domainSettingsInfo['ampApi'];
+            }
+            if ($this->domainSettingsInfo['ampAutoStatus']) {
+                $this->mipInfo['ampAutoStatus'] = $this->domainSettingsInfo['ampAutoStatus'];
+            }
+            if ($this->domainSettingsInfo['xiongZhangStatus']) {
+                $this->mipInfo['guanfanghaoStatus'] = $this->domainSettingsInfo['xiongZhangStatus'];
+            }
+            if ($this->domainSettingsInfo['xiongZhangId']) {
+                $this->mipInfo['guanfanghaoCambrian'] = $this->domainSettingsInfo['xiongZhangId'];
+            }
+            if ($this->domainSettingsInfo['xiongZhangNewApi']) {
+                $this->mipInfo['guanfanghaoRealtimeUrl'] = $this->domainSettingsInfo['xiongZhangNewApi'];
+            }
+            if ($this->domainSettingsInfo['xiongZhangNewAutoStatus']) {
+                $this->mipInfo['guanfanghaoStatusPost'] = $this->domainSettingsInfo['xiongZhangNewAutoStatus'];
+            }
+            if ($this->domainSettingsInfo['xiongZhangOldApi']) {
+                $this->mipInfo['guanfanghaoUrl'] = $this->domainSettingsInfo['xiongZhangOldApi'];
+            }
+            if ($this->domainSettingsInfo['yuanChuangApi']) {
+                $this->mipInfo['baiduYuanChuangUrl'] = $this->domainSettingsInfo['yuanChuangApi'];
+            }
+            if ($this->domainSettingsInfo['yuanChuangAutoStatus']) {
+                $this->mipInfo['baiduYuanChuangStatus'] = $this->domainSettingsInfo['yuanChuangAutoStatus'];
+            }
+            if ($this->domainSettingsInfo['linkApi']) {
+                $this->mipInfo['baiduTimePcUrl'] = $this->domainSettingsInfo['linkApi'];
+            }
+            if ($this->domainSettingsInfo['linkAutoStatus']) {
+                $this->mipInfo['baiduTimePcStatus'] = $this->domainSettingsInfo['linkAutoStatus'];
+            }
+            if ($this->domainSettingsInfo['baiduSearchKey']) {
+                $this->mipInfo['biaduZn'] = $this->domainSettingsInfo['baiduSearchKey'];
+            }
+            if ($this->domainSettingsInfo['baiduSearchSiteMap']) {
+                $this->mipInfo['baiduSearchPcUrl'] = $this->domainSettingsInfo['baiduSearchSiteMap'];
+            }
             $this->assign('mipInfo',$this->mipInfo);
         }
     }
@@ -108,6 +153,7 @@ class Mip extends Init
      * */
     public function mipView($parent,$name = null)
     {
+        $this->assign('mipInfo',$this->mipInfo);
         $tplName = Config::get('view_name');
         $this->assign('tplName',$tplName);
         Config::set('view_name', DS . $tplName);

@@ -396,7 +396,7 @@ class Articles extends Init
         if (!$item) {
             return false;
         }
-        $patern = '/^^((https|http|ftp)?:\/\/)[^\s]+$/';
+        $patern = '/^^((https|http|ftp)?:?\/\/)[^\s]+$/';
         $item['content'] = htmlspecialchars_decode($this->getContentByItemId($item['id'],$item['content_id'])['content']);
         if (preg_match_all('/<img.*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>/', $item['content'], $imgs)) {
             $item['imgCount'] = count($imgs[1]);
@@ -566,7 +566,7 @@ class Articles extends Init
         $itemInfo = db($this->articlesContent)->where('id',$content_id)->find();
         $itemInfo['content'] = htmlspecialchars_decode($itemInfo['content']);
         preg_match_all('/<img.*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>/', $itemInfo['content'], $imagesArray);
-        $patern = '/^^((https|http|ftp)?:\/\/)[^\s]+$/';
+        $patern = '/^^((https|http|ftp)?:?\/\/)[^\s]+$/';
         foreach($imagesArray[0] as $key => $val) {
             @preg_match('/alt=".+?"/',$val,$tempAlt);
             @preg_match('/<img.+(width=\"?\d*\"?).+>/i',$val,$tempWidth);
