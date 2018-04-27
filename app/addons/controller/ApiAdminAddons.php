@@ -101,12 +101,39 @@ class ApiAdminAddons extends AdminBase
         $sqlFile = ROOT_PATH . 'addons' . DS . $name . DS . 'install.sql';
         if (is_file($sqlFile)) {
             try {
+                
+                $hostname = config('database.hostname');
+                $database = config('database.database');
+                $hostport = config('database.hostport');
+                $username = config('database.username');
+                $password = config('database.password');
+                $dsn = "mysql:dbname={$database};host={$hostname};port={$hostport};charset=utf8";
+                try {
+                    $db = new \PDO($dsn, $username, $password);
+                } catch (\PDOException $e) {
+                    return jsonError('错误代码:'.$e->getMessage());
+                }
                 $prefix = "mip_";
                 $orginal = config('database.prefix');
                 $sql = str_replace(" `{$orginal}"," `{$prefix}", file_get_contents($sqlFile));
-                Db::getPdo()->exec($sql);
+                $sql = str_replace("\r", "\n", $sql);
+                $sql = explode(";\n", $sql);
+                foreach ($sql as $item) {
+                    $item = trim($item);
+                    if(empty($item)) continue;
+                    preg_match('/CREATE TABLE `([^ ]*)`/', $item, $matches);
+                    if($matches) {
+                        if(false !== $db->exec($item)){
+
+                        } else {
+                           return jsonError('安装失败');
+                        }
+                    } else {
+                        $db->exec($item);
+                    }
+                }
             } catch (\PDOException $e) {
-//              return jsonError('数据库安装失败，原因：' . $e);
+                return jsonError('数据库安装失败，原因：' . $e);
             }
         }
         $info = $addons->info;
@@ -162,12 +189,38 @@ class ApiAdminAddons extends AdminBase
         $sqlFile = ROOT_PATH . 'addons' . DS . $itemInfo['name'] . DS . 'uninstall.sql';
         if (is_file($sqlFile)) {
             try {
+                $hostname = config('database.hostname');
+                $database = config('database.database');
+                $hostport = config('database.hostport');
+                $username = config('database.username');
+                $password = config('database.password');
+                $dsn = "mysql:dbname={$database};host={$hostname};port={$hostport};charset=utf8";
+                try {
+                    $db = new \PDO($dsn, $username, $password);
+                } catch (\PDOException $e) {
+                    return jsonError('错误代码:'.$e->getMessage());
+                }
                 $prefix = "mip_";
                 $orginal = config('database.prefix');
                 $sql = str_replace(" `{$orginal}"," `{$prefix}", file_get_contents($sqlFile));
-                Db::getPdo()->exec($sql);
+                $sql = str_replace("\r", "\n", $sql);
+                $sql = explode(";\n", $sql);
+                foreach ($sql as $item) {
+                    $item = trim($item);
+                    if(empty($item)) continue;
+                    preg_match('/CREATE TABLE `([^ ]*)`/', $item, $matches);
+                    if($matches) {
+                        if(false !== $db->exec($item)){
+
+                        } else {
+                           return jsonError('卸载失败');
+                        }
+                    } else {
+                        $db->exec($item);
+                    }
+                }
             } catch (\PDOException $e) {
-                return jsonError('数据库安装失败，原因：' . $e);
+                return jsonError('数据库卸载失败，原因：' . $e);
             }
         }
         db('AddonsMenu')->where('type','addons')->where('item_id',$id)->delete();
