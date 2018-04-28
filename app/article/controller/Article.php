@@ -47,6 +47,7 @@ class Article extends Mip
           
         $templateName = $categoryInfo['template'] ? $categoryInfo['template'] : 'article';
         $templateName = str_replace('.html', '', $templateName);
+        
         return $this->mipView('article/'.$templateName);
     }
 

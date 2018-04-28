@@ -56,7 +56,7 @@ if (!is_file(PUBLIC_PATH . 'install' . DS .'install.lock')) {
     }
     config('domain',$domain);
     config('domainStatic',$domainStatic);
-    
+    config('mipauthorization',false);
     config('mipInfo',$mipInfo);
     if (Request::instance()->isMobile()) {
         if ($mipInfo['superTpl']) {
@@ -81,6 +81,7 @@ if (!strpos($request->url(),'Api')) {
     if (config('routeStatus')) {
         Route::rule('/sitemap.xml','index/Index/sitemap');
         Route::rule(['xml/:id' => ['index/Index/xml?id=:id',['ext'=>'xml'],['id'=>'\d+']]]);
+        Route::rule(['tagXml/:id' => ['index/Index/tagXml?id=:id',['ext'=>'xml'],['id'=>'\d+']]]);
         Route::rule('/baiduSitemapPc.xml','index/Index/baiduSitemapPc');
         Route::rule(['pcXml/:id' => ['index/Index/pcXml?id=:id',['ext'=>'xml'],['id'=>'\d+']]]);
         Route::rule('/','index/Index/index');

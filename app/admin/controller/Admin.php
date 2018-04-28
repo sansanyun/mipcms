@@ -12,7 +12,6 @@ class Admin extends Init
 	protected $beforeActionList = ['start'];
 
     public function start() {
-         
         $this->assign('mipInfoToJson',json_encode(config('mipInfo')));
         
         $model = input('model');

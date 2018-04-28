@@ -110,6 +110,18 @@ class Init extends Controller
         config('dataId','');
         $this->dataId = config('dataId');
         $this->assign('dataId','');
+        $itemList = db('GlobalAction')->select();
+        if ($itemList) {
+            try {
+                foreach ($itemList as $key => $val) {
+                    $addonsName = $val['name'];
+                    if (strpos($addonsName,"mipinit") !== false) {
+                        $addonsNameSpace = "addons" . "\\" . $addonsName . "\\" . "controller" . "\\" . "GlobalAction";
+                        model($addonsNameSpace)->$addonsName();
+                    }
+                }
+            } catch (\Exception $e) {}
+        }
     }
      
     protected function addonsFetch($template = '', $addonsName = '')

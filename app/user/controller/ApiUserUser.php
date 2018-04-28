@@ -15,64 +15,6 @@ class ApiUserUser extends AuthBase
     public function index(){
 
     }
-    public function userAdd(Request $request) {
-        if (Request::instance()->isPost()) {
-            if (!$this->mipInfo['registerStatus']) {
-                return jsonError('该功能已被管理员关闭');
-            }
-            $username = Htmlp::htmlp(trim(input('post.username')," \t\n\r\0\x0B"));
-            $password = Htmlp::htmlp(trim(input('post.password')," \t\n\r\0\x0B"));
-            $email = input('post.email');
-            $mobile = input('post.mobile');
-            $captcha = input('post.captcha');
-            $rules = [
-                'username'  => 'require|max:25',
-                'password'  => 'require|max:33',
-                'email' => 'email',
-            ];
-            $msg = [
-                'username.require' => '用户名不能为空',
-                'username.max'     => '用户名超过最大长度',
-                'password.require' => '密码不能为空',
-                'password.max'     => '密码超过最大长度',
-                'email'        => '邮箱格式错误',
-            ];
-            $result = $this->validate($request->param(), $rules, $msg);
-            if (true !== $result) {
-                return $result;
-            }
-            if ($mobile) {
-                if (!preg_match("/^1[34578]\d{9}$/", $mobile)) {
-                    return jsonError('手机号码输入有误');
-                }
-            }
-            if ($this->mipInfo['registerCaptcha']) {
-                if ($this->terminal == 'pc') {
-                    if(!captcha_check($captcha)){
-                        return jsonError('验证码错误');
-                    }
-                }
-            }
-            if (Users::getByUsername($username)) {
-                return jsonError('用户名已存在');
-            }
-            if($email){
-                if (Users::getByEmail($email)) {
-                    return jsonError('邮箱已存在');
-                }
-            }
-            if($mobile){
-                if (Users::getByMobile($mobile)) {
-                    return jsonError('手机已存在');
-                }
-            }
-            if($userInfo = Loader::model('app\user\model\Users')->regUser($username,$password,$this->terminal,$email,$mobile)){
-                return jsonSuccess('注册成功',$username,'/');
-            }else{
-                return jsonError('注册失败');
-            }
-        }
-    }
     public function login(Request $request) {
         if (Request::instance()->isPost()) {
             $terminal = input('post.terminal');

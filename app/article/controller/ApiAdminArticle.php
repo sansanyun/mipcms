@@ -155,14 +155,10 @@ class ApiAdminArticle extends AdminBase
         if (!$uuid) {
           return jsonError('缺少参数');
         }
-        $itemInfo = db($this->item)->where('uuid',$uuid)->find();
+        $itemInfo = model('app\article\model\Articles')->getItemInfo(null,$uuid);
         if (!$itemInfo) {
           return jsonError('不存在');
         }
-        
-        $itemContentInfo = model($this->itemModelNameSpace)->getContentByItemId($itemInfo['id'],$itemInfo['content_id']);
-        
-        $itemInfo['content'] = htmlspecialchars_decode($itemContentInfo['content']);
         
         return jsonSuccess('',$itemInfo);
     }

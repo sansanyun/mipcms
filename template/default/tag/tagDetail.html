@@ -1,8 +1,13 @@
 
 {extend name="main/main"/}
-
 {block name="style"}
+
+{block name="so"}
 {__block__}
+    <link rel="stylesheet" type="text/css" href="//at.alicdn.com/t/font_wm0lx5dg3606n7b9.css"/>
+{/block}
+<style type="text/css">
+    {__block__}
  .no-data-block {
     height: 300px;
     padding-top: 80px;
@@ -19,35 +24,41 @@
     color: #c3d1d6;
 }
 
-
-  .mip-box .mip-tap-body {
-      position: relative;
-      padding: 5px 20px 15px 20px;
-  }
-.mip-tap-body .el-tabs__item.is-active {
-    color: #00AAEE!important;
-    border-bottom: 3px solid #00AAEE;
-}
-.el-tabs__header {
+ 
+.tag-header {
+    display: flex;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
     border-bottom: 1px solid #EFEFEF;
 }
 
  .tag-header .tag-img {
     border: 1px solid #C3D1D6;
-    padding: 10px;
+    width: 60px;
+    height: 60px;
+    text-align: center;
+    padding-top: 5px;
     border-radius: 3px;
-    float: left;
     margin-right: 15px;
 }
-.tag-header .mip-biaoqian{
+.tag-header .mip-biaoqian {
      font-size: 35px;
      margin-bottom: 10px;
 }
-.tag-header .tag-info-content h2{
+.tag-header .tag-info-content {
+}
+.tag-header .tag-info-content h2 {
+    margin-top: 7px;
+    margin-bottom: 5px;
     font-size: 20px;
+}
+.tag-header .tag-info-content p {
+    color: #666;
+    margin-bottom: 0;
 }
 
 {/block}
+</style>
 {block name="main"}
 
   <div class="container">
@@ -55,11 +66,18 @@
                     
              
         <main class="col-lg-8">
+            
             <section class="mip-box mip-box-default">
-                <section class="mip-box-heading">
-                    <h3>{$tagInfo['name']}</h3>
-                </section>
                 <section class="mip-box-body">
+                    <div class="tag-header">
+                        <div class="tag-img">
+                            <i class="mip-iconfont mip-biaoqian"></i>
+                        </div>
+                        <div class="tag-info-content">
+                            <h2>{$tagInfo['name']}</h2>
+                            <p>{$tagInfo['description']}</p>
+                        </div>
+                    </div>
                      <div class="mipui-widget-media-body mipui-category-list-001">
                         {mipcms:article value='v' tagIds='$tagInfo["id"]' page='$tagInfo["page"]' limit='10'}
                             {include file='block/article-list'}

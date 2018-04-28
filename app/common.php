@@ -285,7 +285,7 @@ use mip\Mip;
     {
         $itemInfo['content'] = htmlspecialchars_decode($content);
         preg_match_all('/<img.*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>/', $itemInfo['content'], $imagesArray);
-        $patern = '/^^((https|http|ftp)?:\/\/)[^\s]+$/';
+        $patern = '/^^((https|http|ftp)?:?\/\/)[^\s]+$/';
         foreach($imagesArray[0] as $key => $val) {
             @preg_match('/alt=".+?"/',$val,$tempAlt);
             @preg_match('/<img.+(width=\"?\d*\"?).+>/i',$val,$tempWidth);
@@ -301,11 +301,7 @@ use mip\Mip;
             if (count($alt) == 3) {
                 $alt = $alt[1] ;
             }
-            if (@preg_match($patern,$imagesArray[1][$key])) {
-                $src = $imagesArray[1][$key];
-            } else {
-                $src = config('pcDomain') . $imagesArray[1][$key];
-            }
+            $src = $imagesArray[1][$key];
             if ($tempWidth && $tempHeight) {
                 @preg_match('/\d+/i',$tempWidth[1],$width);
                 if (intval($width[0]) > 320) {

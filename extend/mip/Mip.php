@@ -30,27 +30,10 @@ class Mip extends Init
     {
         parent::_initialize();
         
-        $this->crumb();
         $this->siteInfoInit();
         $this->headerInfo();
-        $this->globalAction();
     }
     
-    
-    /**
-     * 面包屑导航
-     * 根据不同的赋值开启层级
-     * */
-    public function crumb()
-    {
-        $this->assign('crumb',true);
-        $this->assign('crumbDomain',true);
-        $this->assign('crumbCategory',true);
-        $this->assign('crumbCategorySub',null);
-        $this->assign('crumbDetail',null);
-    }
-    
-
     public function siteInfoInit()
     {
         $this->domainSettingsInfo = config('domainSettingsInfo');
@@ -135,22 +118,6 @@ class Mip extends Init
         $this->assign('mipKeywords',config('mipInfo')['keywords']);
         $this->assign('mipDescription',config('mipInfo')['description']);
     }
- 
-    public function globalAction()
-    {
-        $itemList = db('GlobalAction')->select();
-        if ($itemList) {
-            try {
-                foreach ($itemList as $key => $val) {
-                    $addonsName = $val['name'];
-                    $addonsNameSpace = "addons" . "\\" . $addonsName . "\\" . "controller" . "\\" . "GlobalAction";
-                    model($addonsNameSpace)->$addonsName();
-                }
-            } catch (\Exception $e) {
-                
-            }
-        }
-    }
    
     /**
      * 模板渲染处理
@@ -170,6 +137,16 @@ class Mip extends Init
         
         $this->assign('config',config());
         
+        $itemList = db('GlobalAction')->select();
+        if ($itemList) {
+            try {
+                foreach ($itemList as $key => $val) {
+                    $addonsName = $val['name'];
+                    $addonsNameSpace = "addons" . "\\" . $addonsName . "\\" . "controller" . "\\" . "GlobalAction";
+                    model($addonsNameSpace)->$addonsName();
+                }
+            } catch (\Exception $e) {}
+        }
         
         if ($this->mipInfo['codeCompression']) {
             return compress_html($this->fetch('/' .$parent));

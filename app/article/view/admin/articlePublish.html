@@ -352,20 +352,23 @@
                                 var resMIp = JSON.parse(res.data);
                                 this.$Message.success('推送成功：' + resMIp.success_mip + '条，当天剩余条数：' + resMIp.remain_mip);
                             }
-                            this.$Modal.confirm({
-                                title: '消息提示',
-                                content: '<div>发布成功！请问是否要继续发布</div>',
-                                cancelText: '不继续',
-                                onCancel: () => {
-                                    this.editor.setValue('');
-                                    window.location.href = '{$domain}/{$Think.config.admin}/{$itemUrl}/{$itemUrl}/cid-{$cid}';
-                                },
-                                okText: '继续发布',
-                                onOk: () => {
-                                    this.editor.setValue('');
-                                    window.location.href = window.location.href;
-                                }
-                            });
+                            //发布完成后 弹出选项是否继续发布。先注释 体验上感觉不合适
+//                          this.$Modal.confirm({
+//                              title: '消息提示',
+//                              content: '<div>发布成功！请问是否要继续发布</div>',
+//                              cancelText: '不继续',
+//                              onCancel: () => {
+//                                  this.editor.setValue('');
+//                                  window.location.href = '{$domain}/{$Think.config.admin}/{$itemUrl}/{$itemUrl}/cid-{$cid}';
+//                              },
+//                              okText: '继续发布',
+//                              onOk: () => {
+//                                  this.editor.setValue('');
+//                                  window.location.href = window.location.href;
+//                              }
+//                          });
+
+                            window.location.href = '{$domain}/{$Think.config.admin}/{$itemUrl}/{$itemUrl}/cid-{$cid}';
                             
                             
                         }

@@ -9,7 +9,8 @@ class Mipcms extends TagLib {
     protected $tags   =  [
         
         'articlecategory'      => ['attr' => 'pid,where,orderBy,order,value,key,limit,ids,type', 'close' => 1], 
-        'articleinfo'      => ['attr' => 'table,cid,where,orderBy,order,value,keywords,key,limit,page,category,sub,uuids,notUuids,tagIds,tagNames', 'close' => 0],
+        'articlecategoryinfo'      => ['attr' => 'pid,where,orderBy,order,value,key,limit,ids,type', 'close' => 0], 
+        'articleinfo'      => ['attr' => 'table,cid,where,orderBy,order,value,key,keywords,limit,page,category,sub,ids,uuids,notUuids,tagIds,tagNames,itemId,type', 'close' => 0],
         'article'      => ['attr' => 'table,cid,where,orderBy,order,value,key,keywords,limit,page,category,sub,ids,uuids,notUuids,tagIds,tagNames,itemId,type', 'close' => 1],
         'page' => ['attr' => 'itemId,value,key,limit,type,itemType,page,prePage', 'close' => 1],
         'crumb' => ['attr' => 'cid,ulClass,liClass,isHome,separator', 'close' => 0],
@@ -61,9 +62,20 @@ class Mipcms extends TagLib {
         $html .= '{/volist}';
         return $html;
     }
+
     public function tagArticlecategory($tag, $content)
     {
-        $table = isset($tag['table']) ? $tag['table'] : '';
+       return $this->articlecategoryModel($tag, $content,'articleCategoryList');
+    }
+    
+    public function tagArticlecategoryinfo($tag, $content)
+    {
+       return $this->articlecategoryModel($tag, $content,'articleCategoryInfo');
+    }
+
+    public function articlecategoryModel($tag, $content,$tagType)
+    {
+    	    $table = isset($tag['table']) ? $tag['table'] : '';
         $pid = isset($tag['pid']) ? $tag['pid'] : 0;
         $where = isset($tag['where']) ? $tag['where'] : '';
         $order = isset($tag['order']) ? $tag['order'] : 'asc';
@@ -83,15 +95,31 @@ class Mipcms extends TagLib {
         $html .= '$mipcms_ids = "'.$ids.'";';
         $html .= '$mipcms_type = "'.$type.'";';
         
-        $html .= '$mipcms_db_list = model("app\article\model\Articles")->getCategory($mipcms_pid,$mipcms_orderBy,$mipcms_order,$mipcms_limit,$mipcms_where,$mipcms_ids,$mipcms_type);';
-        $html .= ' ?>';
-        $html .= '{volist name="mipcms_db_list" id="' . $value . '" key="' . $key . '"}';
-        $html .= $content;
-        $html .= '{/volist}';
-        return $html;
+        $html .= '$mipcms_categoey_list = model("app\article\model\Articles")->getCategory($mipcms_pid,$mipcms_orderBy,$mipcms_order,$mipcms_limit,$mipcms_where,$mipcms_ids,$mipcms_type);';
+        if ($tagType == 'articleCategoryList') {
+            $html .= ' ?>';
+            $html .= '{volist name="mipcms_categoey_list" id="' . $value . '" key="' . $key . '"}';
+            $html .= $content;
+            $html .= '{/volist}';
+            return $html;
+        }
+        if ($tagType == 'articleCategoryInfo') {
+            $html .= '$'. $value .' = $mipcms_categoey_list; ?>';
+            return $html;
+        }
     }
  
     public function tagArticle($tag, $content)
+    {
+        return $this->articleModel($tag, $content,'articleList');
+    }
+
+    public function tagArticleinfo($tag, $content)
+    {
+       return $this->articleModel($tag, $content,'articleInfo');
+    }
+    
+    public function articleModel($tag, $content,$tagType)
     {
         $table = isset($tag['table']) ? $tag['table'] : '';
         $cid = isset($tag['cid']) ? $tag['cid'] : '';
@@ -208,111 +236,17 @@ class Mipcms extends TagLib {
         } else {
             $html .= '$pagination = "";';
         }
-        $html .= ' ?>';
-        $html .= '{volist name="mipcms_db_info" id="' . $value . '" key="' . $key . '"}';
-        $html .= $content;
-        $html .= '{/volist}';
-        return $html;
+        if ($tagType == 'articleList') {
+            $html .= ' ?>';
+            $html .= '{volist name="mipcms_db_info" id="' . $value . '" key="' . $key . '"}';
+            $html .= $content;
+            $html .= '{/volist}';
+            return $html;
+        }
+        if ($tagType == 'articleInfo') {
+            $html .= '$'. $value .' = $mipcms_db_info; ?>';
+            return $html;
+        }
     }
-
-    public function tagArticleinfo($tag, $content)
-    {
-        $table = isset($tag['table']) ? $tag['table'] : '';
-        $cid = isset($tag['cid']) ? $tag['cid'] : '';
-        $where = isset($tag['where']) ? $tag['where'] : '';
-        $order = isset($tag['order']) ? $tag['order'] : 'desc';
-        $orderBy = isset($tag['orderBy']) ? $tag['orderBy'] : 'publish_time';
-        $value = isset($tag['value']) ? $tag['value'] : 'v';
-        $key   = isset($tag['key'])   ? $tag['key'] : 'i';
-        $limit = isset($tag['limit']) ? $tag['limit'] : '10';
-        $page  = isset($tag['page'])  ? $tag['page'] : '';
-        $category  = isset($tag['category'])  ? $tag['category'] : '';
-        $sub  = isset($tag['sub'])  ? $tag['sub'] : '';
-        $keywords =  isset($tag['keywords']) ? $tag['keywords'] : '';
-        $uuids =  isset($tag['uuids']) ? $tag['uuids'] : '';
-        $notUuids =  isset($tag['notUuids']) ? $tag['notUuids'] : '';
-        $tagIds =  isset($tag['tagIds']) ? $tag['tagIds'] : '';
-        $tagNames =  isset($tag['tagNames']) ? $tag['tagNames'] : '';
-        $html  = '<?php ';
-        if (substr($table, 0, 1) == '$') {
-            $html .= '$mipcms_table = '.$table.';';
-        } else {
-            $html .= '$mipcms_table = "'.$table.'";';
-        }
-        if (substr($cid, 0, 1) == '$') {
-            $html .= '$mipcms_cid = '.$cid.';';
-        } else {
-            $html .= '$mipcms_cid = "'.$cid.'";';
-        }
-        if (strpos($where,"$")) {
-            $html .= '$mipcms_where = '.$where.';';
-        } else {
-            $html .= '$mipcms_where = "'.$where.'";';
-        }
-        if (substr($order, 0, 1) == '$') {
-            $html .= '$mipcms_order = '.$order.';';
-        } else {
-            $html .= '$mipcms_order = "'.$order.'";';
-        }
-        if (substr($orderBy, 0, 1) == '$') {
-            $html .= '$mipcms_orderBy = '.$orderBy.';';
-        } else {
-            $html .= '$mipcms_orderBy = "'.$orderBy.'";';
-        }
-        if (substr($limit, 0, 1) == '$') {
-            $html .= '$mipcms_limit = '.$limit.';';
-        } else {
-            $html .= '$mipcms_limit = "'.$limit.'";';
-        }
-        if (substr($page, 0, 1) == '$') {
-            $html .= '$mipcms_page = '.$page.';';
-        } else {
-            $html .= '$mipcms_page = "'.$page.'";';
-        }
-        if (substr($category, 0, 1) == '$') {
-            $html .= '$mipcms_category = '.$category.';';
-        } else {
-            $html .= '$mipcms_category = "'.$category.'";';
-        }
-        if (substr($sub, 0, 1) == '$') {
-            $html .= '$mipcms_sub = '.$sub.';';
-        } else {
-            $html .= '$mipcms_sub = "'.$sub.'";';
-        }
-        if (substr($keywords, 0, 1) == '$') {
-            $html .= '$mipcms_keywords = '.$keywords.';';
-        } else {
-            $html .= '$mipcms_keywords = "'.$keywords.'";';
-        }
-        if (substr($uuids, 0, 1) == '$') {
-            $html .= '$mipcms_uuids = '.$uuids.';';
-        } else {
-            $html .= '$mipcms_uuids = "'.$uuids.'";';
-        }
-        if (substr($notUuids, 0, 1) == '$') {
-            $html .= '$mipcms_notUuids = '.$notUuids.';';
-        } else {
-            $html .= '$mipcms_notUuids = "'.$notUuids.'";';
-        }
-        if (substr($tagIds, 0, 1) == '$') {
-            $html .= '$mipcms_tagIds = '.$tagIds.';';
-        } else {
-            $html .= '$mipcms_tagIds = "'.$tagIds.'";';
-        }
-        if (substr($tagNames, 0, 1) == '$') {
-            $html .= '$mipcms_tagNames = '.$tagNames.';';
-        } else {
-            $html .= '$mipcms_tagNames = "'.$tagNames.'";';
-        }
-        $html .= '$mipcms_info = model("app\article\model\Articles")->getItemList($mipcms_cid,$mipcms_page,$mipcms_limit,$mipcms_orderBy,$mipcms_order,$mipcms_where,$mipcms_keywords,$mipcms_uuids,$mipcms_notUuids,$mipcms_tagIds,$mipcms_tagNames);';
-        if ($page) {
-            $html .= '$pagination = model("app\article\model\Articles")->getPaginationm($mipcms_cid,$mipcms_limit,$mipcms_category,$mipcms_sub,$mipcms_where,$mipcms_keywords,$mipcms_uuids,$mipcms_notUuids,$mipcms_tagIds,$mipcms_tagNames);';
-        } else {
-            $html .= '$pagination = "";';
-        }
-        $html .= '$'. $value .' = $mipcms_info; ?>';
-        return $html;
-    }
-  
      
 }

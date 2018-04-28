@@ -9,7 +9,7 @@ class Common
     {
         $itemInfo['content'] = htmlspecialchars_decode($content);
         preg_match_all('/<img.*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>/', $itemInfo['content'], $imagesArray);
-        $patern = '/^^((https|http|ftp)?:\/\/)[^\s]+$/';
+        $patern = '/^^((https|http|ftp)?:?\/\/)[^\s]+$/';
         foreach($imagesArray[0] as $key => $val) {
             @preg_match('/alt=".+?"/',$val,$tempAlt);
             @preg_match('/<img.+(width=\"?\d*\"?).+>/i',$val,$tempWidth);
@@ -28,7 +28,7 @@ class Common
             if (@preg_match($patern,$imagesArray[1][$key])) {
                 $src = $imagesArray[1][$key];
             } else {
-                $src = config('pcDomain') . $imagesArray[1][$key];
+                $src = config('domainStatic') . $imagesArray[1][$key];
             }
             if ($tempWidth && $tempHeight) {
                 @preg_match('/\d+/i',$tempWidth[1],$width);

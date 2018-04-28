@@ -47,8 +47,8 @@
                 <div class="mip-box-heading"><h3 class="left">系统信息</h3></div>
                     <div class="mip-box-body copyright-info">
                         <p><b>软件名称：</b>MIPCMS内容管理系统</p>
-                        <p><b>授权状态：</b>未授权</p>
-                        <p><b>当前版本：</b>免费版 {$mipInfo['localCurrentVersion']}</p>
+                        <p><b>授权状态：</b>{if condition='config("mipauthorization")'}{:config("mipauthorization")}{else/}未授权{/if}</p>
+                        <p><b>当前版本：</b>{$mipInfo['localCurrentVersion']}</p>
                         <p><b>联系方式：</b>85249417</p>
                         <p><b>版权归属：</b>苏州三三云网络科技有限公司</p>
                     </div>

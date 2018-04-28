@@ -17,7 +17,7 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "topthink/framework": "5.0.18",
+        "topthink/framework": "5.0.19",
         "topthink/think-captcha": "^1.0",
         "5ini99/think-addons": "dev-master"
     },

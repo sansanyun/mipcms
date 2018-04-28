@@ -20,7 +20,9 @@ class Index extends Mip
 
    function sitemap() {
         $count = model('app\article\model\Articles')->getCount(0);
-        $pageNum = ceil($count / 1000)+1;
+        $tagsCount = db('Tags')->count();
+        $pageNum = ceil($count / 200)+1;
+        $tagPageNum = ceil($tagsCount / 200)+1;
         $sitemap = '<?xml version="1.0" encoding="utf-8"?>';
         $sitemap .= '<sitemapindex>';
         for ($i=1; $i < $pageNum; $i++) {
@@ -29,14 +31,20 @@ class Index extends Mip
             $sitemap .= '<lastmod>' . date("Y-m-d") . '</lastmod>';
         $sitemap .= '</sitemap>';
         }
+        for ($i=1; $i < $tagPageNum; $i++) {
+        $sitemap .= '<sitemap>';
+            $sitemap .= '<loc>' . $this->domain . '/tagXml/' . $i . '.xml' . '</loc>';
+            $sitemap .= '<lastmod>' . date("Y-m-d") . '</lastmod>';
+        $sitemap .= '</sitemap>';
+        }
         $sitemap .= '</sitemapindex>';
         return Response::create($sitemap)->contentType('text/xml');;
     }
-
+    
     function xml() {
         $page = input('param.id');
         $page = $page ? $page : 1;
-        $itemList = model('app\article\model\Articles')->getItemPushList('', $page, 1000, 'publish_time', 'desc');
+        $itemList = model('app\article\model\Articles')->getItemPushList('', $page, 200, 'publish_time', 'desc');
 
         $xml = '<?xml version="1.0" encoding="utf-8"?>';
         $xml .= '<urlset>';
@@ -57,25 +65,6 @@ class Index extends Mip
                     $xml .= '</url>';
                 }
             }
-            $tagsList = db($this->tags)->select();
-            if ($tagsList) {
-                foreach ($tagsList as $key => $val) {
-                    if ($val['url_name']) {
-                        $tagsList[$key]['url'] = $this->domain . '/' . $this->mipInfo['tagModelUrl'] .'/' . $val['url_name'] . '/';
-                    } else {
-                        $tagsList[$key]['url'] = $this->domain . '/' . $this->mipInfo['tagModelUrl'] .'/' . $val['id'] . '/';
-                    }
-                    $tagsList[$key]['time'] = $val['add_time'] ? date("Y-m-d", $val["add_time"]) : date("Y-m-d");
-                }
-                foreach ($tagsList as $key => $val) {
-                    $xml .= '<url>';
-                    $xml .= '<loc>' . $val["url"] . '</loc>';
-                    $xml .= '<lastmod>' . $tagsList[$key]['time'] . '</lastmod>';
-                    $xml .= '<changefreq>daily</changefreq>';
-                    $xml .= '<priority>0.9</priority>';
-                    $xml .= '</url>';
-                }
-            }
         }
         foreach($itemList as $k => $v) {
             $xml .= '<url>';
@@ -88,10 +77,39 @@ class Index extends Mip
         $xml .= '</urlset>';
         return Response::create($xml)->contentType('text/xml');;
     }
+
+
+    function tagXml() {
+        $page = input('param.id');
+        $page = $page ? $page : 1;
+        $xml = '<?xml version="1.0" encoding="utf-8"?>';
+        $xml .= '<urlset>';
+        $tagsList = db($this->tags)->page($page,200)->select();
+        if ($tagsList) {
+            foreach ($tagsList as $key => $val) {
+                if ($val['url_name']) {
+                    $tagsList[$key]['url'] = $this->domain . '/' . $this->mipInfo['tagModelUrl'] .'/' . $val['url_name'] . '/';
+                } else {
+                    $tagsList[$key]['url'] = $this->domain . '/' . $this->mipInfo['tagModelUrl'] .'/' . $val['id'] . '/';
+                }
+                $tagsList[$key]['time'] = $val['add_time'] ? date("Y-m-d", $val["add_time"]) : date("Y-m-d");
+            }
+            foreach ($tagsList as $key => $val) {
+                $xml .= '<url>';
+                $xml .= '<loc>' . $val["url"] . '</loc>';
+                $xml .= '<lastmod>' . $tagsList[$key]['time'] . '</lastmod>';
+                $xml .= '<changefreq>daily</changefreq>';
+                $xml .= '<priority>0.9</priority>';
+                $xml .= '</url>';
+            }
+        }
+        $xml .= '</urlset>';
+        return Response::create($xml)->contentType('text/xml');;
+    }
     
      function baiduSitemapPc() {
         $count = model('app\article\model\Articles')->getCount(0);
-        $pageNum = ceil($count / 1000)+1;
+        $pageNum = ceil($count / 200)+1;
         $sitemap = '<?xml version="1.0" encoding="utf-8"?>';
         $sitemap .= '<sitemapindex>';
         for ($i=1; $i < $pageNum; $i++) {
@@ -106,7 +124,7 @@ class Index extends Mip
     function pcXml() {
         $page = input('param.id');
         $page = $page ? $page : 1;
-        $itemList = model('app\article\model\Articles')->getItemPushList('', $page, 1000, 'publish_time', 'desc');
+        $itemList = model('app\article\model\Articles')->getItemPushList('', $page, 200, 'publish_time', 'desc');
 
         $xml = '<?xml version="1.0" encoding="utf-8"?>';
         $xml .= '<urlset>';

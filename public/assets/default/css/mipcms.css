@@ -630,8 +630,11 @@ a:hover {
   .mipcms-main {
     margin-top: 100px;
   }
+  .mipmb-page-item.item-up-page {
+    float: none!important;
+  }
   .mip-box .mip-box-footer .item-down-page {
-    float: left;
+    float: none!important;
     text-align: left;
     margin-top: 10px;
   }

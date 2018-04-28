@@ -44,16 +44,22 @@
                             {include file='block/article-list'}
                         {/mipcms:article}
                     </div>
-                    {mipcms:articleinfo value="itemUpPage" where='"publish_time < " . $itemInfo["publish_time"]' limit='1' /}
-                    {mipcms:articleinfo value="itemDownPage" order="asc" where='"publish_time > " . $itemInfo["publish_time"]' limit='1' /}
-                    {if condition="$itemUpPage || $itemDownPage"}
                     <div class="mip-box-footer item-up-down-page ">
                         <ul class="clearfix list-unstyled">
-                            {if condition="$itemUpPage"}<li class="item-up-page"><p>上一篇</p><a href="{$itemUpPage[0]['url']}" data-type="mip" data-title="{$itemUpPage[0]['title']}" title="{$itemUpPage[0]['title']}">{$itemUpPage[0]['title']} </a> </li>{/if}
-                            {if condition="$itemDownPage"}<li class="item-down-page"> <p>下一篇</p> <a href="{$itemDownPage[0]['url']}"  data-type="mip" data-title="{$itemDownPage[0]['title']}" title="{$itemDownPage[0]['title']}">{$itemDownPage[0]['title']}</a></li>{/if}
+                            {mipcms:page value='val' limit='1' itemId='$itemInfo["id"]' type='detail' itemType='upPage'}
+                            <div class="mipmb-page-item item-up-page">
+                                <p>上一篇</p>
+                                <a href="{$val.url}">{$val.title}</a>
+                            </div>
+                            {/mipcms:page}
+                            {mipcms:page value='val' limit='1' itemId='$itemInfo["id"]' type='detail' itemType='downPage'}
+                            <div class="mipmb-page-item item-down-page ">
+                                <p>下一篇</p>
+                                <a href="{$val.url}">{$val.title}</a>
+                            </div>
+                            {/mipcms:page}
                         </ul>
                     </div>
-                    {/if}
                 </section>
                 
             </section>

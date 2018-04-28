@@ -22,46 +22,16 @@ class ArticleDetail extends Mip
         if (!$itemInfo) {
             return $this->error($this->mipInfo['articleModelName'].'不存在','');
         }
-        if ($tempArticlesCategory) {
-            $itemInfo['categoryInfo'] = $tempArticlesCategory;
-            $categoryInfo = $tempArticlesCategory;
-        }
-        
+        $itemInfo = model('app\article\model\Articles')->getItemInfo($itemInfo['id']);
         //当前所属分类别名
-        $this->assign('categoryUrlName',$categoryInfo['url_name']);
+        $this->assign('categoryUrlName',$itemInfo['categoryInfo']['url_name']);
         
         //更新当前页面浏览次数
         model('app\article\model\Articles')->updateViews($itemInfo['id'], $itemInfo['uid']);
         
-        //查询内容中图片列表
-        $itemInfo = model('app\article\model\Articles')->getImgList($itemInfo);
-        
-        //查询当前内容正文
-        $itemInfo['mipContent'] = model('app\article\model\Articles')->getContentFilterByArticleId($itemInfo['id'],$itemInfo['content_id']);
-        
-        //内链锚文本
-        if (@$itemInfo['link_tags']) {
-            $itemInfo = model('app\article\model\Articles')->getTagsLink($itemInfo);
-        }
-
-        $isAllTagsLink = false;
-        if ($isAllTagsLink) {
-            $itemInfo = model('app\article\model\Articles')->getAllTagsLink($itemInfo);
-        }
-
         //详情页面ID
         $this->assign('itemDetailId',$itemInfo['uuid']);
         
-        //内容分页
-        if ($this->mipInfo['articlePages']) {
-            $currentPageNum = input('param.page') ? intval(input('param.page')) : 1;
-            $CP = new Cutpagem($itemInfo['content'],$currentPageNum,$this->mipInfo['articlePagesNum']);
-            $page = $CP->cut_str();
-            $itemInfo['content'] = $page[$currentPageNum-1];
-            $currentUrlNotHtml = str_replace('.html','',$itemInfo['categoryInfo']['detailRule']);
-            $itemInfo['pageCode'] = $CP->pagenav($currentPageNum,$currentUrlNotHtml,$this->mipInfo['urlPageBreak'],$this->siteUrl);
-        }
-
         //标签列表
         $itemTagsList = model('app\common\model\Tags')->getTagsListByItemType('article',$itemInfo['uuid']);
         $this->assign('tags',$itemTagsList);

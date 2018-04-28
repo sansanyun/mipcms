@@ -25,20 +25,24 @@ class Articles extends Controller
         $this->dataId = config('dataId');
     }
     
-    public function getItemInfoById($id)
+    public function getItemInfo($id = null,$uuid = null)
     {
-        if (!$id) {
-            return false;
+        if (!$id && !$uuid) {
+               return false;
         }
-            $itemInfo = db::table($this->item)->where('id',$id)->find();
+        if ($id) {
+            $itemInfo = db($this->item)->where('id',$id)->find();
+        }
+        if ($uuid) {
+            $itemInfo = db($this->item)->where('uuid',$uuid)->find();
+        }
         if ($itemInfo) {
-            $itemInfo['cid'] = $itemInfo['typeid'];
-            $itemInfo['categoryInfo'] = $this->getCategoryInfo($itemInfo['typeid']);
-            $itemInfo['url'] = $this->domainUrl($v);
-            $itemInfo['publish_time'] = $itemInfo['pubdate'];
-            $itemInfo['views'] = $itemInfo['click'];
-            $itemInfo['content'] = db::table($this->itemContent)->where('aid',$itemInfo['id'])->find()['body'];
-            $itemInfo['img_url'] = '';
+            $itemInfo = $this->getImgList($itemInfo);
+            $itemInfo['userInfo'] = null;
+            $itemInfo['content'] = $this->getContentByItemContentId($itemInfo['content_id']);
+            $itemInfo['mipContent'] = $this->getContentFilterByArticleInfo($itemInfo);
+            $itemInfo['categoryInfo'] = $this->getCategoryInfo($itemInfo['cid']);
+            $itemInfo['url'] = $this->getUrlByItemInfo($itemInfo);
             return $itemInfo;
         } else {
             return false;
@@ -118,7 +122,7 @@ class Articles extends Controller
             foreach($itemList as $k => $v) {
                 $itemList[$k] = $this->getImgList($v);
                 $itemList[$k]['tempId'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
-                $itemList[$k]['users'] = db('Users')->where('uid',$v['uid'])->find();
+                $itemList[$k]['userInfo'] = db('Users')->where('uid',$v['uid'])->find();
                 $itemList[$k]['categoryInfo'] = $this->getCategoryInfo($v['cid']);
                 $itemList[$k]['url'] = $this->getUrlByItemInfo($v);
             }
@@ -491,7 +495,9 @@ class Articles extends Controller
             return false;
         }
         $patern = '/^^((https|http|ftp)?:?\/\/)[^\s]+$/';
-        $item['content'] = htmlspecialchars_decode($this->getContentByItemId($item['id'],$item['content_id'])['content']);
+        if (!isset($itemInfo['content']) || !$itemInfo['content']) {
+            $item['content'] = $this->getContentByItemContentId($item['content_id']);
+        }
         if (preg_match_all('/<img.*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>/', $item['content'], $imgs)) {
             $item['imgCount'] = count($imgs[1]);
             foreach ($imgs[1] as $key => $value) {
@@ -563,83 +569,25 @@ class Articles extends Controller
         return true;
     }
 
-    public function getContentByItemId($id,$content_id)
+    public function getContentByItemContentId($content_id)
     {
-        if (!$id) {
+        if (!$content_id) {
             return false;
         }
-        return db($this->articlesContent)->where('id',$content_id)->find();
+        return htmlspecialchars_decode(db($this->articlesContent)->where('id',$content_id)->find()['content']);
     }
     
     
-    public function getContentFilterByArticleId($id,$content_id)
+    public function getContentFilterByArticleInfo($itemInfo)
     {
-        if (!$id) {
+        if (!$itemInfo) {
             return false;
         }
-        $itemInfo = db($this->articlesContent)->where('id',$content_id)->find();
-        
-        $itemInfo['content'] = model('app\common\model\Common')->getContentFilterByContent($itemInfo['content']);
-        
-        return $itemInfo['content'];
-    }
-    public function getTagsLink($itemInfo)
-    {
-        $tagsList = explode(',',$itemInfo['link_tags']);
-        $tempTagsList = [];
-        if ($tagsList) {
-            foreach ($tagsList as $key => $val) {
-                $tagsInfo = db($this->tags)->where('name',$val)->find();
-                if ($tagsInfo) {
-                    $tempTagsList[] = $tagsInfo;
-                }
-            }
-            if ($tempTagsList) {
-                foreach ($tempTagsList as $k => $v) {
-                    if ($tempTagsList[$k]['url_name']) {
-                        $tempTagsList[$k]['url'] = $this->domain . '/' . $this->mipInfo['tagModelUrl'] .'/' . $tempTagsList[$k]['url_name'] . '/';
-                    } else {
-                        $tempTagsList[$k]['url'] = $this->domain . '/' . $this->mipInfo['tagModelUrl'] .'/' . $tempTagsList[$k]['id'] . '/';
-                    }
-                }
-            }
-            foreach ($tempTagsList as $ke => $va) {
-                $url = '<a href="' . $tempTagsList[$ke]["url"] . '" data-type="mip" data-title="' . $tempTagsList[$ke]['name'] . '" target="_blank" title="' . $tempTagsList[$ke]['name'] . '">' . $tempTagsList[$ke]["name"] . '</a>';
-                $keyword = $va['name'];
-                $content  = $itemInfo['content'];
-                $content = preg_replace_callback('\'(?!((<.*?)|(<a.*?)|(<strong.*?)))('.$keyword.')(?!(([^<>]*?)>)|([^>]*?</a>)|([^>]*?</strong>))\'si',
-                function ($param)use($url) {
-                    return $url;
-                },$content,1);
-                $itemInfo['content'] = $content;
-            }
+        if (!isset($itemInfo['content']) || !$itemInfo['content']) {
+            $itemContentInfo = db($this->articlesContent)->where('id',$itemInfo['content_id'])->find();
         }
-        return $itemInfo;
-    }
-    public function getAllTagsLink($itemInfo)
-    {
-        $tagsList = db($this->tags)->select();
-        if ($tagsList) {
-            foreach ($tagsList as $key => $val) {
-                if ($val['url_name']) {
-                    $tagsList[$key]['url'] = $this->domain . '/' . $this->mipInfo['tagModelUrl'] .'/' . $val['url_name'] . '/';
-                } else {
-                    $tagsList[$key]['url'] = $this->domain . '/' . $this->mipInfo['tagModelUrl'] .'/' . $val['id'] . '/';
-                }
-            }
-            foreach ($tagsList as $key => $val) {
-                $url = '<a href="' . $tagsList[$key]["url"] . '" data-type="mip" data-title="' . $tagsList[$key]['name'] . '" target="_blank" title="' . $tagsList[$key]['name'] . '">' . $tagsList[$key]["name"] . '</a>';
-                $keyword = $val['name'];
-                $content  = $itemInfo['content'];
-                try {
-                    $content = preg_replace('\'(?!((<.*?)|(<a.*?)|(<strong.*?)))('.$keyword.')(?!(([^<>]*?)>)|([^>]*?</a>)|([^>]*?</strong>))\'si', $url, $content,1);
-                    $itemInfo['content'] = $content;
-                } catch (\Exception $e) {
-                    $itemInfo['content'] = $content;
-                }
-            }
-        }
-        return $itemInfo;
+        $content = model('app\common\model\Common')->getContentFilterByContent($itemContentInfo['content']);
+        return $content;
     }
 
     public function itemPushUrl($createInfo)
