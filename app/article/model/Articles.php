@@ -420,9 +420,9 @@ class Articles extends Controller
     {
         $itemCategoryList = null;
         if ($type == 'menu') {
-            $itemCategoryList = db($this->itemCategory)->where('pid',$pid)->where('status',1)->where($where)->limit($limit)->order($orderBy,$order)->select();
+            $itemCategoryList = db($this->itemCategory)->where('pid',$pid)->where('status','<>',2)->where($where)->limit($limit)->order($orderBy,$order)->select();
         } else {
-            $itemCategoryList = db($this->itemCategory)->where('pid',$pid)->where('status',1)->where('is_page',0)->where($where)->limit($limit)->order($orderBy,$order)->select();
+            $itemCategoryList = db($this->itemCategory)->where('pid',$pid)->where('status','<>',2)->where('is_page',0)->where($where)->limit($limit)->order($orderBy,$order)->select();
         }
         if($itemCategoryList) {
             foreach ($itemCategoryList as $key => $val) {
