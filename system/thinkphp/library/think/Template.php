@@ -1065,7 +1065,9 @@ class Template
             }
             $template = realpath($path . $template . '.' . ltrim($this->config['view_suffix'], '.'));
         }
-
+        if (strpos($template, './app/') !== false && strpos($template, '../app/') === false) {
+            $template = MIP_HOST ? $template : '.' . $template;
+        }
         if (is_file($template)) {
             // 记录模板文件的更新时间
             $this->includeFile[$template] = filemtime($template);
