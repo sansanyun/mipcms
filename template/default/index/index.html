@@ -3,7 +3,7 @@
 {block name="main"}
 {mipcms:articleinfo value="recommendList" where='is_recommend = 1' limit='4' /}
 {if condition="$recommendList && count($recommendList) > 3"}
-<div class="container mb-3 d-lg-block">
+<div class="container mb-3 d-none d-sm-block">
     <div class="row">
         <div class="col-lg-8">
             <div class="position-relative">
