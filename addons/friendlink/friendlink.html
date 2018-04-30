@@ -1,0 +1,30 @@
+{if condition='$friendLink.friendLinkAll || $friendLink.friendLinkNotIndex || $friendLink.friendLinkIndex'}
+<div class="friend-link hidden-xs">
+    <ul> 
+        {if condition='$ctr == "Index"'}
+        {if condition='$friendLink.friendLinkAll || $friendLink.friendLinkIndex'}
+        <li> 友情链接：</li>
+        {/if}
+        {else/}
+        {if condition='$friendLink.friendLinkAll || $friendLink.friendLinkNotIndex'}
+        <li> 友情链接：</li>
+        {/if}
+        {/if}
+        {foreach name='$friendLink' id='v'}
+        {if condition='$ctr == "Index"'}
+        {if condition='$v["type"] == "all" || $v["type"] == "index"'}
+        <li>
+            <a href="{$v['url']}" data-type="mip" data-title="{$v['description']?$v['description']:$v['name']}"  title="{$v['description']?$v['description']:$v['name']}" target="_blank">{$v['name']}</a>
+        </li>
+        {/if}
+        {else/}
+        {if condition='$v["type"] == "all" || $v["type"] == "notIndex"'}
+        <li>
+            <a href="{$v['url']}" data-type="mip" data-title="{$v['description']?$v['description']:$v['name']}" title="{$v['description']?$v['description']:$v['name']}" target="_blank">{$v['name']}</a>
+        </li>
+        {/if}
+        {/if}
+        {/foreach}
+    </ul>
+</div>
+{/if}
