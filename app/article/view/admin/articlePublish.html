@@ -53,14 +53,7 @@
                     </Form-Item>
                     
                     <Form-Item label="分类" prop="title" class="ivu-form-item-required">
-                        <i-Select v-model="cid" style="width:200px">
-                            <span v-for="item in categoryList">
-                                 <i-Option v-if='item.children.length==0'  :value="item.id" :key="item.id">{{ item.name }}</i-Option>
-                                <Option-Group v-else :label="item.name">
-                                    <i-Option v-for='sub in item.children' :value="sub.id" :key="sub.id">{{ sub.name }}</i-Option>
-                                </Option-Group>
-                            </span>
-                        </i-Select>
+                        <Cascader :data="categoryList" transfer v-model="cidArray"  style="width: 300px;"></Cascader>
                     </Form-Item> 
                     
                     <Form-Item label="标签" prop="title">
@@ -125,6 +118,7 @@
             link_tags: '',
             categoryList: [],
             cid: parseInt({$cid}),
+            cidArray: [],
             is_recommend: '',
             content: '',
             url_name: '',
@@ -234,11 +228,25 @@
                                 }
                             });
                         }
-                        var tempCategoryList = [];
-                        for (var i = 0; i < categoryList.length; i++) {
-                            tempCategoryList.push(categoryList[i]);
+                        if (this.cid) {
+                            var tempCidArray = [];
+                            for (var i = 0; i < categoryList.length; i++) {
+                                if (this.cid == categoryList[i].id) {
+                                    tempCidArray.push(categoryList[i].id);
+                                } else {
+                                    if (categoryList[i].children && categoryList[i].children.length) {
+                                        for (var g = 0; g < categoryList[i].children.length; g++) {
+                                            if (this.cid == categoryList[i].children[g].id) {
+                                                tempCidArray.push(categoryList[i].id);
+                                                tempCidArray.push(categoryList[i].children[g].id);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
-                        this.categoryList = tempCategoryList;
+                        this.cidArray = tempCidArray;
+                        this.categoryList = categoryList;
                                     
                         if (_this.articlePublishStatus != 'add') {
                             _this.getItemInfo();
@@ -320,7 +328,7 @@
                         link_tags:this.link_tags,
                         url_name: this.url_name,
                         content: this.content,
-                        cid: this.cid,
+                        cid: this.cidArray[this.cidArray.length - 1],
                         is_recommend: this.is_recommend ? '1' : '0',
                         tags: this.selectedTagsList.join(','),
                         publish_time: timestamp ? timestamp : '',
@@ -341,7 +349,7 @@
                         link_tags:this.link_tags,
                         url_name: this.url_name,
                         content: this.content,
-                        cid: this.cid,
+                        cid: this.cidArray[this.cidArray.length - 1],
                         is_recommend: this.is_recommend ? '1' : '0',
                         tags: this.selectedTagsList.join(','),
                         publish_time: timestamp ? timestamp : '',
