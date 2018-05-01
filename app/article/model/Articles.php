@@ -584,7 +584,7 @@ class Articles extends Controller
             return false;
         }
         if (!isset($itemInfo['content']) || !$itemInfo['content']) {
-            $itemInfo['content'] = db($this->articlesContent)->where('id',$itemInfo['content_id'])->find();
+            $itemInfo['content'] = db($this->articlesContent)->where('id',$itemInfo['content_id'])->find()['content'];
         }
         $content = model('app\common\model\Common')->getContentFilterByContent($itemInfo['content']);
         return $content;
