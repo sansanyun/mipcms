@@ -139,15 +139,14 @@ class Mip extends Init
         
         $itemList = db('GlobalAction')->select();
         if ($itemList) {
-            try {
-                foreach ($itemList as $key => $val) {
-                    $addonsName = $val['name'];
-                    $addonsNameSpace = "addons" . "\\" . $addonsName . "\\" . "controller" . "\\" . "GlobalAction";
+            foreach ($itemList as $key => $val) {
+                $addonsName = $val['name'];
+                $addonsNameSpace = "addons" . "\\" . $addonsName . "\\" . "controller" . "\\" . "GlobalAction";
+                try {
                     model($addonsNameSpace)->$addonsName();
-                }
-            } catch (\Exception $e) {}
+                } catch (\Exception $e) {}
+            }
         }
-        
         if ($this->mipInfo['codeCompression']) {
             return compress_html($this->fetch('/' .$parent));
         } else {
