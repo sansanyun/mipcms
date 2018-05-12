@@ -1,0 +1,34 @@
+{
+    "name": "andreskrey/readability.php",
+    "type": "library",
+    "description": "A PHP port of Readability.js",
+    "keywords": ["readability", "html"],
+    "homepage": "https://github.com/andreskrey/readability",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "Andres Rey",
+            "email": "andreskrey@gmail.com",
+            "role": "Lead Developer"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "andreskrey\\Readability\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=5.6.0",
+        "ext-dom": "*",
+        "ext-xml": "*",
+        "ext-mbstring": "*",
+        "psr/log": "^1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^5.7",
+        "monolog/monolog": "^1.23"
+    },
+    "suggest": {
+        "monolog/monolog": "Allow logging debug information"
+    }
+}

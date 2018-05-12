@@ -8,8 +8,11 @@ class ComposerStaticInit47dc77bd3df7b9e15abb6d463d1174ed
 {
     public static $files = array (
         '9b552a3cc426e3287cc811caefa3cf53' => __DIR__ . '/..' . '/topthink/think-helper/src/helper.php',
+        'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
+        'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
         '1cfd2761b63b0a29ed23657ea394cb2d' => __DIR__ . '/..' . '/topthink/think-captcha/src/helper.php',
         '2cd73290f8e6fac63cdf82efabea125f' => __DIR__ . '/..' . '/5ini99/think-addons/src/common.php',
+        '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         'd0a4aedde4e22005c366f98712801919' => __DIR__ . '/../..' . '/library/HTMLPurifier.composer.php',
     );
 
@@ -20,6 +23,27 @@ class ComposerStaticInit47dc77bd3df7b9e15abb6d463d1174ed
             'think\\composer\\' => 15,
             'think\\captcha\\' => 14,
             'think\\' => 6,
+        ),
+        'a' => 
+        array (
+            'andreskrey\\Readability\\' => 23,
+        ),
+        'Q' => 
+        array (
+            'QL\\Ext\\Lib\\' => 11,
+            'QL\\Ext\\' => 7,
+            'QL\\' => 3,
+        ),
+        'P' => 
+        array (
+            'Psr\\Log\\' => 8,
+            'Psr\\Http\\Message\\' => 17,
+        ),
+        'G' => 
+        array (
+            'GuzzleHttp\\Psr7\\' => 16,
+            'GuzzleHttp\\Promise\\' => 19,
+            'GuzzleHttp\\' => 11,
         ),
     );
 
@@ -41,6 +65,43 @@ class ComposerStaticInit47dc77bd3df7b9e15abb6d463d1174ed
             0 => __DIR__ . '/..' . '/5ini99/think-addons/src',
             1 => __DIR__ . '/../..' . '/thinkphp/library/think',
         ),
+        'andreskrey\\Readability\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/andreskrey/readability.php/src',
+        ),
+        'QL\\Ext\\Lib\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/jaeger/curlmulti',
+        ),
+        'QL\\Ext\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/jaeger/querylist-ext-aquery',
+            1 => __DIR__ . '/..' . '/jaeger/querylist-ext-multi',
+        ),
+        'QL\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/jaeger/querylist',
+        ),
+        'Psr\\Log\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
+        ),
+        'Psr\\Http\\Message\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/http-message/src',
+        ),
+        'GuzzleHttp\\Psr7\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/guzzlehttp/psr7/src',
+        ),
+        'GuzzleHttp\\Promise\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/guzzlehttp/promises/src',
+        ),
+        'GuzzleHttp\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
+        ),
     );
 
     public static $prefixesPsr0 = array (
@@ -53,12 +114,29 @@ class ComposerStaticInit47dc77bd3df7b9e15abb6d463d1174ed
         ),
     );
 
+    public static $classMap = array (
+        'Callback' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
+        'CallbackBody' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
+        'CallbackParam' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
+        'CallbackParameterToReference' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
+        'CallbackReturnReference' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
+        'CallbackReturnValue' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
+        'DOMDocumentWrapper' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
+        'DOMEvent' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
+        'ICallbackNamed' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
+        'phpQuery' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
+        'phpQueryEvents' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
+        'phpQueryObject' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
+        'phpQueryPlugins' => __DIR__ . '/..' . '/jaeger/phpquery-single/phpQuery.php',
+    );
+
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit47dc77bd3df7b9e15abb6d463d1174ed::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit47dc77bd3df7b9e15abb6d463d1174ed::$prefixDirsPsr4;
             $loader->prefixesPsr0 = ComposerStaticInit47dc77bd3df7b9e15abb6d463d1174ed::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit47dc77bd3df7b9e15abb6d463d1174ed::$classMap;
 
         }, null, ClassLoader::class);
     }

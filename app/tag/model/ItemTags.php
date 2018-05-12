@@ -3,8 +3,8 @@
 //Copyright (c) 2017~2099 http://MIPCMS.Com All rights reserved.
 namespace app\tag\model;
 
-use mip\Init;
-class ItemTags extends Init
+use think\Controller;
+class ItemTags extends Controller
 {
     public function tags() {
         return $this->hasOne('Tags','id','tags_id');
@@ -18,28 +18,26 @@ class ItemTags extends Init
             return false;
         }
         if (is_array($tags)) {
-            db($this->itemTags)->where('item_id',$itemId)->where('item_type',$itemType)->delete();
+            db('ItemTags')->where('item_id',$itemId)->delete();
             foreach ($tags as $name) {
                 if ($name) {
-                    $tagInfo = db($this->tags)->where('name',$name)->find();
+                    $tagInfo = db('Tags')->where('name',$name)->find();
                     if (!$tagInfo) {
-                        db($this->tags)->insert(array(
+                        db('Tags')->insert(array(
                             'id' => uuid(),
                             'name' => $name,
-                            'item_type' => $itemType,
                         ));
-                        $tagInfo = db($this->tags)->where('name',$name)->find();
+                        $tagInfo = db('Tags')->where('name',$name)->find();
                     }
-                    db($this->itemTags)->insert(array(
+                    db('ItemTags')->insert(array(
                         'id' => uuid(),
                         'tags_id'=>$tagInfo['id'],
                         'item_id' => $itemId,
-                        'item_type' => $itemType,
                         'item_add_time' => $publish_time,
                     ));
-                    $tagsCount = db($this->itemTags)->where('tags_id',$tagInfo['id'])->count();
+                    $tagsCount = db('ItemTags')->where('tags_id',$tagInfo['id'])->count();
                     if ($tagsCount) {
-                        db($this->tags)->where('id',$tagInfo['id'])->update(array(
+                        db('Tags')->where('id',$tagInfo['id'])->update(array(
                             'relevance_num' => $tagsCount,
                             'creator_uid' => $itemUid,
                             'add_time' => time(),

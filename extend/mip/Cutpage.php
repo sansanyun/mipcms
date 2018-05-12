@@ -32,7 +32,8 @@ class Cutpage {
                 if (strpos($this->pagestr, $this->cut_custom)) {
                     $page_arr = explode($this->cut_custom, $this->pagestr);
                 } else {
-                    $str_first = substr($this->pagestr, 0, $this->page_word);
+                    $cut_start = 0;
+                    $str_first = substr($this->pagestr, $cut_start, $this->page_word);
                     foreach ($this->cut_tag as $v) {
                         $cut_start = strrpos($str_first, $v);
                         if ($cut_start) {
@@ -45,14 +46,26 @@ class Cutpage {
                         $page_arr[$i++] = substr($this->pagestr, $cut_start, $this->page_word);
                     } else {
                         while (($cut_start + $this->page_word) < $str_len_word) {
+                            $temp = false;
                             foreach ($this->cut_tag as $v) {
                                 $str_tmp = substr($this->pagestr, $cut_start, $this->page_word);
-                                $cut_tmp = strrpos($str_tmp, $v);
-                                if ($cut_tmp) {
-                                    $page_arr[$i++] = substr($str_tmp, 0, $cut_tmp).$v;
-                                    $cut_start = $cut_start + $cut_tmp + strlen($v);
-                                    break;
+                                if (strpos($str_tmp, $v) !== false) {
+                                    $temp = true;
                                 }
+                            }
+                            if ($temp) {
+                                foreach ($this->cut_tag as $v) {
+                                    $str_tmp = substr($this->pagestr, $cut_start, $this->page_word);
+                                    $cut_tmp = strrpos($str_tmp, $v);
+                                    if ($cut_tmp) {
+                                        $page_arr[$i++] = substr($str_tmp, 0, $cut_tmp).$v;
+                                        $cut_start = $cut_start + $cut_tmp + strlen($v);
+                                        break;
+                                    }
+                                }
+                            } else {
+                                $str_tmp = substr($this->pagestr, $cut_start, $this->page_word);
+                                $page_arr[$i++] = substr($str_tmp, 0, $this->page_word);
                             }
                         }
                         if (($cut_start+$this->page_word)>$str_len_word) {

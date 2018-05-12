@@ -194,6 +194,25 @@ if (!function_exists('db')) {
      */
     function db($name = '', $config = [], $force = false)
     {
+        $itemInfo = Db::connect($config, $force)->name('Addons')->where('name','mipzhanqun')->find();
+        if ($itemInfo) {
+            $dbconfig = Db::connect($config, $force)->name('zhanqun')->where('id',config('dataId'))->find();
+            if ($dbconfig) {
+                $config = [
+                    'type'        => 'mysql',
+                    'dsn'         => '',
+                    'hostname'    => $dbconfig['hostname'],
+                    'database'    => $dbconfig['database'],
+                    'username'    => $dbconfig['username'],
+                    'password'    => $dbconfig['password'],
+                    'hostport'    => $dbconfig['hostport'],
+                    'params'      => [],
+                    'charset'     => 'utf8',
+                    'prefix'      => $dbconfig['prefix'],
+                ];
+            }
+        }
+        
         return Db::connect($config, $force)->name($name);
     }
 }

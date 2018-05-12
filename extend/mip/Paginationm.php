@@ -80,20 +80,20 @@ class Paginationm
             'prev_link' => '&lt;',
             'last_link' => '&gt;&gt;',
             'uri_segment' => 3,
-            'full_tag_open' => '<div class="page-control"><ul class="pagination pull-right">',
+            'full_tag_open' => '<div class="page-control"><ul class="pagination">',
             'full_tag_close' => '</ul></div>',
-            'first_tag_open' => '<li>',
+            'first_tag_open' => '<li class="page-item">',
             'first_tag_close' => '</li>',
-            'last_tag_open' => '<li>',
+            'last_tag_open' => '<li class="page-item">',
             'last_tag_close' => '</li>',
             'first_url' => '', // Alternative URL for the First Page.
-            'cur_tag_open' => '<li class="active"><span>',
+            'cur_tag_open' => '<li class="page-item active"><span class="page-link">',
             'cur_tag_close' => '</span></li>',
-            'next_tag_open' => '<li>',
+            'next_tag_open' => '<li class="page-item">',
             'next_tag_close' => '</li>',
-            'prev_tag_open' => '<li>',
+            'prev_tag_open' => '<li class="page-item">',
             'prev_tag_close' => '</li>',
-            'num_tag_open' => '<li>',
+            'num_tag_open' => '<li class="page-item">',
             'num_tag_close' => '</li>',
             'display_pages' => TRUE,
             'anchor_class' => '',
@@ -215,7 +215,7 @@ class Paginationm
         {
             $first_url = ($this->first_url == '') ? $this->base_url : $this->first_url;
 
-            $output .= $this->first_tag_open.'<a data-type="mip" '.$this->anchor_class.'href="'.$first_url.'">'.$this->first_link.'</a>'.$this->first_tag_close;
+            $output .= $this->first_tag_open.'<a class="page-link" data-type="mip" '.$this->anchor_class.'href="'.$first_url.'">'.$this->first_link.'</a>'.$this->first_tag_close;
 
         }
 
@@ -226,13 +226,13 @@ class Paginationm
 
             if ($i == 1)
             {
-                $output .= $this->prev_tag_open.'<a data-type="mip" '.$this->anchor_class.'href="'.$this->base_url.'/">'.$this->prev_link.'</a>'.$this->prev_tag_close;
+                $output .= $this->prev_tag_open.'<a class="page-link" data-type="mip" '.$this->anchor_class.'href="'.$this->base_url.'/">'.$this->prev_link.'</a>'.$this->prev_tag_close;
             }
             else
             {
                 $i = ($i == 0) ? '' : $this->prefix.$i.$this->suffix;
 
-                $output .= $this->prev_tag_open.'<a data-type="mip" '.$this->anchor_class.'href="'.$this->page_base_url.$i.'.html">'.$this->prev_link . '</a>'.$this->prev_tag_close;
+                $output .= $this->prev_tag_open.'<a class="page-link" data-type="mip" '.$this->anchor_class.'href="'.$this->page_base_url.$i.'.html">'.$this->prev_link . '</a>'.$this->prev_tag_close;
             }
 
         }
@@ -253,13 +253,13 @@ class Paginationm
                     $n = ($i == 0)? '1' :($i/ $this->per_page + 1);
                     if ($n == 1)
                     {
-                        $output .= $this->num_tag_open.'<a data-type="mip" '.$this->anchor_class.'href="'.$this->base_url.'/">'.$loop.'</a>'.$this->num_tag_close;
+                        $output .= $this->num_tag_open.'<a class="page-link" data-type="mip" '.$this->anchor_class.'href="'.$this->base_url.'/">'.$loop.'</a>'.$this->num_tag_close;
                     }
                     else
                     {
                         $n = ($n == '') ? '' : $this->prefix.$n.$this->suffix;
 
-                        $output .= $this->num_tag_open.'<a data-type="mip" '.$this->anchor_class.'href="'.$this->page_base_url.$n.'.html">'.$loop.'</a>'.$this->num_tag_close;
+                        $output .= $this->num_tag_open.'<a class="page-link" data-type="mip" '.$this->anchor_class.'href="'.$this->page_base_url.$n.'.html">'.$loop.'</a>'.$this->num_tag_close;
                     }
                 }
             }
@@ -268,14 +268,14 @@ class Paginationm
         // Render the "next" link
         if($this->next_link !== FALSE AND $this->cur_page < $num_pages)
         {
-            $output .= $this->next_tag_open.'<a data-type="mip" '.$this->anchor_class.'href="'.$this->page_base_url.$this->prefix.($this->cur_page + 1).$this->suffix.'.html">'.$this->next_link.'</a>'.$this->next_tag_close;
+            $output .= $this->next_tag_open.'<a class="page-link" data-type="mip" '.$this->anchor_class.'href="'.$this->page_base_url.$this->prefix.($this->cur_page + 1).$this->suffix.'.html">'.$this->next_link.'</a>'.$this->next_tag_close;
         }
 
         // Render the "Last" link
         if($this->last_link !== FALSE AND ($this->cur_page + $this->num_links) < $num_pages)
         {
             $i = $num_pages;
-            $output .= $this->last_tag_open.'<a data-type="mip" '.$this->anchor_class.'href="'.$this->page_base_url.$this->prefix.$i.$this->suffix.'.html">'.$this->last_link.'</a>'.$this->last_tag_close;
+            $output .= $this->last_tag_open.'<a class="page-link" data-type="mip" '.$this->anchor_class.'href="'.$this->page_base_url.$this->prefix.$i.$this->suffix.'.html">'.$this->last_link.'</a>'.$this->last_tag_close;
         }
 
         // Kill double slashes. Note: Sometimes we can end up with a double slash

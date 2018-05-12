@@ -9,6 +9,7 @@ class ArticleDetail extends Mip
     public function index()
     {
         $id = input('param.id');
+        $page = input('param.page');
         $whereId = $this->mipInfo['idStatus'] ? 'uuid' : 'id';
         $itemInfo = db($this->articles)->where($whereId,$id)->find();
         if (!$itemInfo) {
@@ -31,6 +32,8 @@ class ArticleDetail extends Mip
         
         //详情页面ID
         $this->assign('itemDetailId',$itemInfo['uuid']);
+        
+        $this->assign('page',$page ? $page : 1);
         
         //标签列表
         $itemTagsList = model('app\common\model\Tags')->getTagsListByItemType('article',$itemInfo['uuid']);
@@ -69,7 +72,10 @@ class ArticleDetail extends Mip
         
         $this->assign('itemInfo',$itemInfo);
         
-        return $this->mipView('article/articleDetail');
+        $templateName = $itemInfo['categoryInfo']['detail_template'] ? $itemInfo['categoryInfo']['detail_template'] : 'articleDetail';
+        $templateName = str_replace('.html', '', $templateName);
+        
+        return $this->mipView('article/'.$templateName);
     }
 
 

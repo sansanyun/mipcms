@@ -30,6 +30,11 @@ class Mip extends Init
     {
         parent::_initialize();
         
+        //js跳转地址
+        $this->assign('return_url','');
+        //js通用模块内容页ID赋值（uuid）
+        $this->assign('itemDetailId','');
+        
         $this->siteInfoInit();
         $this->headerInfo();
     }
@@ -132,9 +137,13 @@ class Mip extends Init
         $this->assign('tplName',$tplName);
         $this->assign('templateStatic', config('domainStatic') . '/template/' . $tplName . '/templateStatic');   
         $this->assign('themeStatic', config('domainStatic') . '/' . config('assets') . '/' . $tplName);
-        $this->assign('siteUrl',config('domain') . $this->request->url());
-        $this->assign('currentUrl',config('domain') . $this->request->url());
-        
+        if ($this->mipInfo['articleDomain']) {
+            $this->assign('siteUrl',$this->mipInfo['httpType'] . $this->mipInfo['domain'] . $this->request->url());
+            $this->assign('currentUrl',$this->mipInfo['httpType'] . $this->mipInfo['domain'] . $this->request->url());
+        } else {
+            $this->assign('siteUrl',config('domain') . $this->request->url());
+            $this->assign('currentUrl',config('domain') . $this->request->url());
+        }
         $this->assign('config',config());
         
         $itemList = db('GlobalAction')->select();
@@ -148,9 +157,9 @@ class Mip extends Init
             }
         }
         if ($this->mipInfo['codeCompression']) {
-            return compress_html($this->fetch('/' .$parent));
+            return mipfilter(compress_html($this->fetch('/' .$parent)));
         } else {
-           return $this->fetch('/' .$parent);
+           return mipfilter($this->fetch('/' .$parent));
         }
     }
 

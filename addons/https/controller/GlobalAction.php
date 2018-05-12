@@ -3,8 +3,8 @@
 //Copyright (c) 2017~2099 http://MIPCMS.Com All rights reserved.
 namespace addons\https\controller;
 use think\Request;
-use mip\Init;
-class GlobalAction extends Init
+use think\Controller;
+class GlobalAction extends Controller
 {
     public function https()
     {

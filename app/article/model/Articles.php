@@ -508,7 +508,7 @@ class Articles extends Controller
                 }
             }
             $item['imgList'] = $imgs[1];
-            $item['firstImg'] = $imgs[1][0];
+            $item['firstImg'] = $item['img_url'] ? $item['img_url'] : $imgs[1][0];
         } else {
             $item['firstImg'] = null;
             $item['imgCount'] = 0;
@@ -564,7 +564,7 @@ class Articles extends Controller
         }
         Cache::set('updateViewsArticle' . md5(session_id()) . intval($id), time(), 60);
         db($this->articles)->where('id',$id)->update([
-            'views' => ['exp','views+1'],
+            'views' => db($this->item)->where('id',$id)->find()['views'] + 1,
         ]);
         return true;
     }

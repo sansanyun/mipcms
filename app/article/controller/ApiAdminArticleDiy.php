@@ -77,11 +77,32 @@ class ApiAdminArticleDiy extends AdminBase
         }
         
         try {
-           Db::query($sql);
+           if (config('dataId')) {
+                $itemInfo = Db::connect($config, false)->name('Addons')->where('name','mipzhanqun')->find();
+                if ($itemInfo) {
+                    $dbconfig = Db::connect($config, false)->name('zhanqun')->where('id',config('dataId'))->find();
+                    if ($dbconfig) {
+                        $config = [
+                            'type'        => 'mysql',
+                            'dsn'         => '',
+                            'hostname'    => $dbconfig['hostname'],
+                            'database'    => $dbconfig['database'],
+                            'username'    => $dbconfig['username'],
+                            'password'    => $dbconfig['password'],
+                            'hostport'    => $dbconfig['hostport'],
+                            'params'      => [],
+                            'charset'     => 'utf8',
+                            'prefix'      => $dbconfig['prefix'],
+                        ];
+                        $res = Db::connect($config, false)->query($sql);
+                    }
+                }
+           } else {
+            Db::query($sql);
+           }
         } catch(\Exception $e) {
            return jsonError('添加失败');
         }
-        
         db($this->currentTable . 'Table')->insert(array(
             'id' => uuid(),
             'name' => $fieldTitle,
@@ -136,7 +157,29 @@ class ApiAdminArticleDiy extends AdminBase
             }
         }
         try {
-           Db::query($sql);
+          if (config('dataId')) {
+                $itemInfo = Db::connect($config, false)->name('Addons')->where('name','mipzhanqun')->find();
+                if ($itemInfo) {
+                    $dbconfig = Db::connect($config, false)->name('zhanqun')->where('id',config('dataId'))->find();
+                    if ($dbconfig) {
+                        $config = [
+                            'type'        => 'mysql',
+                            'dsn'         => '',
+                            'hostname'    => $dbconfig['hostname'],
+                            'database'    => $dbconfig['database'],
+                            'username'    => $dbconfig['username'],
+                            'password'    => $dbconfig['password'],
+                            'hostport'    => $dbconfig['hostport'],
+                            'params'      => [],
+                            'charset'     => 'utf8',
+                            'prefix'      => $dbconfig['prefix'],
+                        ];
+                        $res = Db::connect($config, false)->query($sql);
+                    }
+                }
+           } else {
+            Db::query($sql);
+           }
         } catch (\Exception $e) {
            return jsonError('操作失败');
         }

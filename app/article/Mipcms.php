@@ -87,12 +87,25 @@ class Mipcms extends TagLib {
         $type = isset($tag['type']) ? $tag['type'] : '';
         $html  = '<?php ';
         $html .= '$mipcms_table = "'.$table.'";';
-        $html .= '$mipcms_pid = "'.$pid.'";';
+        
+        if (substr($pid, 0, 1) == '$') {
+            $html .= '$mipcms_pid = '.$pid.';';
+        } else {
+            $html .= '$mipcms_pid = "'.$pid.'";';
+        }
         $html .= '$mipcms_where = "'.$where.'";';
         $html .= '$mipcms_order = "'.$order.'";';
         $html .= '$mipcms_orderBy = "'.$orderBy.'";';
-        $html .= '$mipcms_limit = "'.$limit.'";';
-        $html .= '$mipcms_ids = "'.$ids.'";';
+        if (substr($limit, 0, 1) == '$') {
+            $html .= '$mipcms_limit = '.$limit.';';
+        } else {
+            $html .= '$mipcms_limit = "'.$limit.'";';
+        }
+        if (substr($ids, 0, 1) == '$') {
+            $html .= '$mipcms_ids = '.$ids.';';
+        } else {
+            $html .= '$mipcms_ids = "'.$ids.'";';
+        }
         $html .= '$mipcms_type = "'.$type.'";';
         
         $html .= '$mipcms_categoey_list = model("app\article\model\Articles")->getCategory($mipcms_pid,$mipcms_orderBy,$mipcms_order,$mipcms_limit,$mipcms_where,$mipcms_ids,$mipcms_type);';

@@ -19,7 +19,11 @@
         "php": ">=5.4.0",
         "topthink/framework": "5.0.19",
         "topthink/think-captcha": "^1.0",
-        "5ini99/think-addons": "dev-master"
+        "5ini99/think-addons": "dev-master",
+        "jaeger/querylist": "V3.2.1",
+        "jaeger/querylist-ext-multi": "^1.0",
+        "andreskrey/readability.php": "^1.1",
+        "guzzlehttp/guzzle": "^6.3"
     },
     "extra": {
         "think-path": "thinkphp"

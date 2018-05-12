@@ -28,9 +28,9 @@ class Miptag extends TagLib {
         $html .= '$mipcms_order = "'.$order.'";';
         $html .= '$mipcms_orderBy = "'.$orderBy.'";';
         $html .= '$mipcms_limit = "'.$limit.'";';
-        $html .= '$mipcms_db_list = model("app\common\model\Tags")->getCategory($mipcms_pid,$mipcms_orderBy,$mipcms_order,$mipcms_limit,$mipcms_where);';
+        $html .= '$mipcms_tagscategory_list = model("app\common\model\Tags")->getCategory($mipcms_pid,$mipcms_orderBy,$mipcms_order,$mipcms_limit,$mipcms_where);';
         $html .= ' ?>';
-        $html .= '{volist name="mipcms_db_list" id="' . $value . '" key="' . $key . '"}';
+        $html .= '{volist name="mipcms_tagscategory_list" id="' . $value . '" key="' . $key . '"}';
         $html .= $content;
         $html .= '{/volist}';
         return $html;
@@ -54,7 +54,11 @@ class Miptag extends TagLib {
         $notIds =  !empty($tag['notIds']) ? $tag['notIds'] : '';
         $html  = '<?php ';
         $html .= '$mipcms_table = "'.$table.'";';
-        $html .= '$mipcms_cid = "'.$cid.'";';
+        if (substr($cid, 0, 1) == '$') {
+            $html .= '$mipcms_cid = '.$cid.';';
+        } else {
+            $html .= '$mipcms_cid = "'.$cid.'";';
+        }
         $html .= '$mipcms_where = "'.$where.'";';
         $html .= '$mipcms_order = "'.$order.'";';
         $html .= '$mipcms_orderBy = "'.$orderBy.'";';
@@ -74,14 +78,14 @@ class Miptag extends TagLib {
         $html .= '$mipcms_notIds = "'.$notIds.'";';
         
         $tempEmpty = '';
-        $html .= '$mipcms_db_info = model("app\\common\\model\\Tags")->getItemList($mipcms_cid,$mipcms_page,$mipcms_limit,$mipcms_orderBy,$mipcms_order,$mipcms_where,$mipcms_keywords,$mipcms_itemIds);';
+        $html .= '$mipcms_tag_info = model("app\\common\\model\\Tags")->getItemList($mipcms_cid,$mipcms_page,$mipcms_limit,$mipcms_orderBy,$mipcms_order,$mipcms_where,$mipcms_keywords,$mipcms_itemIds);';
         if ($page) {
-            $html .= '$pagination = model("app\\common\\model\\Tags")->getPaginationm($mipcms_cid,$mipcms_limit,$mipcms_category,$mipcms_sub,$mipcms_where,$mipcms_keywords,$mipcms_itemIds);';
+            $html .= '$tagpagination = model("app\\common\\model\\Tags")->getPaginationm($mipcms_cid,$mipcms_limit,$mipcms_category,$mipcms_sub,$mipcms_where,$mipcms_keywords,$mipcms_itemIds);';
         } else {
-            $html .= '$pagination = "";';
+            $html .= '$tagpagination = "";';
         }
         $html .= ' ?>';
-        $html .= '{volist name="mipcms_db_info" id="' . $value . '" key="' . $key . '"}';
+        $html .= '{volist name="mipcms_tag_info" id="' . $value . '" key="' . $key . '"}';
         $html .= $content;
         $html .= '{/volist}';
         return $html;

@@ -184,17 +184,13 @@ class ApiAdminTag extends AdminBase
     public function itemTagsSelectByItem()
     {
 
-        $itemType = input('post.itemType');
         $itemId = input('post.itemId');
 
-        if (!$itemType) {
-            return jsonError('缺少类型');
-        }
         if (!$itemId) {
             return jsonError('缺少类型Id');
         }
 
-        $tagsList = db($this->itemTags)->where('item_type',$itemType)->where('item_id',$itemId)->select();
+        $tagsList = db($this->itemTags)->where('item_id',$itemId)->select();
 
         if ($tagsList) {
             foreach ($tagsList as $k => $v){
