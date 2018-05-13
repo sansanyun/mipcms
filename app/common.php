@@ -138,15 +138,15 @@ use mip\Mip;
     function getAvatarUrl($uid) {
         if (MIP_HOST) {
             if (file_exists(ROOT_PATH . 'uploads'. DS .'avatar' . DS . $uid . '.jpg')) {
-                return 'uploads/avatar/' . $uid .'.jpg';
+                return '/uploads/avatar/' . $uid .'.jpg';
             } else {
-                return 'public/assets/common/images/avatar.jpg';
+                return '/public/assets/common/images/avatar.jpg';
             }
         } else {
             if (file_exists(ROOT_PATH .'public'. DS . 'uploads'. DS .'avatar' . DS . $uid . '.jpg')) {
-                return 'public/uploads/avatar/' . $uid .'.jpg';
+                return '/uploads/avatar/' . $uid .'.jpg';
             } else {
-                return 'public/assets/common/images/avatar.jpg';
+                return '/assets/common/images/avatar.jpg';
             }
         }
             
@@ -356,4 +356,221 @@ use mip\Mip;
         }
         return $itemInfo['content'];
         
+    }
+
+    
+    
+    
+    
+    function mipfilter($content) {
+    if (strpos($content, '{MIPCMSCSS}') !== false) {
+       
+//      $cssContent = [];
+//      $cssData = array(
+//          'fontSize' => 'font-size',
+//          'margin' => 'margin',
+//          'mLeft' => 'margin-left',
+//          'mRight' => 'margin-right',
+//          'mTop' => 'margin-top',
+//          'mBottom' => 'margin-bottom',
+//          'padding' => 'padding',
+//          'pLeft' => 'padding-left',
+//          'pRight' => 'padding-right',
+//          'pTop' => 'padding-top',
+//          'pBottom' => 'padding-bottom',
+//          'color' => 'color',
+//          'bgColor' => 'background',
+//          'width' => 'width',
+//          'maxWidth' => 'max-width',
+//          'minWidth' => 'min-width',
+//          'height' => 'height',
+//          'position' => 'position',
+//          'top' => 'top',
+//          'left' => 'left',
+//          'right' => 'right',
+//          'bottom' => 'bottom',
+//          'border' => 'border',
+//          'bRadius' => 'border-radius',
+//          'display' => 'display',
+//          'float' => 'float',
+//          'overflow' => 'overflow',
+//          'whiteSpace' => 'white-space'
+//      );
+//      preg_match_all("/class=.+?['|\"]/i", $content, $contentClassArray);
+//      if ($contentClassArray) {
+//          foreach ($contentClassArray[0] as $key => $value) {
+//              preg_match_all('/{(.*?)}/', $value, $contentArray);
+//              foreach ($contentArray[1] as $k => $v) {
+//                  foreach ($cssData as $subK => $subV) {
+//                      $className = $contentArray[1][$k];
+//                      if (strpos($className, $subK) !== false) {
+//                          $resCalssName = str_replace('%', '', $className);
+//                          $resCalssName = str_replace('#', '', $resCalssName);
+//                          if (!isset($cssContent['.'.$resCalssName])) {
+//                              $cssContent['.'.$resCalssName] = $subV . ':'.str_replace($subK, '', $className).'!important;';
+//                          }
+//                          $content = str_replace($contentArray[0][$k], $resCalssName, $content);
+//                      }
+//                  }
+//              }
+//          }
+//      }
+        $tempCssContent = '';
+        if ($cssContent) {
+            foreach ($cssContent as $key => $value) {
+                $tempCssContent .= $key . '{' . $value . '}';
+            }
+        }
+        preg_match_all("/<[a-z]{1,}\s+.*?>/", $content, $contentHtmlArray);
+        if ($contentHtmlArray) {
+            foreach ($contentHtmlArray[0] as $key => $value) {
+            	   if (strpos($value, 'style=') !== false) {
+            	        preg_match_all("/style=[\'|\"](.*?)[\'|\"]/i", $value, $contentcssArray);
+                    if ($contentcssArray) {
+                        $cssName = 'mipmb-css-' . $key;
+                        if (strpos($value, 'class=') !== false) {
+                            preg_match_all("/class=[\'|\"](.*?)[\'|\"]/i", $value, $subClassArray);
+                            if ($subClassArray && $subClassArray[1]) {
+                                $tempClassName = $subClassArray[1];
+                                $className = 'class="' . $tempClassName[0] . ($tempClassName[0] ? ' ' :'') . $cssName . '"';
+                                $contentHtmlArray[0][$key] = str_replace($subClassArray[0][0], $className, $contentHtmlArray[0][$key]);
+                                $cssBlock = '.' . $cssName . '{' . $contentcssArray[1][0] . '}';
+                                $tempCssContent .= $cssBlock;
+                                $contentHtmlArray[0][$key] = str_replace($contentcssArray[0][0], '', $contentHtmlArray[0][$key]);
+                            }
+                        } else {
+                            $className = 'class="' . $cssName . '"';
+                            $cssBlock = '.' . $cssName . '{' . $contentcssArray[1][0] . '}';
+                            $tempCssContent .= $cssBlock;
+                            $contentHtmlArray[0][$key] = str_replace($contentcssArray[0][0], $className, $contentHtmlArray[0][$key]);
+                        }
+                        $content = str_replace($value, $contentHtmlArray[0][$key], $content);
+                    }
+            	        
+                   
+                }
+            }
+        }
+        
+        preg_match_all("/<style type=\"text\/css\">(.*?)<\/style>/is", $content, $contentStyleTextArray);
+        if ($contentStyleTextArray) {
+            foreach ($contentStyleTextArray[1] as $key => $value) {
+                $tempCssContent .= $value;
+                $content = str_replace($contentStyleTextArray[0][0], '', $content);
+            }
+        }
+        preg_match_all("/<style>(.*?)<\/style>/is", $content, $contentStyleArray);
+        if ($contentStyleArray) {
+            foreach ($contentStyleArray[1] as $key => $value) {
+                $tempCssContent .= $value;
+                $content = str_replace($contentStyleArray[0][0], '', $content);
+            }
+        }
+        
+        $content = str_replace('{MIPCMSCSS}', $tempCssContent, $content);
+        }
+        return $content;
+    }
+
+    function getPage($page = 1,$totalNum = 1,$url = '',$endUrl = '.html',$long = 8)
+    {
+        $oldUrl = $url;
+        $url = str_replace('.html','',$url);
+        $startUrl = $url . '_';
+        $endUrl = $endUrl;
+        $long = $long ? $long : 8;
+        
+        if ($totalNum == 1) {
+            $upPage = '<li class="page-item disabled"><span class="page-link">上一页</span></li>';
+            $html .= '<li class="page-item disabled"><span class="page-link">1</span></li>';
+            $downPage = '<li class="page-item disabled"><span class="page-link">下一页</span></li>';
+        } else {
+            if ($page == 2) {
+                $upPage = '<li class="page-item"><a class="page-link" href="'. $oldUrl . '">上一页</a></li>';
+            } else {
+                if ($page == 1) {
+                    $upPage = '<li class="page-item disabled"><span class="page-link">上一页</span></li>';
+                } else {
+                    $upPage = '<li class="page-item"><a class="page-link" href="'.$startUrl. ($page - 1) . $endUrl . '">上一页</a></li>';
+                }
+            }
+            for ($i = 1; $i <= intval($totalNum); $i++) {
+                    if ($long == 1) {
+                        if ($page == $i) {
+                            if ($i == 1) {
+                                if ($page == $i) {
+                                     $html .= '<li class="page-item active"><a class="page-link" href="'. $oldUrl . '">'.$i.'</a></li>';
+                                } else {
+                                   $html .= '<li class="page-item"><a class="page-link" href="'. $oldUrl . '">'.$i.'</a></li>';
+                                }
+                            } else {
+                                $html .= '<li class="page-item active"><a class="page-link" href="'.$startUrl. $i . $endUrl . '">'.$i.'</a></li>';
+                            }
+                        }
+                    } else {
+                        if ($totalNum > 10) {
+                            if ($page <= ceil($long / 2) && $i <= $long) {
+                                if ($i == 1) {
+                                    if ($page == $i) {
+                                        $html .= '<li class="page-item active"><a class="page-link" href="'. $oldUrl . '">'.$i.'</a></li>';
+                                    } else {
+                                        $html .= '<li class="page-item"><a class="page-link" href="'. $oldUrl . '">'.$i.'</a></li>';
+                                    }
+                                } else {
+                                    if ($page == $i) {
+                                        $html .= '<li class="page-item active"><a class="page-link" href="'.$startUrl. $i . $endUrl . '">'.$i.'</a></li>';
+                                    } else {
+                                        $html .= '<li class="page-item"><a class="page-link" href="'.$startUrl. $i . $endUrl . '">'.$i.'</a></li>';
+                                    }
+                                }
+                            } else {
+                                if ($page + ceil($long / 2) > $totalNum && $i > $totalNum - $long) {
+                                    if ($page == $i) {
+                                        $html .= '<li class="page-item active"><a class="page-link" href="'.$startUrl. $i . $endUrl . '">'.$i.'</a></li>';
+                                    } else {
+                                        $html .= '<li class="page-item"><a class="page-link" href="'.$startUrl. $i . $endUrl . '">'.$i.'</a></li>';
+                                    }
+                                } else {
+                                    if ($page - ceil($long / 2) <= $i  && $i <= $page + ceil($long / 2)) {
+                                        if ($i == 1) {
+                                            if ($page == $i) {
+                                                $html .= '<li class="page-item active"><a class="page-link" href="'. $oldUrl . '">'.$i.'</a></li>';
+                                            } else {
+                                                $html .= '<li class="page-item"><a class="page-link" href="'. $oldUrl . '">'.$i.'</a></li>';
+                                            }
+                                        } else {
+                                            if ($page == $i) {
+                                                $html .= '<li class="page-item active"><a class="page-link" href="'.$startUrl. $i . $endUrl . '">'.$i.'</a></li>';
+                                            } else {
+                                                $html .= '<li class="page-item"><a class="page-link" href="'.$startUrl. $i . $endUrl . '">'.$i.'</a></li>';
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            if ($i == 1) {
+                                if ($page == $i) {
+                                     $html .= '<li class="page-item active"><a class="page-link" href="'. $oldUrl . '">'.$i.'</a></li>';
+                                } else {
+                                   $html .= '<li class="page-item"><a class="page-link" href="'. $oldUrl . '">'.$i.'</a></li>';
+                                }
+                            } else {
+                                if ($page == $i) {
+                                    $html .= '<li class="page-item active"><a class="page-link" href="'.$startUrl. $i . $endUrl . '">'.$i.'</a></li>';
+                                } else {
+                                    $html .= '<li class="page-item"><a class="page-link" href="'.$startUrl. $i . $endUrl . '">'.$i.'</a></li>';
+                                }
+                            }
+                        }
+                    }
+            }
+            if ($page == $totalNum) {
+                $downPage = '<li class="page-item disabled"><span class="page-link">下一页</span></li>';
+            } else {
+                $downPage = '<li class="page-item"><a class="page-link" href="'.$startUrl. ($page + 1) . $endUrl . '">下一页</a></li>';
+            }
+        }
+        $html = '<ul class="pagination"><li class="page-item disabled"><span class="page-link">共'.$totalNum.'页</span></li> ' . $upPage . $html . $downPage . '</ul>';
+        return $html;
     }
