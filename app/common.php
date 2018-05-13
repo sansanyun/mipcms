@@ -72,13 +72,13 @@ use mip\Mip;
         $files_list = array();
     
         while (($file = readdir($dir_handle)) !== false) {
-            if (substr($file, 0, 1) != '.' AND !is_dir($base_dir . '/' . $file)) {
+            if (substr($file, 0, 1) != '.' AND !is_dir($base_dir . DS . $file)) {
                 if (($file_type AND end(explode('.', $file)) == $file_type) OR !$file_type) {
-                    $files_list[] = $base_dir . '/' . $file;
+                    $files_list[] = $base_dir . DS . $file;
                 }
             }
-            else if (substr($file, 0, 1) != '.' AND is_dir($base_dir . '/' . $file)) {
-                if ($sub_dir_lists = fetch_file_lists($base_dir . '/' . $file, $file_type)) {
+            else if (substr($file, 0, 1) != '.' AND is_dir($base_dir . DS . $file)) {
+                if ($sub_dir_lists = fetch_file_lists($base_dir . DS . $file, $file_type)) {
                     $files_list = array_merge($files_list, $sub_dir_lists);
                 }
             }
