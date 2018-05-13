@@ -269,7 +269,7 @@ class ApiAdminArticle extends AdminBase
             if ($tags) {
                 model('app\tag\model\ItemTags')->innerTags($tags, $itemType, $itemInfo);
             } else {
-                db($this->itemTags)->where('item_id',$uuid)->where('item_type',$itemType)->delete();
+                db($this->itemTags)->where('item_id',$uuid)->delete();
             }
         }
         return jsonSuccess('修改成功');

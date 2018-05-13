@@ -19,14 +19,10 @@ class ApiAdminTag extends AdminBase
     }
     public function tagAdd()
     {
-      	$item_type = input('post.item_type');
         $cid = input('post.cid') ? input('post.cid') : 0;
         $name = input('post.name');
         $url_name = input('post.url_name');
         $description = input('post.description');
-      	if(!$item_type){
-      	  return jsonError('类型错误');
-      	}
       	if(!$name){
       	  return jsonError('请输入标签名');
       	}
@@ -42,7 +38,6 @@ class ApiAdminTag extends AdminBase
             'id' => uuid(),
            'name' => $name,
            'cid' => $cid,
-           'item_type' => $item_type,
            'url_name' => $url_name,
             'description' => $description,
             'add_time' => time(),
@@ -53,15 +48,11 @@ class ApiAdminTag extends AdminBase
     }
     public function TagsAdd()
     {
-      	$item_type = input('post.item_type');
         $tags = input('post.tags');
       	if (!$tags) {
       	  return jsonError('缺少参数');
       	}
         $tags = explode(',',$tags);
-      	if (!$item_type) {
-      	  return jsonError('类型错误');
-      	}
       	if (is_array($tags)) {
             foreach ($tags as $name) {
                 if ($name) {
@@ -69,7 +60,6 @@ class ApiAdminTag extends AdminBase
                         $tagInfo =  db($this->tags)->insert(array(
                             'id' => uuid(),
                             'name'=>$name,
-                            'item_type' => $item_type,
                             'add_time' => time(),
                         ));
                     }
@@ -147,7 +137,6 @@ class ApiAdminTag extends AdminBase
 		$name = input('post.name');
         $cid = input('post.cid');
         $url_name = input('post.url_name');
-		$item_type = input('post.item_type');
         $description = input('post.description');
         
 		if(!$id){
@@ -172,7 +161,6 @@ class ApiAdminTag extends AdminBase
         if(db($this->tags)->where('id',$id)->update([
            'name' => $name,
            'url_name' => $url_name,
-           'item_type' => $item_type,
            'description' => $description,
            'cid' => $cid,
            ])){

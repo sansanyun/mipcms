@@ -150,7 +150,7 @@ class Articles extends Controller
         }
         
         if (!empty($keywords) || !empty($uuids) || !empty($ids) || !empty($notUuids)) {
-            $itemTagsList = db($this->itemTags)->where($tagIdsWhere)->order('item_add_time',$order)->where('item_type','article')->select();
+            $itemTagsList = db($this->itemTags)->where($tagIdsWhere)->order('item_add_time',$order)->select();
             if ($itemTagsList) {
                 foreach ($itemTagsList as $k => $v) {
                     $itemTagsListIds[] = $v['item_id'];
@@ -159,7 +159,7 @@ class Articles extends Controller
                 return $this->getItemList($cid, $page, $perPage, $orderBy, $order, $where, $keywords, $itemTagsListIds, $notUuids, $ids);
             }
         } else {
-            $itemTagsList = db($this->itemTags)->where($tagIdsWhere)->order('item_add_time',$order)->where('item_type','article')->page($page,$perPage)->select();
+            $itemTagsList = db($this->itemTags)->where($tagIdsWhere)->order('item_add_time',$order)->page($page,$perPage)->select();
             if ($itemTagsList) {
                 foreach ($itemTagsList as $k => $v) {
                     $itemTagsListIds[] = $v['item_id'];
@@ -356,7 +356,7 @@ class Articles extends Controller
                 $tagIds = explode(',',$tagIds);
                 $tagIdsWhere['tags_id']  = ['in',$tagIds];
             }
-            $count = db($this->itemTags)->where($tagIdsWhere)->where('item_type','article')->count();
+            $count = db($this->itemTags)->where($tagIdsWhere)->count();
         }
         return $count;
     }
