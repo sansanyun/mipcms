@@ -33,7 +33,7 @@ class BchInstall extends Controller
                 return json_encode(array('status' => 'fail','result' => '错误代码:'.$e->getMessage()));
             }
             $tablepre = $dbconfig['prefix'];
-            $sql = file_get_contents(PUBLIC_PATH.'package'.DS.'mipcms_v_3_5_0.sql');
+            $sql = file_get_contents(PUBLIC_PATH.'package'.DS.'mipcms_v_3_6_0.sql');
             $sql = str_replace("\r", "\n", $sql);
             $sql = explode(";\n", $sql);
             $default_tablepre = "mip_";

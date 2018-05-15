@@ -35,6 +35,8 @@ class ArticleDetail extends Mip
         
         $this->assign('page',$page ? $page : 1);
         
+        $this->assign('cid',$itemInfo['categoryInfo']['id']);
+        
         //标签列表
         $itemTagsList = model('app\common\model\Tags')->getTagsListByItemType('article',$itemInfo['uuid']);
         $this->assign('tags',$itemTagsList);

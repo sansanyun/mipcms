@@ -97,6 +97,7 @@ class Init extends Controller
         $this->assign('assets',config('assets'));
         $this->assign('commonStatic',config('commonStatic'));
         $this->assign('domain',config('domain'));
+        $this->assign('domainStatic',config('domainStatic'));
         
         
         $itemList = db('GlobalAction')->select();
