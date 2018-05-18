@@ -27,7 +27,7 @@ class Page extends Mip
         }
         
         $itemInfo['mipContent'] = model('app\common\model\Common')->getContentFilterByContent($itemInfo['content']);
-        
+        $itemInfo['content'] = htmlspecialchars_decode($itemInfo['content']);
         //面包屑导航
         $this->assign('crumbCategoryName',$categoryInfo['name']);
         $this->assign('crumbCategoryUrl',$this->domain . '/' . $categoryInfo['url_name'] . '/');
@@ -46,7 +46,7 @@ class Page extends Mip
         
         $this->assign('itemInfo',$itemInfo);
         
-        return $this->mipView('article/articleDetail');
+        return $this->mipView('page/page');
     }
  
     
