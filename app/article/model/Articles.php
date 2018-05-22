@@ -564,7 +564,7 @@ class Articles extends Controller
         }
         Cache::set('updateViewsArticle' . md5(session_id()) . intval($id), time(), 60);
         db($this->articles)->where('id',$id)->update([
-            'views' => ['exp','views+1'],
+            'views' => db($this->item)->where('id',$id)->find()['views'] + 1,
         ]);
         return true;
     }
