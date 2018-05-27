@@ -75,7 +75,11 @@ class Init extends Controller
         $this->mipInfo = config('mipInfo');
         $this->domain = config('domain');
         $this->domainStatic = config('domainStatic');
-        $this->siteUrl = config('domain') . $this->request->url();
+        if ($this->mipInfo['articleDomain']) {
+            $this->siteUrl = $this->mipInfo['httpType'] . $this->mipInfo['domain'] . $this->request->url();
+        } else {
+            $this->siteUrl = config('domain') . $this->request->url();
+        }
         $this->currentUrl = config('domain') . $this->request->url();
         $this->dataId = config('dataId');
         
