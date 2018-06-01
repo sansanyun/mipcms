@@ -49,49 +49,65 @@ class AdminBase extends Init {
             }
             
             if (isset($header['dataid']) && $header['dataid']) {
-                config('dataId',$header['dataid']);
                 $request = Request::instance();
-                $settings = db('Settings')->select();
-                foreach ($settings as $k => $v) {
-                    $mipInfo[$v['key']] = $v['val'];
-                }
-                if ($mipInfo['superSites']) {
-                    $domainSitesList = db('domainSites')->select();
-                    $domainSettingsInfo = null;
-                    if ($domainSitesList) {
-                        $siteInfo = db('domainSites')->where('domain',$request->server()['HTTP_HOST'])->find();
-                        if ($siteInfo) {
-                            $domain = $siteInfo['http_type'] . $siteInfo['domain'] . $rewrite;
-                            $domainStatic = $siteInfo['http_type'] . $siteInfo['domain'];
-                            $tplName = $siteInfo['template'];
-                            config('dataId',$siteInfo['id']);
-                            $domainSettingsInfo = db('domainSettings')->where('id',$siteInfo['id'])->find();
-                            config('domainSettingsInfo',$domainSettingsInfo);
-                        } else {
-                            $domain = $request->domain() . $rewrite;
-                            $domainStatic = str_replace('/index.php?s=', '', $domain);
-                        }
+                $siteInfo = db('zhanqun')->where('id',$header['dataid'])->find();
+                if ($siteInfo && $siteInfo['type'] == 'client') {
+                    if (strpos($this->request->url(),'ApiAdminMipzhanqun') === false) {
+                        $url = $siteInfo['web_url'] . '/index.php?s=' . $this->request->url();
+                        $postData = $request->param();
+                        $header = array (
+                            "Content-Type:application/x-www-form-urlencoded",
+                            "Connection: keep-alive",
+                            'secret-key:'.$siteInfo['link_key'],
+                        );
+                        $html = linkClient($url,$postData,$header);
+                        echo $html;
+                        exit();
                     }
                 } else {
-                    $domain = $request->domain() . $rewrite;
-                    $domainStatic = str_replace('/index.php?s=', '', $domain);
-                    if ($mipInfo['domain']) {
-                        $domain = $mipInfo['httpType'] . $mipInfo['domain'] . $rewrite;
-                        $domainStatic = $mipInfo['httpType'] . $mipInfo['domain'];
+                    config('dataId',$header['dataid']);
+                    $settings = db('Settings')->select();
+                    foreach ($settings as $k => $v) {
+                        $mipInfo[$v['key']] = $v['val'];
                     }
-                    if ($mipInfo['articleDomain']) {
-                        $domain =  $mipInfo['articleDomain'];
-                        if (strpos($domain{(strlen(trim($domain))-1)},'/') !== false) {
-                           $domain = substr($domain,0,strlen($domain)-1); 
+                    if ($mipInfo['superSites']) {
+                        $domainSitesList = db('domainSites')->select();
+                        $domainSettingsInfo = null;
+                        if ($domainSitesList) {
+                            $siteInfo = db('domainSites')->where('domain',$request->server()['HTTP_HOST'])->find();
+                            if ($siteInfo) {
+                                $domain = $siteInfo['http_type'] . $siteInfo['domain'] . $rewrite;
+                                $domainStatic = $siteInfo['http_type'] . $siteInfo['domain'];
+                                $tplName = $siteInfo['template'];
+                                config('dataId',$siteInfo['id']);
+                                $domainSettingsInfo = db('domainSettings')->where('id',$siteInfo['id'])->find();
+                                config('domainSettingsInfo',$domainSettingsInfo);
+                            } else {
+                                $domain = $request->domain() . $rewrite;
+                                $domainStatic = str_replace('/index.php?s=', '', $domain);
+                            }
                         }
-                        $domainStatic = $domain;
-                        $domain = $domain . $rewrite;
+                    } else {
+                        $domain = $request->domain() . $rewrite;
+                        $domainStatic = str_replace('/index.php?s=', '', $domain);
+                        if ($mipInfo['domain']) {
+                            $domain = $mipInfo['httpType'] . $mipInfo['domain'] . $rewrite;
+                            $domainStatic = $mipInfo['httpType'] . $mipInfo['domain'];
+                        }
+                        if ($mipInfo['articleDomain']) {
+                            $domain =  $mipInfo['articleDomain'];
+                            if (strpos($domain{(strlen(trim($domain))-1)},'/') !== false) {
+                               $domain = substr($domain,0,strlen($domain)-1); 
+                            }
+                            $domainStatic = $domain;
+                            $domain = $domain . $rewrite;
+                        }
                     }
+                    config('domain',$domain);
+                    $this->domain = $domain;
+                    config('domainStatic',$domainStatic);
+                    config('mipInfo',$mipInfo);
                 }
-                config('domain',$domain);
-                $this->domain = $domain;
-                config('domainStatic',$domainStatic);
-                config('mipInfo',$mipInfo);
             }
             
             

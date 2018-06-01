@@ -6,9 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
     <title>{block name="title"}{/block}{$mipInfo['siteName']}管理后台</title>
-    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="https://cdn.staticfile.org/ionicons/2.0.1/css/ionicons.min.css"/>
-    <link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/iview/2.13.1/styles/iview.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css"/>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/iview/2.14.0/styles/iview.css">
     <link rel="stylesheet" type="text/css" href="{$domainStatic}/{$assets}/admin/css/admin.css?v={:time()}"/>
     <style type="text/css">
       [v-cloak] {
@@ -30,7 +30,7 @@
                 <div class="mip-logo-a"><a href="{$domain}/{$Think.config.admin}/">管理系统后台</a><span class="sub-v"></span></div>
             </div>
             <ul class="header-switch">
-                <li><a href="{$domain}" target="_blank" class="link">网站前台</a></li>
+                <li><a href="{$domain}" target="_blank" class="link"><Icon type="ios-home-outline"></Icon> 网站主页</a></li>
                 {mipitem:itemselect table='HeaderMenu' value='v'}
                 <li class="link {if condition='$action==$v["name"]'}active{/if}"><a class="link" href="{$domain}/{$Think.config.admin}/{$v['admin_url']}" >{$v['title']}</a></li>
                 {/mipitem:itemselect}
@@ -81,13 +81,13 @@
         mipInfo: {$mipInfoToJson},
     }
 </script>
-<script src="https://cdn.bootcss.com/babel-polyfill/7.0.0-beta.46/polyfill.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue"></script>
-<script type="text/javascript" src="https://cdn.staticfile.org/axios/0.15.3/axios.min.js"></script>
-<script type="text/javascript" src="https://cdn.bootcss.com/iview/2.13.1/iview.min.js"></script>
-<script src="https://cdn.staticfile.org/jquery/1.8.1/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.0.0-beta.49/polyfill.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/iview/2.14.0/iview.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue-router/3.0.1/vue-router.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script src="{$domainStatic}/{$assets}/admin/js/mipcms-admin.js" type="text/javascript" charset="utf-8"></script>
-<!--<script src="https://cdn.bootcss.com/babel-standalone/6.22.1/babel.min.js"></script>-->
 <script type="text/javascript">
 	$(document).ready(function() {
     var animationSpeed = 200;

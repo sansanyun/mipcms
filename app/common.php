@@ -1,4 +1,5 @@
 <?php
+use mip\ChinesePinyin;
 use mip\Mip;
     function compress_html($higrid_uncompress_html_source) {
         $chunks = preg_split( '/(<pre.*?\/pre>)/ms', $higrid_uncompress_html_source, -1, PREG_SPLIT_DELIM_CAPTURE );
@@ -262,6 +263,44 @@ use mip\Mip;
         }
     }
     
+    function curlData($url) {
+        $header = array (
+        //  "Host:www.baidu.com",
+            "Content-Type:application/x-www-form-urlencoded",//post请求
+            "Connection: keep-alive",
+            'Referer:http://www.baidu.com',
+            'User-Agent: Mozilla/5.0 (compatible; Baiduspider-render/2.0; +http://www.baidu.com/search/spider.html)'
+        );
+        $ch = curl_init();
+        curl_setopt($ch,CURLOPT_URL,$url);
+        curl_setopt($ch,CURLOPT_HTTPHEADER,$header);
+        curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); 
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        $html = curl_exec($ch);
+        curl_close($ch);
+        return $html;
+    }
+    
+    function linkClient($url,$postData = '',$header = '') {
+        if (!$url) {
+            return false;
+        }
+        $ch = curl_init();
+        curl_setopt($ch,CURLOPT_URL,$url);
+        if ($header) {
+            curl_setopt($ch,CURLOPT_HTTPHEADER,$header);
+        }
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postData));
+        curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); 
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        $html = curl_exec($ch);
+        curl_close($ch);
+        return $html;
+    }
+    
     function getSHA1($strToken, $intTimeStamp, $strNonce, $strEncryptMsg = '') {
         $arrParams = array(
             $strToken, 
@@ -283,41 +322,32 @@ use mip\Mip;
     
     function deleteStyle($content)
     {
-        $itemInfo['content'] = htmlspecialchars_decode($content);
+        $itemInfo['content'] = $content;
+        $itemInfo['content'] =  preg_replace("/style=.+?['|\"]/i",'', $itemInfo['content']);
         preg_match_all('/<img.*?src=[\'|\"](.*?)[\'|\"].*?[\/]?>/', $itemInfo['content'], $imagesArray);
         $patern = '/^^((https|http|ftp)?:?\/\/)[^\s]+$/';
         foreach($imagesArray[0] as $key => $val) {
-            @preg_match('/alt=".+?"/',$val,$tempAlt);
-            @preg_match('/<img.+(width=\"?\d*\"?).+>/i',$val,$tempWidth);
-            @preg_match('/<img.+(height=\"?\d*\"?).+>/i',$val,$tempHeight);
-            @$alt = explode('=',$tempAlt[0]);
-            @$alt = explode('"',$alt[1]);
-            if (count($alt) == 1) {
-                $alt = $alt[0];
+            @preg_match("/alt=[\'|\"](.*?)[\'|\"]/",$val,$tempAlt);
+            if ($tempAlt) {
+                $alt = $tempAlt[1];
             }
-            if (count($alt) == 2) {
-                $alt = $alt[1] ;
-            }
-            if (count($alt) == 3) {
-                $alt = $alt[1] ;
-            }
+            @preg_match("/width=[\'|\"](.*?)[\'|\"]/",$val,$tempWidth);
+            @preg_match("/height=[\'|\"](.*?)[\'|\"]/",$val,$tempHeight);
             $src = $imagesArray[1][$key];
             if ($tempWidth && $tempHeight) {
-                @preg_match('/\d+/i',$tempWidth[1],$width);
-                if (intval($width[0]) > 320) {
-                    $layout = 'layout="container"';
+                if ($tempWidth > 500) {
+                    $layout = '';
                     $tempImg = '<mip-img '.$layout.' alt="'.$alt.'" src="'.$src.'" popup></mip-img>';
                 } else {
                     $layout = 'layout="fixed"';
-                    $tempImg = '<mip-img ' .$layout. ' ' . $tempWidth[1] . '" ' . $tempHeight[1] .'" alt="'.$alt.'" src="'.$src.'" popup></mip-img>';
+                    $tempImg = '<mip-img ' .$layout. ' ' . $tempWidth[0] . ' ' . $tempHeight[0] .' alt="'.$alt.'" src="'.$src.'" popup></mip-img>';
                 }
             } else {
-                $layout = 'layout="container"';
+                $layout = '';
                 $tempImg = '<mip-img '.$layout.' alt="'.$alt.'" src="'.$src.'" popup></mip-img>';
             }
             $itemInfo['content'] =  str_replace($val,$tempImg,$itemInfo['content']);
         }
-        $itemInfo['content'] =  preg_replace("/style=.+?['|\"]/i",'', $itemInfo['content']);
         @preg_match_all('/<a[^>]*>[^>]+a>/',$itemInfo['content'],$tempLink);
         foreach($tempLink[0] as $k => $v) {
             if(strpos($v,"href")) {
@@ -365,7 +395,7 @@ use mip\Mip;
     function mipfilter($content) {
     if (strpos($content, '{MIPCMSCSS}') !== false) {
        
-//      $cssContent = [];
+        $cssContent = [];
 //      $cssData = array(
 //          'fontSize' => 'font-size',
 //          'margin' => 'margin',
@@ -573,4 +603,167 @@ use mip\Mip;
         }
         $html = '<ul class="pagination"><li class="page-item disabled"><span class="page-link">共'.$totalNum.'页</span></li> ' . $upPage . $html . $downPage . '</ul>';
         return $html;
+    }
+
+    
+    
+function format_url($srcurl, $baseurl) {  
+  $srcinfo = parse_url($srcurl);  
+  if(isset($srcinfo['scheme'])) {  
+    return $srcurl;  
+  }  
+  $baseinfo = parse_url($baseurl);  
+  $url = $baseinfo['scheme'].'://'.$baseinfo['host'];  
+  if(substr($srcinfo['path'], 0, 1) == '/') {  
+    $path = $srcinfo['path'];  
+  }else{  
+    $path = dirname($baseinfo['path']).'/'.$srcinfo['path'];  
+  }  
+  $rst = array();  
+  $path_array = explode('/', $path);  
+  if(!$path_array[0]) {  
+    $rst[] = '';  
+  }  
+  foreach ($path_array AS $key => $dir) {  
+    if ($dir == '..') {  
+      if (end($rst) == '..') {  
+        $rst[] = '..';  
+      }elseif(!array_pop($rst)) {  
+        $rst[] = '..';  
+      }  
+    }elseif($dir && $dir != '.') {  
+      $rst[] = $dir;  
+    }  
+   }  
+  if(!end($path_array)) {  
+    $rst[] = '';  
+  }  
+  $url .= implode('/', $rst);  
+  return str_replace('\\', '/', $url);  
+}  
+
+
+    function replace_str_diy($fustr,$str1,$str2) {
+        if (empty($fustr) || empty($str1)) {
+          return FALSE;
+        }
+        $wz1 = 0;
+        $arr= explode('(*)',$str1);
+        $arr1 = array();
+        $k = 0;
+        for ($i=0;$i<count($arr);$i++) {
+            if ($arr[$i]!=='') {
+                $arr1[$k] = $arr[$i];
+                $k++;
+            }
+        }
+        $cishu=0;
+        while($wz1 < strlen($fustr)) {
+            $jishu=0;
+            for ($i=0;$i<count($arr1);$i++) {
+                if(($wz=strpos($fustr,$arr1[$i],$wz1))!==false) {
+                    if ($i==0) $ks = $wz;
+                    if ($i==count($arr1)-1) $js = $wz + strlen($arr1[$i]);
+                    $wz1 = $wz + strlen($arr1[$i]);
+                    $jishu++;
+                } else break;
+            }
+            if ($jishu==count($arr1)) {
+                $cishu++;
+                $leftstr = substr($fustr,0,$ks);
+                $rightstr = substr($fustr,$js);
+                if (!$rightstr) $rightstr = '';
+                $fustr = $leftstr . $str2 . $rightstr;
+                $wz1 = $ks + strlen($str2);
+            } else {
+                break;
+            }  
+        }
+        return $fustr;
+    }
+
+    function gbkToUTF8($html) {
+        $arr = array( "UTF-8", "ASCII", "GBK", "GB2312", "gb2312","BIG5", "JIS", "eucjp-win", "sjis-win", "EUC-JP" );
+        $encode  = mb_detect_encoding( $html, $arr );    
+        $html = mb_convert_encoding(trim($html), "UTF-8", $encode);
+        $html = str_replace('charset=GB2312','charset=UTF-8',$html);
+        $html = str_replace('charset="GB2312"','charset="UTF-8"',$html);
+        $html = str_replace("charset='GB2312'","charset='UTF-8'",$html);
+        $html = str_replace('charset=gb2312','charset=UTF-8',$html);
+        $html = str_replace('charset="gb2312"','charset="UTF-8"',$html);
+        $html = str_replace("charset='gb2312'","charset='UTF-8'",$html);
+        $html = str_replace('charset=GBK','charset=UTF-8',$html);
+        $html = str_replace('charset="GBK"','charset="UTF-8"',$html);
+        $html = str_replace("charset='GBK'","charset='UTF-8'",$html);
+        $html = str_replace('charset=gbk','charset=UTF-8',$html);
+        $html = str_replace('charset="gbk"','charset="UTF-8"',$html);
+        $html = str_replace("charset='gbk'","charset='UTF-8'",$html);
+        $html = str_replace("charset=UTF-8","",$html);
+        return $html;
+    }
+    
+    
+function getImage($url,$save_dir,$filename = '',$type=0) {
+    if (!$url) {
+         return false;
+    }
+    if (!$save_dir) {
+         return false;
+    }
+    $ext = strrchr($url,'.');
+    if($ext != '.gif' || $ext!='.jpg' ||  $ext!='.png' || $ext!='.jpeg'){
+        $ext = '.jpg';
+    }
+     
+    $filename = uuid() . $ext;
+    if (0 !== strrpos($save_dir, DS )){
+        $save_dir.= DS;
+    }
+    if (!file_exists($save_dir)&&!mkdir($save_dir,0777,true)) {
+        return array('file_name'=>'','save_path'=>'','error'=>5);
+    }
+    if ($type) {  
+        $ch = curl_init();  
+        $timeout = 5;  
+        curl_setopt($ch, CURLOPT_URL, $url);  
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);  
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);  
+        $content = curl_exec($ch);  
+        curl_close($ch);  
+    } else {  
+//      ob_start();  
+//      readfile($url);  
+//      $content = ob_get_contents();  
+//      ob_end_clean();  
+        $ch = curl_init();  
+        $timeout = 5;  
+        curl_setopt($ch, CURLOPT_URL, $url);  
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);  
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);  
+        $content = curl_exec($ch);  
+        curl_close($ch);  
+    }  
+    //echo $content;  
+    $size = strlen($content);  
+    //文件大小  
+    $fp2 = @fopen($save_dir . $filename, 'a');  
+    fwrite($fp2, $content);  
+    fclose($fp2);  
+    unset($content, $url);  
+     
+    return array('file_name'=>$filename,'save_path'=>$save_dir.$filename,'error'=>0);
+}
+   
+    if (is_file(APP_PATH . 'function.php')) {
+        include APP_PATH . 'function.php';
+    }
+    
+    
+    function getPinyin($name) {
+        if (!$name) {
+           return false;
+        }
+        $Pinyin = new ChinesePinyin();
+        $result = $Pinyin->TransformWithoutTone($name);
+        return $result;
     }

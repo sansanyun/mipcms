@@ -1,7 +1,12 @@
 {extend name="main/main"/}
 <style type="text/css">
 {block name="style"}{__block__}
- 
+.mipcms-detail-body img{
+    width: auto;
+    min-width: auto;
+    height: auto; 
+}
+    
 {/block}
 </style>
 {block name="so"}
@@ -38,6 +43,13 @@
                 </section>
                 <section class="mip-box-body mipcms-detail-body">
                     {$itemInfo['mipContent']}
+                    {if condition="$mipInfo['articlePages']"}
+                    <div class="mip-page-pagination text-center">
+                        <ul class="pagination list-unstyled">
+                            {$itemInfo['pageCode']}
+                        </ul>
+                    </div>
+                    {/if}
                     <p>猜你喜欢</p>
                     <div class="mipui-widget-media-body mipui-category-list-001">
                         {mipcms:article value="v" keywords='$itemInfo["tagsListString"]' notUuids="$itemInfo['uuid']" limit='5'}
