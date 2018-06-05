@@ -10,13 +10,4 @@ return array(
     'think\\composer\\' => array($vendorDir . '/topthink/think-installer/src'),
     'think\\captcha\\' => array($vendorDir . '/topthink/think-captcha/src'),
     'think\\' => array($vendorDir . '/5ini99/think-addons/src', $baseDir . '/thinkphp/library/think'),
-    'andreskrey\\Readability\\' => array($vendorDir . '/andreskrey/readability.php/src'),
-    'QL\\Ext\\Lib\\' => array($vendorDir . '/jaeger/curlmulti'),
-    'QL\\Ext\\' => array($vendorDir . '/jaeger/querylist-ext-aquery', $vendorDir . '/jaeger/querylist-ext-multi'),
-    'QL\\' => array($vendorDir . '/jaeger/querylist'),
-    'Psr\\Log\\' => array($vendorDir . '/psr/log/Psr/Log'),
-    'Psr\\Http\\Message\\' => array($vendorDir . '/psr/http-message/src'),
-    'GuzzleHttp\\Psr7\\' => array($vendorDir . '/guzzlehttp/psr7/src'),
-    'GuzzleHttp\\Promise\\' => array($vendorDir . '/guzzlehttp/promises/src'),
-    'GuzzleHttp\\' => array($vendorDir . '/guzzlehttp/guzzle/src'),
 );
