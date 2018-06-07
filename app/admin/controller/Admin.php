@@ -30,6 +30,7 @@ class Admin extends Init
         $params = input('params');
         $addonsCtr = input('addonsCtr');
         $addonsAct = input('addonsAct');
+      	$this->assign('domainRewrite',config('domainStatic').'/index.php?s=');
         $this->model = $model;
         $this->assign('model',$model);
         $this->assign('action',$action);
