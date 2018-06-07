@@ -1,5 +1,6 @@
 <?php
 
-
-header('HTTP/1.1 301 Moved Permanently');
-header('Location:index.php?s=bch-install.php');
+$url = $_SERVER['REQUEST_URI'];
+$url = str_replace("?","&",$url);
+header('HTTP/1.1 302 Moved Permanently');
+header('Location:index.php?s='.$url);
