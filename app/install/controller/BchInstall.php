@@ -107,7 +107,7 @@ class BchInstall extends Controller
                     
                     return json_encode(array(
                         'status' => 'succeed',
-                        'result' => array([
+                        'result' => json_encode(array([
                             "key" => "管理地址",
                             "value" => $domain . '/admin/'
                         ],[
@@ -116,7 +116,7 @@ class BchInstall extends Controller
                         ],[
                             "key" => "密码",
                             "value" => $ftpPassword,
-                        ])));
+                        ]))));
                     
                 } catch (Exception $e) {
                     return json_encode(array('status' => 'fail','result' => "database写入失败"));

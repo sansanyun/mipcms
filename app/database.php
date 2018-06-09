@@ -15,11 +15,11 @@ return [
     // 服务器地址
     'hostname'       => '127.0.0.1',
     // 数据库名
-    'database'       => 'mipcms_test_com',
+    'database'       => 'mipcms',
     // 用户名
-    'username'       => 'mipcms_test_com',
+    'username'       => 'root',
     // 密码
-    'password'       => 'ziGpj8jjkE',
+    'password'       => '123456',
     // 端口
     'hostport'       => '3306',
     // 连接dsn
