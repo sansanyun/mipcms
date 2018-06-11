@@ -4,6 +4,7 @@
 namespace app\install\controller;
 use think\Controller;
 use think\Request;
+use think\Response;
 use think\Db;
 use think\Loader;
 
@@ -30,7 +31,8 @@ class BchInstall extends Controller
             try {
                 $db = new \PDO($dsn, $dbconfig['username'], $dbconfig['password']);
             } catch (\PDOException $e) {
-                return json_encode(array('status' => 'fail','result' => '错误代码:'.$e->getMessage()));
+                $res = json_encode(array('status' => 'fail','result' => '错误代码:'.$e->getMessage()));
+				return Response::create($res)->contentType('application/json');
             }
             $tablepre = $dbconfig['prefix'];
             $sql = file_get_contents(PUBLIC_PATH.'package'.DS.'mipcms_v_3_6_0.sql');
@@ -46,7 +48,8 @@ class BchInstall extends Controller
                     if(false !== $db->exec($item)){
 
                     } else {
-                       return json_encode(array('status' => 'fail','result' => '安装失败'));
+                       $res = json_encode(array('status' => 'fail','result' => '安装失败'));
+						return Response::create($res)->contentType('application/json');
                     }
                 } else {
                     $db->exec($item);
@@ -59,7 +62,8 @@ class BchInstall extends Controller
                     $conf = str_replace("#{$key}#", $value, $conf);
                 }
                 if(!is_writable(CONF_PATH)) {
-                    return json_encode(array('status' => 'fail','result' => '路径：'.CONF_PATH.'没有写入权限'));
+                    $res = json_encode(array('status' => 'fail','result' => '路径：'.CONF_PATH.'没有写入权限'));
+					return Response::create($res)->contentType('application/json');
                 }
                 try {
                     $fileStatus = is_file(CONF_PATH. '/database.php');
@@ -95,17 +99,18 @@ class BchInstall extends Controller
                     ));
 //                  
                     if (!is_writable(ROOT_PATH.'public/install')) {
-                        return json_encode(array('status' => 'fail','result' => "路径：/public/install没有写入权限"));
+                        $res = json_encode(array('status' => 'fail','result' => "路径：/public/install没有写入权限"));
+						return Response::create($res)->contentType('application/json');
                     }
                     try {
                         touch(PUBLIC_PATH.'install'.DS.'install.lock');
                     } catch (Exception $e) {
-                        return json_encode(array('status' => 'fail','result' => "install.lock文件写入失败，请检查public/install 文件夹是否可写入"));
+                        $res = json_encode(array('status' => 'fail','result' => "install.lock文件写入失败，请检查public/install 文件夹是否可写入"));
+                    	return Response::create($res)->contentType('application/json');
                     }
                     $request = Request::instance();
                     $domain = $request->domain();
-                    
-                    return json_encode(array(
+                    $res = json_encode(array(
                         'status' => 'succeed',
                         'result' => json_encode(array([
                             "key" => "管理地址",
@@ -117,9 +122,12 @@ class BchInstall extends Controller
                             "key" => "密码",
                             "value" => $ftpPassword,
                         ]))));
+                    return Response::create($res)->contentType('application/json');;
                     
                 } catch (Exception $e) {
-                    return json_encode(array('status' => 'fail','result' => "database写入失败"));
+                    $res = json_encode(array('status' => 'fail','result' => "database写入失败"));
+					
+                    return Response::create($res)->contentType('application/json');
                 }
                 
             }
