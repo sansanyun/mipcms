@@ -12,7 +12,7 @@ class ApiAdminUpload extends AdminBase
     }
     public function imgUpload(Request $request){
         if (Request::instance()->isPost()) {
-
+			$request = Request::instance();
             $type = input('post.type');
             $ymd = input('post.ymd');
             $file = $request->file('fileDataFileName');

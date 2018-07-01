@@ -47,8 +47,10 @@
                 <h3 style="text-align: center;line-height: 50px;">数据库信息填写</h3>
                 <p style="text-align: center;">注：系统不会自动创建数据库</p>
             
-                 <Form-item label="安装地址">
-                    <i-input v-model="form.installAddress" placeholder="用于二级目录安装"></i-input>
+                 <Form-item label="目录运行URL">
+                    <i-input v-model="form.installAddress" placeholder="用于二级目录安装，不是目录安装，请留空"></i-input>
+                    <p>例如：http://www.test.com/news/</p>
+                    <p>末尾请加反斜杠，非目录安装站点，请勿填写</p>
                   </Form-item>
                  <Form-item label="数据库地址" prop="dbhost">
                     <i-input v-model="form.dbhost"></i-input>
