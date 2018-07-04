@@ -19,14 +19,7 @@ class AdminBase extends Init {
          
         $this->passStatus = false;
         $passAuthInfo = true;
-        $passAuthList = array(
-            '0' => 'imgUpload',
-        );
-        foreach ($passAuthList as $key => $val) {
-            if (strtoupper($passAuthList[$key]) == strtoupper($this->request->action())) {
-                $passAuthInfo = false;
-            }
-        }
+        
         if ($passAuthInfo) {
             if (!$this->isAdmin) {
                 if (empty($header['secret-key'])) {
