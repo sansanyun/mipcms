@@ -5,7 +5,7 @@
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
-    <base href="{$domain}/" />
+    <base href="{$domains}" />
     <title>登录后台</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/iview@2.7.4/dist/styles/iview.css">
@@ -101,7 +101,7 @@ var mip = {
                     }
                     if(res.data.code == 1005 || res.data.code == 1008) {
                         iview.Message.error('登录状态失效');
-                        location.href = '{$domain}/{$Think.config.admin}/login';
+                        location.href = '{$domains}/{$Think.config.admin}/login';
                     }
                     if(res.data.code != 200 && res.data.code != 1 && res.data.code != -1) {
                         iview.Message.error(res.data.msg + ' 错误代码:' + res.data.code);
@@ -128,7 +128,7 @@ Vue.prototype.$mip = mip;
     new Vue({
         el: '#app',
         data: {
-            captchaImg: 'index.php?s=/captcha.html',
+            captchaImg: '{$domains}/captcha.html',
             ruleForm: {
                 username: '',
                 password: '',
@@ -157,7 +157,7 @@ Vue.prototype.$mip = mip;
                 let __this = this;
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        this.$mip.ajax('{$domain}/user/ApiUserUser/login', {
+                        this.$mip.ajax('{$domains}/user/ApiUserUser/login', {
                             terminal: 'pc',
                             username: _this.ruleForm.username,
                             password: md5(_this.ruleForm.password),
@@ -168,14 +168,14 @@ Vue.prototype.$mip = mip;
                                 localStorage.setItem('mip_userInfo',JSON.stringify(res.data));
                                 localStorage.setItem('access-token',res.data.accessToken[0]['access-token']);
                                 localStorage.setItem('user_client_url','');
-                                location.href = '{$domain}/{$Think.config.admin}';
+                                location.href = '{$domains}/{$Think.config.admin}';
                             }
                         });
                     }
                 });
             },
             refreshCaptcha: function() {
-                this.captchaImg = 'index.php?s=/captcha.html&t='+(new Date()).getTime();
+                this.captchaImg = '{$domains}/captcha.html&t='+(new Date()).getTime();
             },
         }
     })

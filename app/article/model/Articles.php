@@ -9,8 +9,8 @@ use think\Controller;
 
 class Articles extends Controller
 {
-    public $item;
-    public $itemCategory;
+	private $categoryAllListData;
+	private $categoryListData;
     public function _initialize()
     {
         parent::_initialize();
@@ -23,6 +23,14 @@ class Articles extends Controller
         $this->mipInfo = config('mipInfo');
         $this->domain = config('domain');
         $this->dataId = config('dataId');
+		$categoryAllListData = db($this->itemCategory)->order('sort asc')->select();
+		if ($categoryAllListData) {
+			foreach ($categoryAllListData as $key => $value) {
+				$categoryListData[$value['id']] = $value;
+			}
+		}
+		$this->categoryAllListData = $categoryAllListData;
+		$this->categoryListData = $categoryListData;
     }
     
     public function getItemInfo($id = null,$uuid = null)
@@ -108,7 +116,7 @@ class Articles extends Controller
                     }
                 }
                 if ($itemCategoryList) {
-                    $itemList = db($this->item)->where($where)->where($keywordsWhere)->where($uuidsWhere)->where($notUuidsWhere)->whereOr('cid',$cid)->whereOr('cid','in',$cids)->page($page,$perPage)->order($orderBy,$order)->select();
+                    $itemList = db($this->item)->where($where)->where($keywordsWhere)->where($uuidsWhere)->where($notUuidsWhere)->where('cid','in',$cids)->page($page,$perPage)->order($orderBy,$order)->select();
                 } else {
                     $itemList = db($this->item)->where($where)->where($keywordsWhere)->where($uuidsWhere)->where($notUuidsWhere)->where('cid',$cid)->page($page,$perPage)->order($orderBy,$order)->select();
                 }
@@ -124,6 +132,8 @@ class Articles extends Controller
                 $itemList[$k]['tempId'] = $this->mipInfo['idStatus'] ? $v['uuid'] : $v['id'];
                 $itemList[$k]['userInfo'] = db('Users')->where('uid',$v['uid'])->find();
                 $itemList[$k]['categoryInfo'] = $this->getCategoryInfo($v['cid']);
+            }
+            foreach($itemList as $k => $v) {
                 $itemList[$k]['url'] = $this->getUrlByItemInfo($v);
             }
         } else {
@@ -367,7 +377,7 @@ class Articles extends Controller
         if (!$cid) {
             return false;
         }
-        $itemCategoryInfo = db('ArticlesCategory')->where('id',$cid)->find();
+        $itemCategoryInfo = $this->categoryListData[$cid];
         if ($itemCategoryInfo) {
             if ($itemCategoryInfo['pid'] == 0) {
                 $urlName = $itemCategoryInfo['url_name'];
@@ -451,7 +461,7 @@ class Articles extends Controller
     public function getAllCategory()
     {
         $categoryList = null;
-        $itemCategoryList = db($this->itemCategory)->order('sort asc')->select();
+        $itemCategoryList = $this->categoryAllListData;
         if($itemCategoryList) {
             foreach ($itemCategoryList as $key => $val) {
                 $itemCategoryList[$key] = $this->getCategoryInfo($val['id']);

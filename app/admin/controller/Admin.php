@@ -17,12 +17,16 @@ class Admin extends Init
         $model = input('model');
         if ($model != 'login') {
             if (!$this->userId) {
-                $this->redirect($this->domain.'/'. Config::get('admin') . '/' .'login',301);
+                $this->redirect($this->domains.'/'. Config::get('admin') . '/' .'login',301);
             }
             if (!$this->isAdmin) {
-                $this->redirect($this->domain.'/'. Config::get('admin') . '/' .'login',301);
+                $this->redirect($this->domains.'/'. Config::get('admin') . '/' .'login',301);
             }
         }
+        
+        $this->assign('webUrl',config('domain'));
+        
+        $this->assign('domain',config('domains'));
     }
     public function index() {
         $model = input('model');
@@ -30,7 +34,6 @@ class Admin extends Init
         $params = input('params');
         $addonsCtr = input('addonsCtr');
         $addonsAct = input('addonsAct');
-      	$this->assign('domainRewrite',config('domainStatic').'/index.php?s=');
         $this->model = $model;
         $this->assign('model',$model);
         $this->assign('action',$action);

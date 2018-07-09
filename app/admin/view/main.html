@@ -31,7 +31,7 @@
                 <div class="mip-logo-a"><a href="{$domain}/{$Think.config.admin}/">管理系统后台</a><span class="sub-v"></span></div>
             </div>
             <ul class="header-switch">
-                <li><a href="{$domain}" target="_blank" class="link"><Icon type="ios-home-outline"></Icon> 网站主页</a></li>
+                <li><a href="{$webUrl}" target="_blank" class="link"><Icon type="ios-home-outline"></Icon> 网站主页</a></li>
                 {mipitem:itemselect table='HeaderMenu' value='v'}
                 <li class="link {if condition='$action==$v["name"]'}active{/if}"><a class="link" href="{$domain}/{$Think.config.admin}/{$v['admin_url']}" >{$v['title']}</a></li>
                 {/mipitem:itemselect}
