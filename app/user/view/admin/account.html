@@ -86,7 +86,7 @@
                 this.$refs[formName].validate((valid) => {
                     if(valid) {
                         let _this = this;
-                        this.$mip.ajax(mipGlobal.rewrite + '/user/ApiUserUser/userPasswordEdit', {
+                        this.$mip.ajax('{$domain}/user/ApiUserUser/userPasswordEdit', {
                             oldPassword: md5(_this.form.oldPassword),
                             newPassword: md5(_this.form.newPassword),
                             rpassword: md5(_this.form.rpassword),

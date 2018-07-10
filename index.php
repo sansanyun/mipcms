@@ -1,6 +1,8 @@
 <?php
 if (!version_compare(PHP_VERSION,'5.4.0','ge')) {
+    header("Content-type: text/html; charset=utf-8");
     echo '您当前使用的PHP版本为：' . PHP_VERSION . '系统最低要求PHP5.4 建议使用PHP7.0版本！';
+    exit;
 }
 define('MIP_HOST',true);
 define('BAIDU',false);
