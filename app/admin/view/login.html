@@ -175,7 +175,7 @@ Vue.prototype.$mip = mip;
                 });
             },
             refreshCaptcha: function() {
-                this.captchaImg = '{$domains}/captcha.html&t='+(new Date()).getTime();
+                this.captchaImg = '$domainStatic}/?s=/captcha.html&t='+(new Date()).getTime();
             },
         }
     })
