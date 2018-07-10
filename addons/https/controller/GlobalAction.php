@@ -9,15 +9,15 @@ class GlobalAction extends Controller
     public function https()
     {
         $addonsName = 'https'; //配置当前插件名称
+
         $itemInfo = db('Addons')->where('name',$addonsName)->find();
         if (!$itemInfo || $itemInfo['status'] != 1) {
             return false;
         }
-        
-        if ($this->mipInfo['httpType'] == 'https://') {
-          if (Request::instance()->server()['REQUEST_SCHEME'] != "https") {
+        if (config('mipInfo')['httpType'] == 'https://') {  
+          if (Request::instance()->server()['HTTPS'] != 'on') {
               header('HTTP/1.1 301 Moved Permanently');
-              header('Location: ' . $this->domain . Request::instance()->url());
+              header('Location: ' . config('domain') . Request::instance()->url());
               exit();
           }
         }

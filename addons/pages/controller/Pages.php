@@ -1,16 +1,16 @@
 <?php
 //MIPCMS.Com [Don't forget the beginner's mind]
 //Copyright (c) 2017~2099 http://MIPCMS.Com All rights reserved.
-namespace addons\page\controller;
+namespace addons\pages\controller;
 use think\Request;
 use mip\Mip;
-class Page extends Mip
+class Pages extends Mip
 {
     protected $beforeActionList = ['start'];
     protected $addonsName = '';
     public function start()
     {
-        $addonsName = 'page'; //配置当前插件名称
+        $addonsName = 'pages'; //配置当前插件名称
         $this->addonsName = $addonsName;
         $itemInfo = db('Addons')->where('name',$addonsName)->find();
         if (!$itemInfo || $itemInfo['status'] != 1) {
@@ -21,12 +21,12 @@ class Page extends Mip
     public function index()
     {
         $urlName = $this->request->dispatch()['var']['url_name'];
-        $itemInfo = db('Page')->where('url_name',$urlName)->find();
+        $itemInfo = db('Pages')->where('url_name',$urlName)->find();
         if (!$itemInfo) {
             return $this->error('页面不存在');
         }
         
-        $itemInfo['mipContent'] = model('app\common\model\Common')->getContentFilterByContent($itemInfo['content']);
+        $itemInfo['mipContent'] = model('app\common\model\Common')->getContentFilterByContent(htmlspecialchars_decode($itemInfo['content']));
         $itemInfo['content'] = htmlspecialchars_decode($itemInfo['content']);
         //面包屑导航
         $this->assign('crumbCategoryName',$categoryInfo['name']);
@@ -46,7 +46,7 @@ class Page extends Mip
         
         $this->assign('itemInfo',$itemInfo);
         
-        return $this->mipView('page/page');
+        return $this->addonsFetch('pages','pages');
     }
  
     

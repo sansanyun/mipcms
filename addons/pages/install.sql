@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS `mip_page`;
-CREATE TABLE `mip_page` (
+DROP TABLE IF EXISTS `mip_pages`;
+CREATE TABLE `mip_pages` (
   `id` char(24) CHARACTER SET latin1 NOT NULL,
   `url_name` varchar(255) DEFAULT NULL,
   `title` varchar(255) DEFAULT NULL,

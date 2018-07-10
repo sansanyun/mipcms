@@ -1,0 +1,5 @@
+{
+  name: 'pages',
+  path: '/:mod/pages/:dataId?',
+  component: Pages
+},
