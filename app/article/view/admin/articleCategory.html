@@ -95,7 +95,7 @@
         </section>
     </section>
 </main>
-      <Modal  v-model="category.dialogCategory" size="large" v-cloak>
+      <Modal  v-model="category.dialogCategory" size="large" v-cloak width='1000' :mask-closable="false">
         <i-form :model="category" :rules="category.categoryRules" ref="category" :label-width="80">
             <Tabs :animated='false' v-model="itemTabsValue">
                 <Tab-Pane label="基础信息" name='default'>
@@ -166,7 +166,11 @@
                         </radio-group>
                     </Form-Item>
                 </Tab-Pane>
-                
+                <Tab-Pane label="内容" name='page'>
+		            <Form-item>
+		            	<i-input type='textarea' id="article_editor" v-model="content" ></i-input>
+		            </Form-item>
+                </Tab-Pane>
             </Tabs>
             </i-form>
             <div slot="footer" class="dialog-footer">
@@ -179,6 +183,20 @@
     
 {block name="javascript"}
 {__block__}
+	<link rel="stylesheet" type="text/css" href="{$domainStatic}/{$assets}/plugin/simditor/styles/simditor.css" />
+    <link rel="stylesheet" href="{$domainStatic}/{$assets}/plugin/simditor/styles/simditor-html.css" media="screen" charset="utf-8" />
+
+    <script type="text/javascript" src="{$domainStatic}/{$assets}/plugin/simditor/scripts/jquery.min.js"></script>
+    <script type="text/javascript" src="{$domainStatic}/{$assets}/plugin/simditor/scripts/module.js"></script>
+    <script type="text/javascript" src="{$domainStatic}/{$assets}/plugin/simditor/scripts/hotkeys.js"></script>
+    <script type="text/javascript" src="{$domainStatic}/{$assets}/plugin/simditor/scripts/uploader.js"></script>
+
+    <script type="text/javascript" src="{$domainStatic}/{$assets}/plugin/simditor/scripts/simditor.min.js"></script>
+
+    <script type="text/javascript" src="{$domainStatic}/{$assets}/plugin/simditor/scripts/simditor-autosave.js"></script>
+
+    <script type="text/javascript" src="{$domainStatic}/{$assets}/plugin/simditor/scripts/beautify-html.js"></script>
+    <script type="text/javascript" src="{$domainStatic}/{$assets}/plugin/simditor/scripts/simditor-html.js"></script>
 <script>
     new Vue({
         el: '#app',
@@ -220,14 +238,48 @@
             tempCategoryList: [],
             templateList: [],
             itemTabsValue: 'default',
+            
+        	content: '',
+        	toolbar : ['title', 'bold', 'italic', 'underline', 'strikethrough', 'fontScale', 'color', '|', 'ol', 'ul', 'blockquote', 'code', '|', 'link', 'image', 'hr', '|', 'indent', 'outdent', 'alignment', 'html'],
+			editor: '',
         },
         watch: {
         },
         mounted() {
             this.getTemplateList();
             this.getCategoryList();
+    		this.editorInit();
         },
         methods: {
+        	editorInit() {
+	            var _this = this;
+	            setTimeout(function() {
+	                _this.createEditor();
+	            }, 100);
+	        },
+	        
+	        //创建编辑器
+	        createEditor() {
+	            var _this = this;
+	            this.uploadUrl = '/admin/ApiAdminUpload/defaultImgUpload';
+	            document.getElementById('article_editor').innerHTML = '';
+	            this.editor = new Simditor({
+	                textarea: document.getElementById('article_editor'),
+	                toolbar: _this.toolbar,
+	                upload: {
+	                    url: this.uploadUrl,
+	                    params: {
+	                        type: 'article',
+	                    },
+	                    fileKey: 'fileDataFileName',
+	                    connectionCount: 3,
+	                    leaveConfirm: '正在上传文件'
+	                },
+	                pasteImage: true,
+	                autosave: 'editor-content'
+	            });
+	           	this.editor.setValue('');
+	        },
             moveUp(item,subItem) {
                 var categoryList = this.categoryList;
                 for (var i = 0; i < categoryList.length; i++) {
@@ -343,6 +395,7 @@
                 this.category.id = '';
                 this.category.dialogCategory = true;
                 this.category.dialogCategoryTitle = '添加分类';
+             	this.editor.setValue('');
             },
             categorySortSave() {
                 var itemList = this.categoryList;
@@ -356,6 +409,14 @@
                 });
             },
             categoryPost(val, param) {
+            	if (!this.category.url_name) {
+                    this.$Message.error('请输入基础信息中的必填项');
+                    return false;
+            	}
+            	if (!this.category.name) {
+                    this.$Message.error('请输入基础信息中的必填项');
+                    return false;
+            	}
                 this.$refs[val].validate((valid) => {
                     if(valid) {
                         var parent=/^[a-zA-Z0-9_-]+$/;
@@ -363,6 +424,7 @@
                             this.$Message.error('别名输入值不支持');
                             return false;
                         }
+            			this.content = this.editor.getValue();
                         if(this.category.categoryStatus == false) {
                             this.$mip.ajax('{$domain}/{$itemUrl}/ApiAdmin{$itemApiUrl}/categoryAdd', {
                                 pid: this.category.pid,
@@ -376,6 +438,7 @@
                                 detail_url: this.category.detail_url,
                                 description: this.category.description,
                                 keywords: this.category.keywords,
+                    			content: this.content,
                             }).then(res => {
                                 if(res.code == 1) {
                                     this.category.dialogCategory = false;
@@ -397,10 +460,12 @@
                                 detail_url: this.category.detail_url,
                                 description: this.category.description,
                                 keywords: this.category.keywords,
+                    			content: this.content,
                             }).then(res => {
                                 if(res.code == 1) {
                                     this.category.dialogCategory = false;
                                     this.$Message.success(res.msg);
+                        			this.editor.setValue('');
                                     this.getCategoryList();
                                 }
                             });
@@ -476,6 +541,7 @@
                 this.category.keywords = row.keywords;
                 this.category.id = row.id;
                 this.category.isChild = false;
+				this.editor.setValue(row.content);
                 this.category.dialogCategoryTitle = '编辑分类';
                 if(row.pid == 0) {
                     for(var i = 0; i < this.category.categoryList.length; i++) {

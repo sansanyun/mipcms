@@ -309,6 +309,7 @@ class ApiAdminArticle extends AdminBase
         $detail_url =  input('post.detail_url');
         $description = input('post.description');
         $keywords = input('post.keywords');
+        $content = input('post.content');
         if (!$pid) {
             $pid = 0;
         }
@@ -338,6 +339,7 @@ class ApiAdminArticle extends AdminBase
             'detail_url' => $detail_url,
             'keywords' => $keywords,
             'description' => $description,
+            'content' => htmlspecialchars($content),
             'status' => 1,
             'pid' => $pid
         ))) {
@@ -426,6 +428,7 @@ class ApiAdminArticle extends AdminBase
         $detail_url =  input('post.detail_url');
         $description = input('post.description');
         $keywords = input('post.keywords');
+        $content = input('post.content');
         $status = input('post.status');
 
         if (!$id) {
@@ -471,6 +474,7 @@ class ApiAdminArticle extends AdminBase
             'category_page_url' => $category_page_url,
             'detail_url' => $detail_url,
             'keywords' => $keywords,
+            'content' => htmlspecialchars($content),
             'status' => $status,
             'pid' => $pid
         ])) {

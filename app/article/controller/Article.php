@@ -34,6 +34,8 @@ class Article extends Mip
         $this->assign('page',$page);
         $this->assign('categoryUrlName',$categoryInfo['url_name']);
         
+        $categoryInfo['content'] = htmlspecialchars_decode($categoryInfo['content']);
+        $categoryInfo['mipContent'] = model('app\common\model\Common')->getContentFilterByContent($categoryInfo['content']);
         //分页数量
         $pageText = $page == 1 ? "" : $this->mipInfo['titleSeparator'] . "第" . $page . "页";
         
