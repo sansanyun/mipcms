@@ -5,11 +5,7 @@ use think\Config;
 use think\DB;
 use think\Request;
 if (!is_file(PUBLIC_PATH . 'install' . DS .'install.lock')) {
-    Route::rule('bch-install.php','install/BchInstall/index');
-    Route::rule('/','install/Install/index');
-    Route::rule('/install','install/Install/index');
-    Route::rule('/install/installPost','install/Install/installPost');
-    Route::rule('/install/installPostOne','install/Install/installPostOne');
+    if (BAIDU) {        Route::rule('/','install/BchInstall/index');    } else {        Route::rule('/','install/Install/index');            Route::rule('/install','install/Install/index');            Route::rule('/install/installPost','install/Install/installPost');            Route::rule('/install/installPostOne','install/Install/installPostOne');    }
 
 } else {
     $request = Request::instance();

@@ -17,16 +17,17 @@ class Admin extends Init
         $model = input('model');
         if ($model != 'login') {
             if (!$this->userId) {
-                $this->redirect($this->domains.'/'. Config::get('admin') . '/' .'login',301);
+                $this->redirect(config('domains').'/'. Config::get('admin') . '/' .'login',301);
             }
             if (!$this->isAdmin) {
-                $this->redirect($this->domains.'/'. Config::get('admin') . '/' .'login',301);
+                $this->redirect(config('domains').'/'. Config::get('admin') . '/' .'login',301);
             }
         }
-        
         $this->assign('webUrl',config('domain'));
         
         $this->assign('domain',config('domains'));
+        
+        $this->assign('domains',config('domains'));
     }
     public function index() {
         $model = input('model');
