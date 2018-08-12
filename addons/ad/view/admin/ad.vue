@@ -1,0 +1,258 @@
+
+<template>
+<div>
+<header class="mipcms-container-header">
+    <div class="float-left">
+        <h4>{$itemName}管理</h4>
+    </div>
+   <button type="button" class="pull-right ivu-btn ivu-btn-primary ivu-btn-circle" @click='itemAdd'>
+        <span>添加{$itemName}</span>
+    </button>
+</header>
+
+<main class="mipcms-container-body" style="height: calc(100% - 50px)">
+    <section class="mip-box">
+        <section class="mip-box-body">
+            <!--内容列表-->
+            <section class="diy-table-list" v-cloak>
+                
+                <div class="diy-table-item diy-table-item-header">
+                    <ul class="list-unstyled row">
+                       
+                        <li class="col-md-2">
+                            <span>名称</span>
+                        </li>
+                        <li class="col-md-2">
+                            <span>别名</span>
+                        </li>
+                        <li class="col-md-2">
+                            <span>添加时间</span>
+                        </li>
+                        <li class="col-md-2">
+                            <span>备注说明</span>
+                        </li>
+                        <li class="col-md-2">
+                            <span>调用代码</span>
+                        </li>
+                        <li class="col-md-2">
+                            <span>操作</span>
+                        </li>
+                    </ul>
+                </div>
+                <div v-if='itemList.length' class="diy-table-body">
+                    <div class="diy-table-item" v-for='item in itemList' >
+                         <ul class="list-unstyled row">
+                                
+                            <li class="col-md-2 over-h-e">
+                                <span>{{item.title}}</span>
+                            </li>
+                            <li class="col-md-2">
+                                <span>{{item.name}}</span>
+                            </li>
+                            <li class="col-md-2">
+                                <span>{{item.add_time | dateTime}}</span>
+                            </li>
+                            <li class="col-md-2 over-h-e">
+                                <span>{{item.info}}</span>
+                            </li>
+                            <li class="col-md-2">
+                                <span>{{"{:"}}{{"hook('adHook','"}}{{item.name}}{{"')}"}}</span>
+                            </li>
+                            <li class="col-md-2">
+                                <i-button type="error" size="small" @click='itemDel(item)'>删除</i-button>
+                                <i-button type="primary" size="small" @click='itemEdit(item)'>修改</i-button>
+                            </li>
+                         
+                        </ul>
+                    </div>
+                </div>
+                <div class="no-block" v-else>
+                    <Icon type="ios-filing-outline"></Icon>
+                    <p>暂无数据</p>
+                </div>
+            </section>
+            <!--内容列表结束-->
+            <!--分页-->
+            <div class="text-right clearfix mt-3">
+                <Page :total="pagination.total"  @on-page-size-change='itemPaginationSelect' :page-size-opts='[10,100,500,1000,5000]' show-total show-sizer placement='top' @on-change='itemPaginationClick'></Page>
+            </div>
+        </section>
+    </section>
+     <Modal :title="dialogItemTitle" size="small" v-model='dialogItemStatus' v-cloak>
+            <i-form :model="item" :rules="itemRules" ref="item" :label-width="80" >
+    
+                <Form-Item label="{$itemName}名称" prop="title">
+                    <i-input v-model="item.title" placeholder="例：网站侧边栏广告"></i-input>
+                </Form-Item>
+                <Form-Item label="{$itemName}别名" prop="name">
+                    <i-input v-model="item.name" placeholder="例：side_right_ad（必须英文）" ></i-input>
+                </Form-Item>
+                <Form-Item label="{$itemName}代码">
+                    <i-input type="textarea" rows='5' v-model="item.content"></i-input>
+                </Form-Item>
+                <Form-Item label="备注说明">
+                    <i-input type="textarea" v-model="item.info" placeholder="备注说明"></i-input>
+                </Form-Item>
+            </i-form>
+            <div slot="footer" class="dialog-footer">
+                <i-button @click="dialogItemStatus = false">取 消</i-button>
+                <i-button type="primary" @click="itemPost('item')">确 定</i-button>
+            </div>
+        </Modal>
+</main>
+
+</div>
+</template>
+
+<script>
+   
+export default {
+    data () {
+        return {
+            itemName: '{$itemName}',
+            itemList: [], 
+            
+            item: {
+                id: '',
+                title: '',
+                name: '',
+                content: '',
+                info: '',
+            },
+            dialogItemTitle: '添加{$itemName}',
+            dialogItemStatus: false,
+            
+            itemRules: {
+                title: [{
+                    required: true,
+                    message: '请输入名称',
+                    trigger: 'blur'
+                }],
+                name: [{
+                    required: true,
+                    message: '请输入别名,必须是英文',
+                    trigger: 'blur'
+                }],
+            },
+            
+            pagination: {
+                currentPage: 1,
+                limit: 10,
+                total: this.total,
+            },
+        }
+    },
+        watch: {
+             
+        },
+        mounted() {
+            this.getItemList();
+        },
+        methods: {
+            itemAdd() {
+                this.item.id = '';
+                this.dialogItemTitle = '添加{$itemName}';
+                this.item.title = '';
+                this.item.name = '';
+                this.item.content = '';
+                this.item.info = '';
+                this.dialogItemStatus = true;
+            },
+            itemDel(item) {
+                 var _this = this;
+                this.$Modal.confirm({
+                    title: '消息提示',
+                    content: '<p>确定删除么？删除后不可恢复</p>',
+                    onOk: () => {
+                        _this = this;
+                        this.$mip.ajax('{$domain}/ad/ApiAdminAd/itemDel', {
+                            id: item.id,
+                        }).then(function(res) {
+                            if(res.code == 1) {
+                                _this.$Message.success('删除成功');
+                                _this.getItemList();
+                            }
+                        });
+                    },
+                    onCancel: () => {
+                    }
+                });
+            },
+            itemEdit(item) {
+                this.item.id = item.id;
+                this.dialogItemTitle = '修改{$itemName}';
+                this.item.title = item.title;
+                this.item.name = item.name;
+                this.item.content = item.content;
+                this.item.info =  item.info;
+                this.dialogItemStatus = true;
+            },
+            itemPost(val) {
+                var _this = this;
+                this.$refs[val].validate((valid) => {
+                    if(valid) {
+                        var parent=/^[A-Za-z]+$/;
+                        if (!parent.test(this.item.name)) {
+                            _this.$Message.error('别名只限英文字母');
+                            return false;
+                        }
+                        if (this.item.id) {
+                            this.$mip.ajax('{$domain}/ad/ApiAdminAd/itemEdit', {
+                                id: this.item.id,
+                                title: this.item.title,
+                                name: this.item.name,
+                                content: this.item.content,
+                                info: this.item.info,
+                            }).then(function(res) {
+                                if(res.code == 1) {
+                                    _this.$Message.success('修改成功');
+                                    _this.getItemList();
+                                    _this.dialogItemStatus = false;
+                                }
+                            });
+                        } else {
+                            this.$mip.ajax('{$domain}/ad/ApiAdminAd/itemAdd', {
+                                title: this.item.title,
+                                name: this.item.name,
+                                content: this.item.content,
+                                info: this.item.info,
+                            }).then(function(res) {
+                                if(res.code == 1) {
+                                    _this.$Message.success('添加成功');
+                                    _this.getItemList();
+                                    _this.dialogItemStatus = false;
+                                }
+                            });
+                        }
+                        
+                    }
+                });
+            },
+            getItemList() {
+                this.loading = true;
+                var _this = this;
+                this.$mip.ajax('{$domain}/ad/ApiAdminAd/itemSelect', {
+                    page: this.pagination.currentPage,
+                    limit: this.pagination.limit,
+                }).then(function(res) {
+                    _this.itemList = [];
+                    if(res.code == 1) {
+                        var itemList = res.data.itemList;
+                        _this.itemList = itemList;
+                        _this.pagination.total = res.data.total;
+                    }
+                    _this.loading = false;
+                });
+            },
+            
+            itemPaginationSelect(val) {
+                this.pagination.limit = val;
+                this.getItemList();
+            },
+            itemPaginationClick(val) {
+                this.pagination.currentPage = val;
+                this.getItemList();
+            },
+        }
+}
+  </script>

@@ -10,6 +10,7 @@
                     <h3>{$categoryInfo['name']}</h3>
                 </section>
                 <section class="mip-box-body">
+					{:hook('adHook','categoryListTop')}
                     <div class="mipui-widget-media-body mipui-category-list-001">
                         {mipcms:article value='v' cid='$categoryInfo["cid"]' limit='10' page='$categoryInfo["page"]'}
                             {include file='block/article-list'}
@@ -20,6 +21,7 @@
             </section>
         </main>
         <aside class="col-lg-4 hidden-xs">
+        	{:hook('adHook','categorySideA')}
             <section class="mip-box mip-box-default">
                 <section class="mip-box-heading">
                     <h3>热门{$mipInfo['articleModelName']}</h3>
@@ -37,6 +39,7 @@
             </section>
             
             {include file='block/tags-hot'}
+            {:hook('adHook','categorySideB')}
         </aside>
 
     </div>

@@ -93,6 +93,7 @@
             </div>
         </main>
         <aside class="col-lg-4 hidden-xs">
+        	{:hook('adHook','indexSideA')}
             <section class="mip-box mip-box-default">
                 <section class="mip-box-heading">
                     <h3>热门{$mipInfo['articleModelName']}</h3>
@@ -109,6 +110,7 @@
                 </section>
             </section>
             {include file='block/tags-hot'}
+        	{:hook('adHook','indexSideB')}
         </aside>
 
     </div>
