@@ -16,7 +16,7 @@ if (!strpos($request->url(),'Api')) {
             
             Route::rule([str_replace('.html','',$value['detailRule']).$mipInfo['urlPageBreak'].'<page>' => ['article/ArticleDetail/index',['ext'=>'html'],['id'=>'[a-zA-Z0-9_-]+']]]);
 
-            Route::rule([str_replace('.html','',$value['detailRule']) => ['article/ArticleDetail/index',['ext'=>'html'],['__url__' => $value['detail__url__']],[]]]);
+            Route::rule([str_replace('.html','',$value['detailRule']) => ['article/ArticleDetail/index',['__url__' => $value['detail__url__']],[]]]);
             Route::rule([$value['rule'] => ['article/Article/index?id=' . $value["id"] . '&cid=' . $value["id"],[],[]]]);
         }
     } else {

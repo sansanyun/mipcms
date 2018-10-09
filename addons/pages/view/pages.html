@@ -1,8 +1,5 @@
 {extend name="main/main"/}
 <!--自定义当前页面标题关键词描述-->
-{block name="mipTitle"}MIPCMS示例页面标题{$mipInfo['titleSeparator']}{$mipInfo['siteName']}{/block}
-{block name="mipKeywords"}MIPCMS关键词{/block}
-{block name="mipDescription"}MIPCMS描述{/block}
 
 <style type="text/css">
 /*示例当前页面CSS代码*/
@@ -13,6 +10,7 @@
     .mipcms-detail-body img{
     	max-width: 100%;
     	width: auto;
+    	height: auto;
     }
 {/block}
 </style>
@@ -28,7 +26,7 @@
              <h1 class="detail-title demo-title">{$itemInfo['title']}</h1>
         </section>
         <section class="mip-box-body mipcms-detail-body">
-            {$itemInfo['content']}
+            {$itemInfo['mipContent']}
         </section>
     </section>
 </div>
