@@ -97,7 +97,7 @@
         methods: {
                  
             getGonggaoList:function() {
-                this.$mip.ajax('//www.mipcms.cn/api/open/gonggaoList',{
+                this.$mip.ajax('https://www.mipcms.cn/api/open/gonggaoList',{
                 },'global').then(res => {
                     if (res.code == 1) {
                        this.gonggaoList = res.data.gonggaoList;
@@ -106,7 +106,7 @@
             },
 
             getFunctionList:function() {
-                this.$mip.ajax('//www.mipcms.cn/api/open/functionList',{
+                this.$mip.ajax('https://www.mipcms.cn/api/open/functionList',{
                 },'global').then(res => {
                     if (res.code == 1) {
                         this.functionList = res.data.functionList;

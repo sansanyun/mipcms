@@ -3,25 +3,27 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
-        <link rel="stylesheet" type="text/css" href="https://mipcache.bdstatic.com/static/v1/mip.css">
-        <title>页面不存在</title>
+        <title>跳转提示</title>
         <link rel="canonical" href="https://m.baidu.com/">
         <style mip-custom>
+        
         .page {
             width: 100%;
             margin: 0 auto;
             text-align: center;
-            padding-top: 5vw;
+            padding-top: 3rem;
         }
-        .page div{
-            font-size: 2vw;
+        .page .success,.page .error{
+            font-size: 2rem;
             text-align: center;
-            color: #FF4949;
-            padding-bottom: 2vw;
             position: relative;
+            padding: 1rem;
         }
         .success {
             color: #00AAEE;
+        }
+        .error {
+            color: #FF4949;
         }
         .page img{
             margin: 0 auto;
@@ -36,31 +38,41 @@
         .page a{
             color: #aaa;
         }
+        .bottom {
+        	margin-top: 2rem;
+        }
         </style>
     </head>
     <body>
     <div class="page">
         <?php switch ($code) {?>
             <?php case 1:?>
-            <div>
-              
                <div class="success">
                     <?php echo(strip_tags($msg));?>
                </div>
-                <p><a href="<?php echo($domain.$url);?>">点击跳转</a></p>
-            <?php break;?>
+            	<?php break;?>
             <?php case 0:?>
-            <div>
-               <div>
+               <div class="error">
                     <?php echo(strip_tags($msg));?>
                </div>
-            </div>
-            <p><a href="<?php echo($domain.$url);?>">点击跳转</a></p>
             <?php break;?>
         <?php } ?>
-        <p>Copyright &copy; Powered By <a href="http://www.mipcms.com" title="MIPCMS内容管理系统" target="_blank">MIPCMS内容管理系统</a></p>
+        	
+      	<p class="jump">页面自动 <a id="href" href="<?php echo($url);?>">跳转</a> 等待时间： <b id="wait"><?php echo($wait);?></b></p>
+        <p class="bottom">Copyright &copy; Powered By <a href="http://www.mipcms.com" title="MIPCMS内容管理系统" target="_blank">MIPCMS内容管理系统</a></p>
     </div>
-        <script src="https://mipcache.bdstatic.com/static/v1/mip.js"></script>
-        <script src="https://mipcache.bdstatic.com/static/v1/mip-stats-baidu/mip-stats-baidu.js"></script>
+    <script type="text/javascript">
+        (function(){
+            var wait = document.getElementById('wait'),
+                href = document.getElementById('href').href;
+            var interval = setInterval(function(){
+                var time = --wait.innerHTML;
+                if(time <= 0) {
+                    location.href = href;
+                    clearInterval(interval);
+                };
+            }, 1000);
+        })();
+    </script>
     </body>
 </html>
