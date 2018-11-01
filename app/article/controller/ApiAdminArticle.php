@@ -22,6 +22,7 @@ class ApiAdminArticle extends AdminBase
         $title = input('post.title');
         $keywords = input('post.keywords');
         $description = input('post.description');
+        $imgUrl = input('post.imgUrl');
         $link_tags = input('post.link_tags');
         $url_name = input('post.url_name');
         $content = input('post.content');
@@ -59,6 +60,7 @@ class ApiAdminArticle extends AdminBase
             'title' => htmlspecialchars($title),
             'keywords' => $keywords,
             'description' => $description,
+            'img_url' => $imgUrl,
             'link_tags' => $link_tags,
             'uid' => $this->userId,
             'cid' => $cid,
@@ -202,6 +204,7 @@ class ApiAdminArticle extends AdminBase
         $title = input('post.title');
         $keywords = input('post.keywords');
         $description = input('post.description');
+        $imgUrl = input('post.imgUrl');
         $link_tags = input('post.link_tags');
         $url_name = input('post.url_name');
         $content = input('post.content');
@@ -247,6 +250,7 @@ class ApiAdminArticle extends AdminBase
             'title' => htmlspecialchars($title),
             'keywords' => $keywords,
             'description' => $description,
+            'img_url' => $imgUrl,
             'link_tags' => $link_tags,
             'cid' => $cid,
             'edit_time'=>time(),
@@ -411,6 +415,16 @@ class ApiAdminArticle extends AdminBase
             $order = 'asc';
         }
         $categoryList = model($this->itemModelNameSpace)->getCategory($pid,$orderBy,$order,$limit);
+        if ($categoryList) {
+            foreach ($categoryList as $key => $value) {
+                $categoryList[$key]['content'] = htmlspecialchars_decode($value['content']);
+                if ($categoryList[$key]['children']) {
+                    foreach ($categoryList[$key]['children'] as $k => $v) {
+                        $categoryList[$key]['children'][$k]['content'] = htmlspecialchars_decode($v['content']);
+                    }
+                }
+            }
+        }
         return jsonSuccess('',['categoryList' => $categoryList]);
     }
 
