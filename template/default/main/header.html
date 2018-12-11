@@ -27,18 +27,18 @@
                 </li>
             </ul>
         </div>
-        <div class="d-lg-flex d-none">
-            <ul class="mipmb-menu list-unstyled">
-                {if condition='$userInfo["group_id"] == 1'}
-                <li>
-                    <a href="{$domains}/{$Think.config.admin}/">后台管理</a>
-                </li>
-                {else/}
-                <li>
-                    <a href="{$domains}/{$Think.config.admin}/">登录</a>
-                </li>
-                {/if}
-            </ul>
+    </div>
+</div>
+<div class="sub-nav">
+    <div class="container">
+        <div class="mip-box">
+            <div class="mip-box-body">
+                <ul class="list-unstyled tags">
+                    {miptag:tags value="v" limit='50'}
+                        <li><a href="{$v.url}" data-type="mip" data-title="{$v.name}" title="{$v.name}">{$v.name}</a></li>
+                    {/miptag:tags}
+                </ul>
+            </div>
         </div>
     </div>
 </div>

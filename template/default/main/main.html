@@ -16,6 +16,48 @@
     <link rel="stylesheet" type="text/css" href="{$domainStatic}/{$assets}/{$tplName}/css/mipcms.css">
     <style mip-custom>
     {block name="style"}{/block}
+    .mipcms-main {
+        margin-top: 115px;
+    }
+    .sub-nav {
+        background-color: #fff;
+    }
+    .sub-nav .mip-box-body {
+        padding: 10px;
+    }
+    .sub-nav .tags {
+        margin: 0;
+        overflow: hidden;
+        display: block;
+        white-space: nowrap;
+    }
+    .sub-nav .tags li {
+        float: none;
+        display: inline-block;
+    }
+    @media (max-width: 768px) {
+        .mipcms-main {
+            margin-top: 135px;
+        }
+        .sub-nav .container{
+            padding: 0;
+        }
+        .sub-nav .mip-box-body {
+            padding: 5px;
+        }
+        .sub-nav .tags {
+            overflow: hidden;
+            width: 100%;
+            list-style: none;
+            padding-left: 0;
+            padding: 0;
+            line-height: 30px;
+            margin: 0;
+            overflow-x: scroll;
+            -webkit-overflow-scrolling: touch;
+            white-space: nowrap;
+          }
+    }
     </style>
     <link rel="canonical" href="{$siteUrl}">
 </head>
