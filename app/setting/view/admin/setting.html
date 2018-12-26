@@ -67,12 +67,13 @@
                         </div>
                         <div class="col-md-1">
                             <Form-item label="超级站点">
-                                <i-switch v-model="setting.superSites">
+                                <i-switch v-model="setting.superSites" disabled>
                                     <span slot="open">开</span>
                                     <span slot="close">关</span>
                                 </i-switch>
                             </Form-item>
                         </div>
+                         
                     </div>
                 </i-form>
             </div>
@@ -89,10 +90,10 @@
             <div class="col-md-6">
                 <i-form label-position="top">
                     <Form-item label="运行地址">
-                        <i-input v-model="setting.articleDomain"></i-input>
+                        <i-input v-model="setting.articleDomain" disabled></i-input>
                     </Form-item>
                     <Form-item label="网站域名">
-                        <i-input v-model="setting.domain" placeholder="www.baidu.com">
+                        <i-input v-model="setting.domain" disabled>
                         <i-select v-model="setting.httpType" slot="prepend" style="width: 80px">
                             <i-option value="http://">http://</i-option>
                             <i-option value="https://">https://</i-option>
@@ -298,6 +299,7 @@
                         } else {
                             temp.rewrite = false;
                         }
+                         
                         temp.baiduSearchPcUrl = '/baiduSitemapPc.xml';
                         _this.setting = temp;
                     }
