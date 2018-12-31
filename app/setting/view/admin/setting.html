@@ -90,10 +90,10 @@
             <div class="col-md-6">
                 <i-form label-position="top">
                     <Form-item label="运行地址">
-                        <i-input v-model="setting.articleDomain" disabled></i-input>
+                        <i-input v-model="setting.articleDomain" placeholder='仅用于目录建站使用，如果不理解请勿填写'></i-input>
                     </Form-item>
                     <Form-item label="网站域名">
-                        <i-input v-model="setting.domain" disabled>
+                        <i-input v-model="setting.domain" placeholder='此项若填写错误，会导致系统无法正常运行，如果不理解请勿填写'>
                         <i-select v-model="setting.httpType" slot="prepend" style="width: 80px">
                             <i-option value="http://">http://</i-option>
                             <i-option value="https://">https://</i-option>
