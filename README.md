@@ -1,4 +1,5 @@
 # MIPCMS内容管理系统 v3.6.0 介绍
+已有最新版本，请移步至 [MIPCMS 5.X](https://github.com/sansanyun/mipcms5)
 > #### 官网地址
 > http://www.mipcms.com
 > #### 主要使用技术栈：
