@@ -507,6 +507,7 @@ class Request
             if (isset($_POST[Config::get('var_method')])) {
                 $this->method = strtoupper($_POST[Config::get('var_method')]);
                 $this->{$this->method}($_POST);
+				unset($_POST[Config::get('var_method')]);
             } elseif (isset($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'])) {
                 $this->method = strtoupper($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE']);
             } else {
